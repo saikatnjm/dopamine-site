@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { experiencesInCategory, listCategories, listExperiences } from "@/lib/experience/registry";
 import { absoluteUrl } from "@/lib/site";
+import { listGames } from "@/data/games";
 
 // Only real, useful pages. Result pages are personal and noindex.
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -15,6 +16,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...listCategories()
       .filter((c) => experiencesInCategory(c.slug).length > 0)
       .map((c) => ({ url: absoluteUrl(`/categories/${c.slug}`), changeFrequency: "monthly" as const, priority: 0.6 })),
+    { url: absoluteUrl("/games"), changeFrequency: "weekly", priority: 0.8 },
+    ...listGames().map((g) => ({
+      url: absoluteUrl(`/games/${g.slug}`),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    })),
     { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.3 },
     { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.2 },
     { url: absoluteUrl("/terms"), changeFrequency: "yearly", priority: 0.2 },

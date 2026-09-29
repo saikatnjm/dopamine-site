@@ -6,6 +6,7 @@ import type { Lang } from "./core";
 const en = {
   skip: "Skip to content",
   navExperiences: "Experiences",
+  navGames: "Games",
   surprise: "Surprise",
   surpriseMe: "Surprise me",
   rolling: "Rolling…",
@@ -63,6 +64,11 @@ const en = {
   categoryEmpty: "Nothing playable here yet. The chaos is still loading.",
   otherCategories: "Other categories",
   backAll: "← All experiences",
+  gamesTitle: "Games",
+  gamesSub: "Quick reflex games about everyday chaos. About 30 seconds each, no sign-up.",
+  backGames: "← All games",
+  gameSeconds: "{n} sec",
+  footerGames: "Games",
 
   introMeta: "{steps} steps · about {min} min · no sign-up",
   restart: "↺ Restart",
@@ -102,6 +108,7 @@ export type Dict = typeof en;
 const bn: Dict = {
   skip: "মূল অংশে যান",
   navExperiences: "খেলাগুলো",
+  navGames: "গেমস",
   surprise: "সারপ্রাইজ",
   surpriseMe: "সারপ্রাইজ দাও",
   rolling: "ছক্কা ঘুরছে…",
@@ -159,6 +166,11 @@ const bn: Dict = {
   categoryEmpty: "এখানে এখনো খেলার কিছু নেই। হট্টগোল লোড হচ্ছে।",
   otherCategories: "অন্যান্য ক্যাটাগরি",
   backAll: "← সব খেলা",
+  gamesTitle: "গেমস",
+  gamesSub: "প্রতিদিনের হট্টগোল নিয়ে ঝটপট রিফ্লেক্স গেম। প্রতিটা প্রায় ৩০ সেকেন্ড, সাইন-আপ লাগে না।",
+  backGames: "← সব গেম",
+  gameSeconds: "{n} সেকেন্ড",
+  footerGames: "গেমস",
 
   introMeta: "{steps} ধাপ · প্রায় {min} মিনিট · সাইন-আপ লাগবে না",
   restart: "↺ আবার শুরু",

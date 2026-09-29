@@ -7,6 +7,7 @@ export async function SiteFooter() {
   const { d } = await getI18n();
   const links = [
     { href: "/experiences", label: d.footerAll },
+    { href: "/games", label: d.footerGames },
     { href: "/about", label: d.footerAbout },
     { href: "/privacy", label: d.footerPrivacy },
     { href: "/terms", label: d.footerTerms },

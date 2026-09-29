@@ -55,6 +55,7 @@ data/
   categories.ts
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   experiences/index.ts   registry list; one file per experience
+  games/index.ts         games registry (slug, title, accent…); games/<slug>.ts = copy
 lib/
   site.ts                siteConfig, absoluteUrl()
   random.ts              seeded RNG (FNV-1a + Mulberry32), weightedPick
@@ -66,7 +67,29 @@ lib/
     engine.ts            runExperience(), pickBeat(), validateExperience()
     registry.ts          getExperience(), listExperiences(), categories
     result-token.ts      encode/decodeResultToken()
+  games/<slug>.ts        pure, seeded game rules (no DOM/React)
+app/games/               Games index + one route per game (e.g. /games/cng-catch)
+components/games/        game cards + client game components
 ```
+
+## Games (reflex mini-games, separate from story experiences)
+
+- Registry: `data/games/index.ts`; listed at `/games`, in header (🎮), footer, sitemap.
+- Rules live in `lib/games/<slug>.ts` as pure functions of `(seed, roundIndex)`;
+  the same seed replays identical traffic. Never `Math.random()` in gameplay.
+- Share link: `/games/<slug>?seed=<base36>&s=<score>` → friend plays the same
+  seed with "beat {score}" banner. Score is claimed (client-side), not verified.
+- Result title is a pure function of score (`rankFor`); never rename rank ids.
+- Best score: `localStorage["hottogol:<slug>:best"]` via `useSyncExternalStore`
+  (server snapshot 0, try/catch for blocked storage).
+- Per-frame motion writes to the DOM from one `requestAnimationFrame` loop; React
+  state changes only on events. Micro-animations use the Web Animations API
+  (no extra bundle), skipped when `prefers-reduced-motion` is set. Individual
+  `translate/rotate/scale` keyframes must respect Tailwind v4 utilities on the
+  same element.
+- Input: pointerdown (tap/click), Space/Enter (global during play), and
+  keyboard/AT `click` (`detail === 0`) on the stage button.
+- Analytics events: `game_start`, `game_retry`, `game_complete`, `game_share`.
 
 ## Engine rules
 
@@ -151,4 +174,5 @@ lib/
 - [x] Phase 7 — live audit (TTFB 63 ms, load 0.6 s, CLS 0; no overflow at 360/390/412)
 - [x] Phase 8 — six more experiences: food delivery, Dhaka bus, job resignation,
       fake shopping, house rent, random life decision (all EN/BN, 11–12 endings)
+- [x] Phase 9 — Games section + first game: CNG Catch (`/games/cng-catch`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

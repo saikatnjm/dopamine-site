@@ -8,7 +8,11 @@ export type AnalyticsEvent =
   | "result_view"
   | "result_share"
   | "experience_retry"
-  | "surprise_me_click";
+  | "surprise_me_click"
+  | "game_start"
+  | "game_retry"
+  | "game_complete"
+  | "game_share";
 // page_view is sent automatically by GA4 (enhanced measurement).
 
 export type AnalyticsParams = Record<string, string | number | boolean | undefined>;

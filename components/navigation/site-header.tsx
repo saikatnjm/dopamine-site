@@ -22,6 +22,14 @@ export async function SiteHeader() {
         <Link href="/experiences" className="hidden rounded-pill px-3 py-2 font-bold hover:underline md:inline-flex">
           {d.navExperiences}
         </Link>
+        <Link
+          href="/games"
+          aria-label={d.navGames}
+          className="inline-flex min-h-11 items-center gap-1 rounded-pill px-2 py-2 font-bold hover:underline sm:px-3"
+        >
+          <span aria-hidden>🎮</span>
+          <span className="hidden sm:inline">{d.navGames}</span>
+        </Link>
         <LangToggle />
         <SurpriseButton slugs={slugs} size="sm" />
       </nav>
