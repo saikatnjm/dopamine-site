@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design tokens — "sticker zine": butter-cream paper, loud candy accents,
+   thick ink outlines, offset shadows. Light-only on purpose (brand look).
+   Accents are backgrounds with ink text; *-deep variants are AA-safe text.
+--------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --bg: #fff3d6;
+  --surface: #ffffff;
+  --surface-2: #ffe7a8;
+  --ink: #1a1325;
+  --ink-muted: #5b4f6b;
+  --line: #e9d49a;
+
+  --cng: #3ddc84;
+  --marigold: #ffc53d;
+  --chili: #ff5c93;
+  --violet: #9b7bff;
+  --sky: #4fc3ff;
+  --tangerine: #ff8a3d;
+  --lime: #b8f13a;
+
+  --cng-deep: #0b7d42;
+  --marigold-deep: #9a5b00;
+  --chili-deep: #c2185b;
+  --violet-deep: #5b3fd6;
+  --sky-deep: #0b6aa8;
+
+  --focus: #5b3fd6;
+  --pop-shadow: 4px 4px 0 0 var(--ink);
+  --pop-shadow-lg: 6px 6px 0 0 var(--ink);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-line: var(--line);
+
+  --color-cng: var(--cng);
+  --color-marigold: var(--marigold);
+  --color-chili: var(--chili);
+  --color-violet: var(--violet);
+  --color-sky: var(--sky);
+  --color-tangerine: var(--tangerine);
+  --color-lime: var(--lime);
+
+  --color-cng-deep: var(--cng-deep);
+  --color-marigold-deep: var(--marigold-deep);
+  --color-chili-deep: var(--chili-deep);
+  --color-violet-deep: var(--violet-deep);
+  --color-sky-deep: var(--sky-deep);
+
+  --font-display: var(--font-bricolage), var(--font-bangla), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-bricolage), var(--font-bangla), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 1.5rem;
+  --radius-pill: 999px;
+
+  --shadow-pop: var(--pop-shadow);
+  --shadow-pop-lg: var(--pop-shadow-lg);
+
+  --animate-float: float 5s ease-in-out infinite;
+  --animate-wiggle: wiggle 0.45s ease-in-out;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-spin-once: spin-once 0.6s ease-in-out;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-12px) rotate(calc(var(--r, 0deg) + 6deg)); }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-3deg); }
+    75% { transform: rotate(3deg); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes spin-once {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  /* Dotted "notebook" paper */
+  background-image: radial-gradient(rgb(26 19 37 / 0.09) 1.2px, transparent 1.2px);
+  background-size: 22px 22px;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Bangla glyphs are taller (matras, conjuncts): give headings room. */
+html:lang(bn) :is(h1, h2, h3) {
+  line-height: 1.3;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 0.5rem;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
