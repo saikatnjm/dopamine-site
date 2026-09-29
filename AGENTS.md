@@ -6,7 +6,7 @@ in the same change.
 
 ## What this is
 
-**Dopamine Web** (working name, domain TBD): a site of short (30–120 s), funny,
+**Hottogol** (হট্টগোল, "chaos") — live at https://hottogol.vercel.app — a site of short (30–120 s), funny,
 shareable interactive "experiences". First experience: **Dhaka CNG Simulator**.
 Core loop: curiosity → play → unexpected outcome → share link → friend plays.
 Primary metric: **share rate per completed experience**.
@@ -127,8 +127,17 @@ lib/
 5. At the end of a task, list all files created or modified.
 6. Everything runs through Docker Compose; install nothing on the host.
 7. Keep this AGENTS.md current; record every new standing instruction here.
-8. Analytics = GA4. Site will be monetized later (Vercel Hobby is
+8. Analytics = GA4 only. Do NOT add Vercel Analytics (owner decision). Site will be monetized later (Vercel Hobby is
    non-commercial → move to Vercel Pro or Cloudflare before ads).
+9. Always credit the creator: keep the GitHub badge (bottom-right corner) and
+   the footer "Made by @saikatnjm" link to https://github.com/saikatnjm
+   (`siteConfig.author`, `components/navigation/github-credit.tsx`).
+10. Site URL: `NEXT_PUBLIC_SITE_URL` in Vercel; falls back to Vercel's production
+    domain, never localhost, on Vercel (`lib/site.ts`).
+11. Follow the core instructions in this file. Match model to task: hand
+    low-level, mechanical work (renames, copy edits, file moves, simple
+    lookups/checks) to a smaller/cheaper model or subagent; keep the main
+    model for design, architecture and debugging.
 
 ## Phase status
 
@@ -139,4 +148,7 @@ lib/
 - [x] Phase 5 — redesign (sticker-zine palette), homepage, listing, categories, about/privacy/terms, 404/error, sitemap, robots, JSON-LD
 - [x] Phase 5b — Bangla/English toggle, share panel with photo card
 - [x] Phase 6 — CI (lint/build/typecheck), Docker → GHCR, README, Vercel + domain docs
-- [ ] Phase 7 — full verification (mobile viewports, Lighthouse, Docker)
+- [x] Phase 7 — live audit (TTFB 63 ms, load 0.6 s, CLS 0; no overflow at 360/390/412)
+- [x] Phase 8 — six more experiences: food delivery, Dhaka bus, job resignation,
+      fake shopping, house rent, random life decision (all EN/BN, 11–12 endings)
+- [ ] Owner: run production Docker image locally (`docker compose up --build`)

@@ -5,7 +5,7 @@ import { Marquee } from "@/components/ui/marquee";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
 import { upcoming } from "@/data/upcoming";
 import { listCategories, listExperiences } from "@/lib/experience/registry";
-import { t } from "@/lib/i18n/core";
+import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
@@ -54,7 +54,7 @@ export default async function HomePage() {
         ))}
 
         <p className="relative mx-auto inline-flex rotate-1 items-center gap-2 rounded-pill border-2 border-ink bg-lime px-4 py-1.5 text-sm font-extrabold shadow-pop">
-          {d.heroBadge}
+          {fmt(d.heroBadge, { n: num(experiences.length, lang) })}
         </p>
         <h1 className="relative mx-auto mt-6 max-w-3xl font-display text-5xl font-extrabold leading-[0.95] tracking-tight sm:text-7xl">
           {d.heroA}{" "}
@@ -87,15 +87,19 @@ export default async function HomePage() {
           ))}
         </div>
 
-        <h2 className="mt-14 font-display text-2xl font-extrabold sm:text-3xl">
-          {d.oven} <span aria-hidden>🍳</span>
-        </h2>
-        <p className="mt-1 text-ink-muted">{d.ovenSub}</p>
-        <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-3">
-          {upcoming.map((item) => (
-            <ComingSoonCard key={item.id} item={item} lang={lang} />
-          ))}
-        </div>
+        {upcoming.length > 0 && (
+          <>
+            <h2 className="mt-14 font-display text-2xl font-extrabold sm:text-3xl">
+              {d.oven} <span aria-hidden>🍳</span>
+            </h2>
+            <p className="mt-1 text-ink-muted">{d.ovenSub}</p>
+            <div className="mt-5 grid grid-cols-2 gap-4 lg:grid-cols-3">
+              {upcoming.map((item) => (
+                <ComingSoonCard key={item.id} item={item} lang={lang} />
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       {/* How it works */}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
+import { GitHubIcon } from "./github-credit";
 
 export async function SiteFooter() {
   const { d } = await getI18n();
@@ -29,7 +30,18 @@ export async function SiteFooter() {
           </ul>
         </nav>
       </div>
-      <p className="px-4 pb-6 text-center text-xs opacity-70">{d.footerNote}</p>
+      <div className="flex flex-col items-center gap-2 px-4 pb-20 text-center text-xs sm:pb-8">
+        <a
+          href={siteConfig.author.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-9 items-center gap-2 rounded-pill px-3 text-sm font-bold underline-offset-4 hover:text-lime hover:underline"
+        >
+          <GitHubIcon className="size-4" />
+          {d.madeBy} @{siteConfig.author.name}
+        </a>
+        <p className="opacity-70">{d.footerNote}</p>
+      </div>
     </footer>
   );
 }

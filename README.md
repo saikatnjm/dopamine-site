@@ -1,10 +1,11 @@
-# 🧠 Dopamine Web
+# 🧠 Hottogol
 
 **Tiny simulators for everyday chaos.** One-minute interactive experiences with
-unexpected endings, made to be shared. First experience: **🛺 Dhaka CNG Simulator**.
+unexpected endings, made to be shared. Seven experiences: 🛺 Dhaka CNG, 🍔 Food Delivery,
+🚌 Dhaka Bus, 💼 Job Resignation, 🛍️ Fake Shopping, 🏠 House Rent and 🎲 Random Life Decision.
 English and Bangla. No accounts, no database, no backend server.
 
-> Working name — the final brand and domain are still to be chosen.
+Live: **https://hottogol.vercel.app** · Made by [@saikatnjm](https://github.com/saikatnjm)
 
 ---
 

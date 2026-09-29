@@ -1,0 +1,219 @@
+import type { Experience, RunContext } from "@/lib/experience/types";
+
+// Shipped ids are permanent (share links store them). See AGENTS.md.
+
+const food = (c: RunContext) => c.choices.craving ?? "";
+const pay = (c: RunContext) => c.choices.payment ?? "";
+const wait = (c: RunContext) => c.choices.wait ?? "";
+const rider = (c: RunContext) => c.beats.rider ?? "";
+const map = (c: RunContext) => c.beats.map ?? "";
+
+const RIDER = { en: "Rider", bn: "রাইডার" };
+const DELIVERED = { en: "Delivered", bn: "ডেলিভারি" };
+
+export const foodDelivery: Experience = {
+  slug: "food-delivery-simulator",
+  title: { en: "Food Delivery Simulator", bn: "ফুড ডেলিভারি সিমুলেটর" },
+  tagline: { en: "Your rider is 2 minutes away. For 3 hours.", bn: "রাইডার ২ মিনিট দূরে। ৩ ঘণ্টা ধরে।" },
+  description: {
+    en: "Order dinner, pick how to pay, then survive the tracking map. The food arrives eventually. Probably. In some form.",
+    bn: "রাতের খাবার অর্ডার দিন, পেমেন্ট বেছে নিন, তারপর ট্র্যাকিং ম্যাপ সহ্য করুন। খাবার আসবে। হয়তো। কোনো না কোনো রূপে।",
+  },
+  startLabel: { en: "Place the order 🍔", bn: "অর্ডার দিন 🍔" },
+  category: "food",
+  emoji: "🍔",
+  durationSec: 60,
+  accent: "tangerine",
+  seo: {
+    title: "Food Delivery Simulator — Will Your Order Ever Arrive?",
+    description:
+      "A free, funny one-minute food delivery simulator. Order, pay, track the rider and see what actually shows up at your door. Share your result.",
+  },
+  steps: [
+    {
+      kind: "choice",
+      id: "craving",
+      prompt: { en: "What are you craving?", bn: "কী খেতে মন চাইছে?" },
+      cardLabel: { en: "Order", bn: "অর্ডার" },
+      options: [
+        { id: "kacchi", emoji: "🍛", label: { en: "Kacchi biryani", bn: "কাচ্চি বিরিয়ানি" }, hint: { en: "Friday energy.", bn: "শুক্রবারের এনার্জি।" } },
+        { id: "burger", emoji: "🍔", label: { en: "Double cheeseburger", bn: "ডাবল চিজবার্গার" }, hint: { en: "Must arrive hot. It won't.", bn: "গরম আসা লাগবে। আসবে না।" } },
+        { id: "pizza", emoji: "🍕", label: { en: "Large pizza", bn: "লার্জ পিৎজা" }, hint: { en: "The box will be sideways.", bn: "বক্স কাত হয়ে আসবে।" } },
+        { id: "fuchka", emoji: "🥟", label: { en: "Fuchka", bn: "ফুচকা" }, hint: { en: "Extremely fragile cargo.", bn: "অত্যন্ত ভঙ্গুর মাল।" } },
+        { id: "cha", emoji: "☕", label: { en: "Cha + singara", bn: "চা + সিঙ্গারা" }, hint: { en: "৳40 order, ৳60 delivery fee.", bn: "৳৪০ অর্ডার, ৳৬০ ডেলিভারি চার্জ।" } },
+      ],
+    },
+    {
+      kind: "choice",
+      id: "payment",
+      prompt: { en: "How will you pay?", bn: "পেমেন্ট কীভাবে করবেন?" },
+      cardLabel: { en: "Payment", bn: "পেমেন্ট" },
+      options: [
+        { id: "cash", emoji: "💵", label: { en: "Cash on delivery (৳1000 note)", bn: "ক্যাশ অন ডেলিভারি (৳১০০০ নোট)" }, hint: { en: "Good luck with change.", bn: "খুচরার জন্য শুভকামনা।" } },
+        { id: "wallet", emoji: "📱", label: { en: "Mobile wallet", bn: "মোবাইল ওয়ালেট" }, hint: { en: "OTP arrives in 4–40 minutes.", bn: "OTP আসবে ৪–৪০ মিনিটে।" } },
+        { id: "card", emoji: "💳", label: { en: "Card", bn: "কার্ড" }, hint: { en: "Very modern. Very trusting.", bn: "খুব মডার্ন। খুব বিশ্বাসী।" } },
+        { id: "coupon", emoji: "🎟️", label: { en: "A 50% coupon", bn: "৫০% কুপন" }, hint: { en: "Terms and conditions apply.", bn: "শর্ত প্রযোজ্য।" } },
+      ],
+    },
+    {
+      kind: "beat",
+      id: "restaurant",
+      title: { en: "The restaurant", bn: "রেস্টুরেন্ট" },
+      beats: [
+        { id: "flip-flop", emoji: "🔁", weight: 3, text: { en: "Order accepted. Then cancelled. Then accepted again. The app is confused. So are you.", bn: "অর্ডার অ্যাকসেপ্টেড। তারপর ক্যান্সেল। তারপর আবার অ্যাকসেপ্টেড। অ্যাপ কনফিউজড। আপনিও।" } },
+        { id: "preparing", emoji: "👨‍🍳", weight: 4, text: { en: "Status: \"Preparing your food\". It has said this for 40 minutes.", bn: "স্ট্যাটাস: \"খাবার তৈরি হচ্ছে\"। ৪০ মিনিট ধরে এটাই লেখা।" } },
+        { id: "instant", emoji: "⚡", weight: 1.5, text: { en: "Food is ready instantly. Nobody knows how. Nobody asks.", bn: "খাবার সাথে সাথে রেডি। কীভাবে কেউ জানে না। কেউ জিজ্ঞেসও করে না।" } },
+        { id: "kacchi-out", emoji: "📞", speaker: { en: "Restaurant", bn: "রেস্টুরেন্ট" }, text: "কাচ্চি শেষ, তেহারি দেই?", weight: (c) => (food(c) === "kacchi" ? 6 : 0) },
+      ],
+    },
+    {
+      kind: "beat",
+      id: "rider",
+      title: { en: "The rider calls", bn: "রাইডারের ফোন" },
+      beats: [
+        { id: "location", speaker: RIDER, text: "ভাই, লোকেশনটা একটু বুঝায়া দেন।", weight: 4 },
+        { id: "downstairs", speaker: RIDER, text: "আমি আপনার বাসার নিচে। (উনি নিচে নেই।)", weight: 3 },
+        { id: "no-change", speaker: RIDER, text: "ভাই, খুচরা আছে তো? আমার কাছে নাই।", weight: (c) => (pay(c) === "cash" ? 7 : 0) },
+        { id: "jam", speaker: RIDER, text: "জ্যামে আছি ভাই, ১০ মিনিট।", weight: 3 },
+        { id: "cancel-please", speaker: RIDER, text: "ভাই, অর্ডারটা ক্যান্সেল করে দেন, আমি অনেক দূরে।", weight: 1.5 },
+      ],
+    },
+    {
+      kind: "choice",
+      id: "wait",
+      prompt: { en: "How do you wait?", bn: "কীভাবে অপেক্ষা করবেন?" },
+      cardLabel: { en: "Waiting style", bn: "অপেক্ষার স্টাইল" },
+      options: [
+        { id: "refresh", emoji: "🔄", label: { en: "Refresh the map every 3 seconds", bn: "৩ সেকেন্ড পরপর ম্যাপ রিফ্রেশ" }, hint: { en: "It helps. Emotionally.", bn: "কাজ হয়। মানসিকভাবে।" } },
+        { id: "call", emoji: "📞", label: { en: "Call the rider again", bn: "রাইডারকে আবার ফোন" }, hint: { en: "He is driving. He answers anyway.", bn: "উনি বাইক চালাচ্ছেন। তবুও ধরবেন।" } },
+        { id: "gate", emoji: "🚪", label: { en: "Wait at the gate", bn: "গেটে গিয়ে দাঁড়ান" }, hint: { en: "Mosquitoes are waiting too.", bn: "মশারাও অপেক্ষা করছে।" } },
+        { id: "maggi", emoji: "🍜", label: { en: "Give up and make Maggi", bn: "হাল ছেড়ে ম্যাগি বানান" }, hint: { en: "Plan B has never failed you.", bn: "প্ল্যান বি কখনো ধোঁকা দেয়নি।" } },
+      ],
+    },
+    {
+      kind: "beat",
+      id: "map",
+      title: { en: "Live tracking", bn: "লাইভ ট্র্যাকিং" },
+      beats: [
+        { id: "river", emoji: "🌊", weight: 2, text: { en: "The rider icon is now in the middle of the river.", bn: "রাইডারের আইকন এখন নদীর মাঝখানে।" } },
+        { id: "away", emoji: "↗️", weight: 3, text: { en: "The rider is now 2 km further away than before. Confidently.", bn: "রাইডার আগের চেয়ে ২ কিমি আরও দূরে। আত্মবিশ্বাসের সাথে।" } },
+        { id: "eta", emoji: "⏱️", weight: 3, text: { en: "ETA: 5 min → 12 min → 25 min → \"Arriving soon\".", bn: "ETA: ৫ মিনিট → ১২ মিনিট → ২৫ মিনিট → \"শিগগিরই পৌঁছাচ্ছে\"।" } },
+        { id: "guard", emoji: "💂", weight: 2, text: { en: "The rider is at your gate. Your building guard says no one ordered anything.", bn: "রাইডার আপনার গেটে। দারোয়ান বলছেন কেউ কিছু অর্ডার করেনি।" } },
+        { id: "circling", emoji: "🌀", weight: (c) => (wait(c) === "refresh" ? 4 : 2), text: { en: "The rider has circled your building seven times. You can hear the bike.", bn: "রাইডার আপনার বিল্ডিংয়ের চারপাশে সাতবার ঘুরলেন। বাইকের শব্দ শোনা যাচ্ছে।" } },
+        { id: "smooth", emoji: "🟢", weight: 0.6, text: { en: "The dot moves straight toward you. No detours. You don't trust it.", bn: "ডটটা সোজা আপনার দিকে আসছে। কোনো ঘোরাঘুরি নেই। আপনি বিশ্বাস করছেন না।" } },
+      ],
+    },
+  ],
+  outcomes: [
+    {
+      id: "delivered-emotionally",
+      emoji: "📦",
+      title: { en: "Delivered (Emotionally)", bn: "ডেলিভারড (মনে মনে)" },
+      quote: "আপনার অর্ডার ডেলিভারি করা হয়েছে।",
+      message: { en: "The app says delivered. Your table says otherwise. Support replies in 3–5 business days.", bn: "অ্যাপ বলছে ডেলিভারড। আপনার টেবিল অন্য কথা বলছে। সাপোর্ট উত্তর দেবে ৩–৫ কার্যদিবসে।" },
+      card: [{ label: DELIVERED, value: { en: "✅ (in the app)", bn: "✅ (অ্যাপে)" } }, { label: { en: "Food received", bn: "খাবার পেয়েছি" }, value: "❌" }],
+      shareText: { en: "My food was delivered. To the app. Not to me 📦", bn: "খাবার ডেলিভারড হয়েছে। অ্যাপে। আমার কাছে না 📦" },
+      weight: (c) => 2 + (map(c) === "river" ? 2 : 0),
+    },
+    {
+      id: "wrong-order",
+      emoji: "🔄",
+      title: { en: "Wrong Order", bn: "ভুল অর্ডার" },
+      quote: "ভাই, এইটাই তো দিল।",
+      message: { en: "You ordered one thing. You received three plates of someone else's borhani. You're drinking it.", bn: "আপনি অর্ডার দিলেন এক জিনিস। পেলেন অন্য কারো তিন গ্লাস বোরহানি। আপনি খাচ্ছেন।" },
+      card: [{ label: DELIVERED, value: "✅" }, { label: { en: "Correct order", bn: "সঠিক অর্ডার" }, value: "❌" }],
+      shareText: { en: "Ordered dinner, got three glasses of a stranger's borhani 🔄", bn: "রাতের খাবার অর্ডার দিলাম, পেলাম অচেনা কারো তিন গ্লাস বোরহানি 🔄" },
+      weight: (c) => 2 + (c.beats.restaurant === "flip-flop" ? 2 : 0),
+    },
+    {
+      id: "ice-cold",
+      emoji: "🧊",
+      title: { en: "Arrived Ice Cold", bn: "বরফ ঠান্ডা পৌঁছাল" },
+      quote: "গরমই তো ছিল ভাই।",
+      message: { en: "The cheese has become a solid. The fries have become a memory.", bn: "চিজ এখন শক্ত পদার্থ। ফ্রাই এখন শুধুই স্মৃতি।" },
+      card: [{ label: DELIVERED, value: "✅" }, { label: { en: "Temperature", bn: "তাপমাত্রা" }, value: "🥶" }],
+      shareText: { en: "My food arrived colder than my ex 🧊", bn: "আমার খাবার এত ঠান্ডা এলো যে ফ্রিজে রাখার দরকার নেই 🧊" },
+      weight: (c) => 1.5 + (food(c) === "burger" || food(c) === "pizza" ? 2 : 0) + (rider(c) === "jam" ? 2 : 0),
+    },
+    {
+      id: "fuchka-soup",
+      emoji: "🥣",
+      title: { en: "Fuchka Soup", bn: "ফুচকা স্যুপ" },
+      quote: "একটু ঝাঁকি লাগছে ভাই।",
+      message: { en: "Every single fuchka broke. The tok is now a lake. You eat it with a spoon, like soup. It's actually good.", bn: "সব ফুচকা ভেঙে গেছে। টক এখন একটা লেক। আপনি চামচ দিয়ে স্যুপের মতো খাচ্ছেন। আসলে মজাই লাগছে।" },
+      card: [{ label: DELIVERED, value: "✅" }, { label: { en: "Fuchka intact", bn: "অক্ষত ফুচকা" }, value: "0/12" }],
+      shareText: { en: "Ordered fuchka, received fuchka soup 🥣", bn: "ফুচকা অর্ডার দিলাম, পেলাম ফুচকা স্যুপ 🥣" },
+      weight: (c) => (food(c) === "fuchka" ? 6 : 0),
+    },
+    {
+      id: "no-change",
+      emoji: "🪙",
+      title: { en: "No Change Available", bn: "খুচরা নেই" },
+      quote: "খুচরা নাই ভাই, বাকিটা টিপস?",
+      message: { en: "Nobody in a 3 km radius has change for ৳1000. You accidentally tipped ৳600 for a ৳400 order.", bn: "৩ কিমির মধ্যে কারো কাছে ৳১০০০-এর খুচরা নেই। ৳৪০০-এর অর্ডারে আপনি অজান্তে ৳৬০০ টিপস দিলেন।" },
+      card: [{ label: DELIVERED, value: "✅" }, { label: { en: "Tip", bn: "টিপস" }, value: { en: "💸 150%", bn: "💸 ১৫০%" } }],
+      shareText: { en: "Paid cash for food delivery. Accidentally tipped 150% 🪙", bn: "ক্যাশে পেমেন্ট দিলাম। ভুল করে ১৫০% টিপস দিয়ে ফেললাম 🪙" },
+      weight: (c) => (pay(c) === "cash" ? 3 + (rider(c) === "no-change" ? 4 : 0) : 0),
+    },
+    {
+      id: "coupon-rejected",
+      emoji: "🎟️",
+      title: { en: "Coupon Rejected", bn: "কুপন বাতিল" },
+      quote: "এই কুপন শুধু মঙ্গলবার রাত ৩:১৪ থেকে ৩:১৫ পর্যন্ত।",
+      message: { en: "The coupon only works on Tuesdays between 3:14 and 3:15 AM, for new users, on orders above ৳5000.", bn: "কুপনটা শুধু মঙ্গলবার রাত ৩:১৪ থেকে ৩:১৫, নতুন ইউজারদের জন্য, ৳৫০০০-এর বেশি অর্ডারে।" },
+      card: [{ label: { en: "Discount", bn: "ছাড়" }, value: "৳0" }, { label: DELIVERED, value: "✅" }],
+      shareText: { en: "Used a 50% coupon. Saved exactly ৳0 🎟️", bn: "৫০% কুপন দিলাম। বাঁচল ঠিক ৳০ 🎟️" },
+      weight: (c) => (pay(c) === "coupon" ? 5 : 0),
+    },
+    {
+      id: "tehari-instead",
+      emoji: "🍛",
+      title: { en: "Tehari Instead", bn: "কাচ্চির বদলে তেহারি" },
+      quote: "কাচ্চি শেষ, তেহারি দিলাম।",
+      message: { en: "You didn't answer the restaurant's call, so they decided for you. It's tehari. It's fine. You're fine.", bn: "আপনি ফোন ধরেননি, তাই রেস্টুরেন্ট নিজেই ঠিক করল। এটা তেহারি। ঠিক আছে। আপনিও ঠিক আছেন।" },
+      card: [{ label: DELIVERED, value: "✅" }, { label: { en: "Kacchi", bn: "কাচ্চি" }, value: "❌" }],
+      shareText: { en: "Ordered kacchi. Received tehari. Didn't complain 🍛", bn: "কাচ্চি অর্ডার দিলাম। পেলাম তেহারি। কিছু বলিনি 🍛" },
+      weight: (c) => (c.beats.restaurant === "kacchi-out" ? 7 : 0),
+    },
+    {
+      id: "maggi-first",
+      emoji: "🍜",
+      title: { en: "Two Dinners", bn: "দুইবার ডিনার" },
+      quote: "ভাই, আমি নিচে।",
+      message: { en: "You finished your Maggi. Exactly one minute later, the food arrived. You are now eating dinner number two.", bn: "ম্যাগি শেষ করলেন। ঠিক এক মিনিট পর খাবার এলো। এখন আপনি দ্বিতীয় ডিনার খাচ্ছেন।" },
+      card: [{ label: DELIVERED, value: "✅" }, { label: { en: "Dinners eaten", bn: "ডিনার খাওয়া হলো" }, value: { en: "2", bn: "২" } }],
+      shareText: { en: "Gave up waiting and made Maggi. Food arrived 1 minute later 🍜", bn: "অপেক্ষা ছেড়ে ম্যাগি বানালাম। ১ মিনিট পর খাবার চলে এলো 🍜" },
+      weight: (c) => (wait(c) === "maggi" ? 6 : 0),
+    },
+    {
+      id: "guard-blocked",
+      emoji: "🚧",
+      title: { en: "Stopped at the Gate", bn: "গেটে আটকা" },
+      quote: "এই নামে এখানে কেউ থাকে না।",
+      message: { en: "The guard and the rider argued for 20 minutes. They are now friends. Your food is with the guard.", bn: "দারোয়ান আর রাইডার ২০ মিনিট তর্ক করলেন। এখন তারা বন্ধু। আপনার খাবার দারোয়ানের কাছে।" },
+      card: [{ label: DELIVERED, value: { en: "🚧 to the gate", bn: "🚧 গেট পর্যন্ত" } }],
+      shareText: { en: "My food got stuck at my own building's gate 🚧", bn: "আমার খাবার আমারই বিল্ডিংয়ের গেটে আটকে গেল 🚧" },
+      weight: (c) => (map(c) === "guard" ? 5 : 0.5) + (wait(c) === "gate" ? -0.4 : 0),
+    },
+    {
+      id: "rider-cancelled",
+      emoji: "❌",
+      title: { en: "Cancelled by Rider", bn: "রাইডার ক্যান্সেল করলেন" },
+      quote: "ভাই, অনেক দূর।",
+      message: { en: "The order was cancelled. A new rider was assigned. He is also far. Very far.", bn: "অর্ডার ক্যান্সেল হলো। নতুন রাইডার দেওয়া হলো। উনিও দূরে। অনেক দূরে।" },
+      card: [{ label: DELIVERED, value: "❌" }, { label: { en: "Riders assigned", bn: "রাইডার বদল" }, value: { en: "4", bn: "৪" } }],
+      shareText: { en: "My food delivery got cancelled by 4 riders in a row ❌", bn: "পরপর ৪ জন রাইডার আমার অর্ডার ক্যান্সেল করলেন ❌" },
+      weight: (c) => (rider(c) === "cancel-please" ? 6 : 0.5),
+    },
+    {
+      id: "perfect",
+      emoji: "🏆",
+      title: { en: "Hot, On Time, Correct", bn: "গরম, সময়মতো, সঠিক" },
+      quote: "ভাই, খাবারটা এনজয় করেন।",
+      message: { en: "Everything was right. You checked the bag three times anyway. Screenshot this.", bn: "সব ঠিকঠাক। তবুও আপনি ব্যাগ তিনবার চেক করলেন। স্ক্রিনশট নিন।" },
+      card: [{ label: DELIVERED, value: "✅" }, { label: { en: "Temperature", bn: "তাপমাত্রা" }, value: "🔥" }, { label: { en: "Correct order", bn: "সঠিক অর্ডার" }, value: "✅ (?!)" }],
+      shareText: { en: "My food delivery was hot, on time AND correct. Legendary 🏆", bn: "আমার ফুড ডেলিভারি গরম, সময়মতো আর সঠিক এলো। লেজেন্ডারি 🏆" },
+      weight: (c) => 0.4 + (map(c) === "smooth" ? 3 : 0) + (c.beats.restaurant === "instant" ? 0.6 : 0),
+    },
+  ],
+};

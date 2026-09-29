@@ -10,6 +10,12 @@ const options: { lang: Lang; label: string; full: string }[] = [
   { lang: "bn", label: "বাং", full: "বাংলা" },
 ];
 
+/** Browser side effects live outside the component (React compiler rule). */
+function persistLang(next: Lang) {
+  document.cookie = `${LANG_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+  document.documentElement.lang = next;
+}
+
 // Same URL in both languages: the choice is stored in a cookie for a year
 // and the server re-renders the page in place.
 export function LangToggle() {
@@ -19,8 +25,7 @@ export function LangToggle() {
 
   function choose(next: Lang) {
     if (next === lang) return;
-    document.cookie = `${LANG_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
-    document.documentElement.lang = next;
+    persistLang(next);
     startTransition(() => router.refresh());
   }
 

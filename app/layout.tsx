@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Noto_Sans_Bengali } from "next/font/google";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { CreditBadge } from "@/components/navigation/github-credit";
 import { SiteFooter } from "@/components/navigation/site-footer";
 import { SiteHeader } from "@/components/navigation/site-header";
 import { LangProvider } from "@/components/providers/lang-provider";
@@ -73,6 +74,7 @@ export default async function RootLayout({
             <MotionProvider>{children}</MotionProvider>
           </div>
           <SiteFooter />
+          <CreditBadge />
         </LangProvider>
         <GoogleAnalytics />
       </body>
