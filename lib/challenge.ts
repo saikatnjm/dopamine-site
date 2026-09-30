@@ -23,6 +23,7 @@ export const CHALLENGE_GAMES = {
   "traffic-controller": { code: "tc", maxScore: 20_000 },
   "queue-sim": { code: "qs", maxScore: 6_000 },
   "programmer-rage": { code: "pr", maxScore: 6_000 },
+  "traffic-boss": { code: "wb", maxScore: 10_000 },
 } as const;
 
 export type ChallengeGame = keyof typeof CHALLENGE_GAMES;

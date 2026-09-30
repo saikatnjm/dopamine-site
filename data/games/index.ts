@@ -193,6 +193,22 @@ export const games: Game[] = [
       description: "A fictional comedy for developers: your production deploy fails. Check logs, blame frontend, ask AI, deploy again. 6 endings incl. the Legendary 3 AM Fix. Free, no sign-up.",
     },
   },
+  {
+    slug: "traffic-boss",
+    title: { en: "👹 Dhaka Traffic Boss", bn: "👹 ঢাকা ট্রাফিক বস" },
+    tagline: { en: "This week's boss fight. 60 seconds. 3 lives. All of Dhaka's traffic.", bn: "এই সপ্তাহের বস-লড়াই। ৬০ সেকেন্ড। ৩টা জীবন। ঢাকার সব ট্রাফিক।" },
+    description: {
+      en: "The Weekly Boss: a new 60-second challenge every week, the same for everyone. Dodge cars, buses, swerving CNGs, rickshaws, bikes and pedestrians through rain and rush hour — survive to defeat the boss.",
+      bn: "সাপ্তাহিক বস: প্রতি সপ্তাহে নতুন ৬০ সেকেন্ডের চ্যালেঞ্জ, সবার জন্য একই। গাড়ি, বাস, লেন বদলানো সিএনজি, রিকশা, বাইক আর পথচারী এড়িয়ে বৃষ্টি আর ভিড়ে টিকে থাকুন — তবেই বস পরাজিত।",
+    },
+    emoji: "👹",
+    accent: "chili",
+    durationSec: 60,
+    seo: {
+      title: "Weekly Boss — Dhaka Traffic Boss Fight (Free 60-Second Game)",
+      description: "A new Hottogol boss every week: survive 60 seconds of Dhaka traffic with 3 lives. Same challenge for everyone this week, personal best saved locally. Free, no sign-up.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {

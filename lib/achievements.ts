@@ -208,6 +208,21 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     description: { en: "Deploy successfully in the Programmer Rage Simulator.", bn: "প্রোগ্রামার রেজ সিমুলেটরে সফলভাবে ডিপ্লয় করুন।" },
     unlocks: (e) => isGame(e, "programmer-rage") && (e.params.outcome === "success" || e.params.outcome === "legendary-3am"),
   },
+  {
+    id: "boss-slayer",
+    emoji: "👹",
+    title: { en: "Boss Slayer", bn: "বস শিকারি" },
+    description: { en: "Defeat a Weekly Boss.", bn: "একটি সাপ্তাহিক বস পরাজিত করুন।" },
+    unlocks: (e) => isGame(e, "traffic-boss") && e.params.defeated === true,
+  },
+  {
+    id: "flawless-boss",
+    emoji: "🛡️",
+    title: { en: "Untouchable", bn: "অছুঁত" },
+    description: { en: "Defeat a Weekly Boss without losing a life.", bn: "কোনো জীবন না হারিয়ে একটি সাপ্তাহিক বস পরাজিত করুন।" },
+    hidden: true,
+    unlocks: (e) => isGame(e, "traffic-boss") && e.params.defeated === true && num(e.params.lives) >= 3,
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));
