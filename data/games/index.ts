@@ -65,6 +65,22 @@ export const games: Game[] = [
       description: "Haggle with stubborn, dramatic and sleepy vendors in this free Bangladesh bazar negotiation game. Save money, avoid getting refused, unlock legendary endings. No sign-up.",
     },
   },
+  {
+    slug: "tea-balance",
+    title: { en: "Tea Balance", bn: "টি ব্যালেন্স" },
+    tagline: { en: "One full cup of cha. One Dhaka road. Zero chance.", bn: "এক কাপ ভরা চা। এক ঢাকার রাস্তা। কোনো চান্স নেই।" },
+    description: {
+      en: "A 20–60 second balancing game: push a cha cart up a Dhaka road, dodge potholes, manholes and goats, and keep the tea from sloshing out.",
+      bn: "২০–৬০ সেকেন্ডের ব্যালেন্সিং গেম: ঢাকার রাস্তায় চায়ের কার্ট ঠেলুন, গর্ত, ম্যানহোল আর ছাগল এড়ান, আর চা ছলকে পড়তে দেবেন না।",
+    },
+    emoji: "☕",
+    accent: "marigold",
+    durationSec: 60,
+    seo: {
+      title: "Tea Balance — Don't Spill the Cha (Dhaka Balancing Game)",
+      description: "Carry a full cup of tea through potholes, manholes and goats in this free 20–60 second Dhaka balancing game. Smooth moves, funny endings, shareable challenges.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {
