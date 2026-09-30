@@ -136,6 +136,14 @@ components/games/        game cards + client game components
   Storage `localStorage["hottogol:achievements"] = { v: 1, unlocked, stats }`;
   bump the version + add a `migrate()` case for schema changes. `hidden: true`
   achievements show "Secret achievement" until unlocked. Never rename ids.
+- Chaos Machine (`/games/chaos-machine`): `createScenario(seed)` rolls 9
+  coherent ingredients (traffic follows time + weather, budget follows vehicle,
+  "stay dry" only when wet, exact-change only for fare vehicles) and picks 5
+  events (modifier event + 3 eligible + "last-stretch"). Event rules/effects in
+  `lib/games/chaos-machine.ts`, copy (same ids) in `data/games/chaos-machine.ts`.
+  10 outcomes (1 legendary), score × chaos level. Bot-tuned: random ≈ 4 %
+  legendary. Uses the shared challenge/share UI and `game_complete` (with
+  `outcome`) for achievements.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -233,4 +241,5 @@ components/games/        game cards + client game components
 - [x] Phase 14 — fifth game: Don't Tap (`/games/dont-tap`)
 - [x] Phase 15 — Challenge a Friend: shared `/c/<token>` links + share UI for all games
 - [x] Phase 16 — Achievements (local, versioned storage; 13 achievements incl. 2 secret)
+- [x] Phase 17 — Chaos Machine (`/games/chaos-machine`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

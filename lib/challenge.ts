@@ -17,6 +17,7 @@ export const CHALLENGE_GAMES = {
   "bazar-bargain": { code: "bb", maxScore: 8_000 },
   "tea-balance": { code: "tb", maxScore: 1_200 },
   "dont-tap": { code: "dt", maxScore: 3_000 },
+  "chaos-machine": { code: "cm", maxScore: 6_000 },
 } as const;
 
 export type ChallengeGame = keyof typeof CHALLENGE_GAMES;
