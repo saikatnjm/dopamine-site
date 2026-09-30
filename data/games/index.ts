@@ -49,6 +49,22 @@ export const games: Game[] = [
       description: "Weave a motorbike through buses, CNGs, rickshaws and goats in this free 30–60 second Dhaka traffic arcade game. Near-miss combos, funny titles, shareable challenges.",
     },
   },
+  {
+    slug: "bazar-bargain",
+    title: { en: "Bazar Bargain", bn: "বাজার বার্গেইন" },
+    tagline: { en: "Five items, one budget, six vendors who all say “last price”.", bn: "পাঁচটা জিনিস, এক বাজেট, আর সব দোকানির “শেষ দাম”।" },
+    description: {
+      en: "A Bangladeshi bazar negotiation game: haggle for hilsa, eggs and onions, bluff, walk away, get refused — and chase rare legendary endings.",
+      bn: "বাংলাদেশি বাজারের দরদামের খেলা: ইলিশ, ডিম, পেঁয়াজ নিয়ে দরদাম করুন, চাপা মারুন, দরকার হলে হেঁটে চলে যান — আর খুঁজুন বিরল কিংবদন্তি এন্ডিং।",
+    },
+    emoji: "🛒",
+    accent: "tangerine",
+    durationSec: 90,
+    seo: {
+      title: "Bazar Bargain — Bangladesh Market Haggling Game",
+      description: "Haggle with stubborn, dramatic and sleepy vendors in this free Bangladesh bazar negotiation game. Save money, avoid getting refused, unlock legendary endings. No sign-up.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {

@@ -92,6 +92,21 @@ components/games/        game cards + client game components
   keyboard/AT `click` (`detail === 0`) on the stage button.
 - Analytics events: `game_start`, `game_retry`, `game_complete`, `game_share`.
 - New games use `lib/games/shared.ts` (CNG Catch still has its own copies).
+- Daily Hottogol (`/daily`, homepage `DailyCard`): `lib/daily.ts` derives one
+  challenge per **Bangladesh date** (fixed UTC+6, no DST) → `{number, game, seed}`;
+  game = `DAILY_ROTATION[dayIndex % len]` (append-only), seed = hash of the date.
+  Computed client-side only (SSR renders a placeholder). The page pins its date
+  so midnight never swaps a running game ("load new challenge" banner instead).
+  Record per day in `localStorage["hottogol:daily:v1:<date>"]` = first/best/attempts.
+  Games opt in via the `daily?: DailyMode` prop (`lib/games/shared.ts`) and must be
+  registered in `DAILY_GAMES` (`components/daily/daily-play.tsx`). The 1 s clock
+  lives in leaf components (`DailyCountdown`) so running games never re-render
+  from it. Never show rankings or player counts — scores are local only.
+- Bazar Bargain: turn-based (no rAF). `makeRun(seed)` fixes list, budget, vendor
+  personality, hidden floor and opening price per stall; each reaction uses an
+  RNG from (seed, stall, turn, action) so same seed + same choices = same story.
+  8 endings (2 legendary, rare by design — re-run a bot sim if you tune numbers).
+  Vendor quotes are Bangla in both languages with an English gloss in EN mode.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -166,6 +181,8 @@ components/games/        game cards + client game components
     low-level, mechanical work (renames, copy edits, file moves, simple
     lookups/checks) to a smaller/cheaper model or subagent; keep the main
     model for design, architecture and debugging.
+12. The owner always tests locally first. Deliver changes to the local project
+    folder and a PR for CI; never merge/push to `main` until the owner confirms.
 
 ## Phase status
 
@@ -181,4 +198,6 @@ components/games/        game cards + client game components
       fake shopping, house rent, random life decision (all EN/BN, 11–12 endings)
 - [x] Phase 9 — Games section + first game: CNG Catch (`/games/cng-catch`)
 - [x] Phase 10 — second game: Dhaka Traffic Dodge (`/games/traffic-dodge`)
+- [x] Phase 11 — Daily Hottogol (`/daily` + homepage card; CNG Catch / Traffic Dodge rotation)
+- [x] Phase 12 — third game: Bazar Bargain (`/games/bazar-bargain`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

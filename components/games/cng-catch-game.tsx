@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { cngCatchCopy as copy, feedbackLines, ranks, soundWords } from "@/data/games/cng-catch";
 import { track } from "@/lib/analytics";
+import type { DailyMode } from "@/lib/games/shared";
 import {
   DURATION_MS,
   GAME_SLUG,
@@ -74,12 +75,21 @@ function prefersReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-export function CngCatchGame({ challenge }: { challenge: { seed: number; score: number } | null }) {
+export function CngCatchGame({
+  challenge,
+  daily,
+}: {
+  challenge: { seed: number; score: number } | null;
+  /** Daily Hottogol mode (fixed seed, results reported to the daily page). */
+  daily?: DailyMode;
+}) {
   const { lang } = useI18n();
   const best = useSyncExternalStore(subscribeBest, readBest, () => 0);
 
   const [phase, setPhase] = useState<Phase>("idle");
-  const [seed, setSeed] = useState<number | null>(challenge?.seed ?? null);
+  const [seed, setSeed] = useState<number | null>(daily?.seed ?? challenge?.seed ?? null);
+  // Stable across renders, so passing a new `daily` object never restarts a run.
+  const reportDaily = useEffectEvent((points: number) => daily?.onComplete(points));
   const [count, setCount] = useState<number | null>(0);
   const [hud, setHud] = useState<Hud>(EMPTY_HUD);
   const [secondsLeft, setSecondsLeft] = useState(DURATION_MS / 1000);
@@ -203,6 +213,7 @@ export function CngCatchGame({ challenge }: { challenge: { seed: number; score: 
       setResult({ ...stats, seed, end, newBest });
       setPhase("over");
       track("game_complete", { game: GAME_SLUG, score: s.score, rank: rankFor(s.score), end });
+      reportDaily(s.score);
     };
 
     const hail = () => {
@@ -467,7 +478,17 @@ export function CngCatchGame({ challenge }: { challenge: { seed: number; score: 
         </section>
       )}
 
-      {phase === "over" && result && <ResultView result={result} challenge={challenge} headingRef={headingRef} onRetry={() => start(newSeed(), "retry")} onReplay={() => start(result.seed, "replay")} onShare={() => share(result)} />}
+      {phase === "over" && result && (
+        <ResultView
+          result={result}
+          challenge={challenge}
+          headingRef={headingRef}
+          retryLabel={daily?.retryLabel}
+          onRetry={() => (daily ? start(daily.seed, "replay") : start(newSeed(), "retry"))}
+          onReplay={daily ? undefined : () => start(result.seed, "replay")}
+          onShare={() => (daily ? daily.onShare(result.score) : share(result))}
+        />
+      )}
 
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">
         {toast && <p className="rounded-pill border-2 border-ink bg-ink px-5 py-2.5 font-bold text-bg shadow-pop">{toast}</p>}
@@ -519,6 +540,7 @@ function ResultView({
   result,
   challenge,
   headingRef,
+  retryLabel,
   onRetry,
   onReplay,
   onShare,
@@ -526,8 +548,10 @@ function ResultView({
   result: Result;
   challenge: { seed: number; score: number } | null;
   headingRef: RefObject<HTMLHeadingElement | null>;
+  retryLabel?: string;
   onRetry: () => void;
-  onReplay: () => void;
+  /** Omitted in daily mode (retry already replays the same traffic). */
+  onReplay?: () => void;
   onShare: () => void;
 }) {
   const { lang } = useI18n();
@@ -580,11 +604,13 @@ function ResultView({
         {t(copy.share, lang)}
       </button>
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
-        {t(copy.retry, lang)}
+        {retryLabel ?? t(copy.retry, lang)}
       </button>
-      <button type="button" onClick={onReplay} className={btnGhost}>
-        {t(copy.replay, lang)}
-      </button>
+      {onReplay && (
+        <button type="button" onClick={onReplay} className={btnGhost}>
+          {t(copy.replay, lang)}
+        </button>
+      )}
     </section>
   );
 }

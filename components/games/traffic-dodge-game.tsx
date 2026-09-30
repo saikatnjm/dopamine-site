@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import {
@@ -13,7 +13,7 @@ import {
   trafficRanks,
 } from "@/data/games/traffic-dodge";
 import { track } from "@/lib/analytics";
-import { createBestStore, encodeSeed, prefersReducedMotion } from "@/lib/games/shared";
+import { createBestStore, encodeSeed, prefersReducedMotion, type DailyMode } from "@/lib/games/shared";
 import {
   GAME_SLUG,
   LANES,
@@ -58,12 +58,21 @@ type Result = {
 };
 type Challenge = { seed: number; score: number } | null;
 
-export function TrafficDodgeGame({ challenge }: { challenge: Challenge }) {
+export function TrafficDodgeGame({
+  challenge,
+  daily,
+}: {
+  challenge: Challenge;
+  /** Daily Hottogol mode (fixed seed, results reported to the daily page). */
+  daily?: DailyMode;
+}) {
   const { lang } = useI18n();
   const best = useSyncExternalStore(bestStore.subscribe, bestStore.read, () => 0);
 
   const [phase, setPhase] = useState<Phase>("idle");
-  const [seed, setSeed] = useState<number | null>(challenge?.seed ?? null);
+  const [seed, setSeed] = useState<number | null>(daily?.seed ?? challenge?.seed ?? null);
+  // Stable across renders, so passing a new `daily` object never restarts a run.
+  const reportDaily = useEffectEvent((points: number) => daily?.onComplete(points));
   const [count, setCount] = useState<number | null>(0);
   const [combo, setCombo] = useState(0);
   const [banner, setBanner] = useState<{ id: number; text: Text } | null>(null);
@@ -238,6 +247,7 @@ export function TrafficDodgeGame({ challenge }: { challenge: Challenge }) {
       });
       setPhase("over");
       track("game_complete", { game: GAME_SLUG, score: points, rank: rankFor(points), seconds: Math.floor(sim.t / 1000), crash: crashKind });
+      reportDaily(points);
     };
 
     let pre = COUNTDOWN_MS;
@@ -560,9 +570,10 @@ export function TrafficDodgeGame({ challenge }: { challenge: Challenge }) {
           result={result}
           challenge={challenge}
           headingRef={headingRef}
-          onRetry={() => start(newSeed(), "retry")}
-          onReplay={() => start(result.seed, "replay")}
-          onShare={() => share(result)}
+          retryLabel={daily?.retryLabel}
+          onRetry={() => (daily ? start(daily.seed, "replay") : start(newSeed(), "retry"))}
+          onReplay={daily ? undefined : () => start(result.seed, "replay")}
+          onShare={() => (daily ? daily.onShare(result.score) : share(result))}
         />
       )}
 
@@ -614,6 +625,7 @@ function ResultView({
   result,
   challenge,
   headingRef,
+  retryLabel,
   onRetry,
   onReplay,
   onShare,
@@ -621,8 +633,10 @@ function ResultView({
   result: Result;
   challenge: Challenge;
   headingRef: RefObject<HTMLHeadingElement | null>;
+  retryLabel?: string;
   onRetry: () => void;
-  onReplay: () => void;
+  /** Omitted in daily mode (retry already replays the same traffic). */
+  onReplay?: () => void;
   onShare: () => void;
 }) {
   const { lang } = useI18n();
@@ -677,11 +691,13 @@ function ResultView({
         {t(copy.share, lang)}
       </button>
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
-        {t(copy.retry, lang)}
+        {retryLabel ?? t(copy.retry, lang)}
       </button>
-      <button type="button" onClick={onReplay} className={btnGhost}>
-        {t(copy.replay, lang)}
-      </button>
+      {onReplay && (
+        <button type="button" onClick={onReplay} className={btnGhost}>
+          {t(copy.replay, lang)}
+        </button>
+      )}
     </section>
   );
 }

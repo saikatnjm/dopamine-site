@@ -8,6 +8,7 @@ export async function SiteFooter() {
   const links = [
     { href: "/experiences", label: d.footerAll },
     { href: "/games", label: d.footerGames },
+    { href: "/daily", label: d.footerDaily },
     { href: "/about", label: d.footerAbout },
     { href: "/privacy", label: d.footerPrivacy },
     { href: "/terms", label: d.footerTerms },
