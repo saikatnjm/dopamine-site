@@ -108,7 +108,8 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     hidden: true,
     unlocks: (e) =>
       (isGame(e, "bazar-bargain") && (e.params.rank === "amma-approved" || e.params.rank === "free-lemon")) ||
-      (isGame(e, "chaos-machine") && e.params.outcome === "early-miracle"),
+      (isGame(e, "chaos-machine") && e.params.outcome === "early-miracle") ||
+      (isGame(e, "delivery-sim") && e.params.outcome === "legendary"),
   },
   {
     id: "ten-games",
@@ -167,6 +168,13 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     description: { en: "Got 3 different Dhaka personalities. Who are you, really?", bn: "৩টা আলাদা ঢাকা পার্সোনালিটি পেয়েছেন। আসলে আপনি কে?" },
     hidden: true,
     unlocks: (e) => e.name === "quiz_complete" && e.params.quiz === "dhaka-person" && num(e.params.distinct) >= 3,
+  },
+  {
+    id: "five-star-rider",
+    emoji: "🏍️",
+    title: { en: "Five-Star Rider", bn: "ফাইভ-স্টার রাইডার" },
+    description: { en: "Get a 5-star rating in the Delivery Simulator.", bn: "ডেলিভারি সিমুলেটরে ৫ স্টার রেটিং পান।" },
+    unlocks: (e) => isGame(e, "delivery-sim") && num(e.params.rating) >= 5,
   },
 ];
 
