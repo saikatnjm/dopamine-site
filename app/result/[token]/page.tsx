@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ResultActions } from "@/components/result/result-actions";
-import { ResultCard } from "@/components/result/result-card";
+import { ResultCard } from "@/components/share/result-card";
+import { simulatorCard } from "@/lib/experience/result-card-data";
 import { decodeResultToken } from "@/lib/experience/result-token";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, siteConfig } from "@/lib/site";
 
 type Props = {
   params: Promise<{ token: string }>;
@@ -36,11 +37,12 @@ export default async function ResultPage({ params, searchParams }: Props) {
   if (!result) notFound();
   const { experience, outcome } = result;
   const mine = me === "1";
+  const card = simulatorCard(result, lang);
 
   return (
     <main className="mx-auto w-full max-w-md px-4 pb-16 pt-6">
       <p className="mb-3 text-center text-sm font-semibold text-ink-muted">{mine ? d.resultMine : d.resultFriend}</p>
-      <ResultCard result={result} lang={lang} />
+      <ResultCard data={card} host={new URL(siteConfig.url).host} />
       <ResultActions
         slug={experience.slug}
         token={token}
@@ -50,6 +52,7 @@ export default async function ResultPage({ params, searchParams }: Props) {
         shareUrl={absoluteUrl(`/result/${token}`)}
         shareText={t(outcome.shareText, lang)}
         mine={mine}
+        card={card}
       />
     </main>
   );

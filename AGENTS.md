@@ -195,6 +195,26 @@ components/games/        game cards + client game components
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
 
+## Result cards (shared by every game, simulator, quiz and excuse)
+
+- One data shape: `ResultCardData` in `lib/result-card.ts` (game, emoji,
+  accent, headline + label, title + emoji, rank pill, badge, blurb, stats,
+  quote, path). Each experience maps its *existing* result data into it —
+  never invent numbers.
+- On screen: `components/share/result-card.tsx` (`ResultCard`, server- or
+  client-rendered; extras like `ChallengeOutcome`, new-best and seed codes go
+  in `children`). Convention: games with named endings → title = ending,
+  `rank` = rank pill; score-only games → title = rank.
+- Share kit: `components/share/result-share-kit.tsx` (`ResultShareKit`) =
+  Share (Web Share → copy fallback) + Copy result (`resultText()`) + Save image.
+  Challenge links stay in `ShareActions`; simulators keep `ResultActions`
+  (now with Copy result and the canvas photo card).
+- Image: `lib/result-image.ts` draws the card on a 1080×1350 canvas with the
+  page's CSS colour variables and fonts (Bangla shaped by the browser), loaded
+  lazily via dynamic import — no dependency, no server. OG images (Satori,
+  English-only) are still used for link previews.
+- Simulator mapping: `simulatorCard()` in `lib/experience/result-card-data.ts`.
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -324,4 +344,5 @@ components/games/        game cards + client game components
 - [x] Phase 22 — Dhaka Traffic Controller (`/games/traffic-controller`)
 - [x] Phase 23 — Queue Simulator (`/games/queue-sim`)
 - [x] Phase 24 — Programmer Rage Simulator (`/games/programmer-rage`)
+- [x] Phase 25 — Shared result cards: one card design, Copy result, canvas image download, for every experience
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

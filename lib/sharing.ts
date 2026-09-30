@@ -1,6 +1,6 @@
 // Share-target URLs and clipboard helper. No SDKs, no tracking pixels.
 
-export type ShareMethod = "native" | "copy" | "whatsapp" | "facebook" | "x" | "image";
+export type ShareMethod = "native" | "copy" | "copy-result" | "whatsapp" | "facebook" | "x" | "image";
 
 export function shareTargets(url: string, text: string) {
   const u = encodeURIComponent(url);

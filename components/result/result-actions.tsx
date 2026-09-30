@@ -7,6 +7,7 @@ import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { track } from "@/lib/analytics";
 import type { Experience } from "@/lib/experience/types";
+import { hostOf, resultText, type ResultCardData } from "@/lib/result-card";
 import { copyText, shareTargets, type ShareMethod } from "@/lib/sharing";
 
 type Props = {
@@ -19,12 +20,14 @@ type Props = {
   shareText: string;
   /** True when the viewer just played (arrived via ?me=1). */
   mine: boolean;
+  /** Shared result-card data (for Copy result and the photo card). */
+  card: ResultCardData;
 };
 
 const tile =
   "grid size-12 place-items-center rounded-full border-2 border-ink text-xl font-black sm:size-14 sm:text-2xl shadow-pop transition-all duration-150 group-hover:-translate-y-1 group-hover:shadow-pop-lg group-active:translate-y-0.5 group-active:shadow-none";
 
-export function ResultActions({ slug, token, emoji, accent, outcomeId, shareUrl, shareText, mine }: Props) {
+export function ResultActions({ slug, emoji, accent, outcomeId, shareUrl, shareText, mine, card }: Props) {
   const { d } = useI18n();
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | undefined>(undefined);
@@ -67,11 +70,22 @@ export function ResultActions({ slug, token, emoji, accent, outcomeId, shareUrl,
     await copy();
   }
 
-  /** Phones: share the PNG straight to Instagram/WhatsApp. Desktop: download it. */
+  async function copyResult() {
+    if (await copyText(resultText(card, shareUrl))) {
+      showToast(`✅ ${d.resultCopied}`);
+      shared("copy-result");
+    }
+  }
+
+  /**
+   * Phones: share the PNG straight to Instagram/WhatsApp. Desktop: download it.
+   * Drawn in the browser (lib/result-image.ts) so Bangla works in the image too.
+   */
   async function saveImage() {
     const fileName = `${slug}-result.png`;
     try {
-      const blob = await (await fetch(`/result/${token}/opengraph-image`)).blob();
+      const { renderResultImage } = await import("@/lib/result-image");
+      const blob = await renderResultImage(card, hostOf(window.location.origin));
       const file = new File([blob], fileName, { type: "image/png" });
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({ files: [file], text: `${shareText} ${shareUrl}` });
@@ -113,6 +127,9 @@ export function ResultActions({ slug, token, emoji, accent, outcomeId, shareUrl,
     <div className="mt-6 grid gap-3">
       {mine ? shareButton : playButton}
       {mine ? playButton : shareButton}
+      <button type="button" onClick={copyResult} className={`${btnPrimary} bg-surface`}>
+        📋 {d.copyResult}
+      </button>
 
       <section aria-label={d.shareTo} className={`${card} mt-2 p-4`}>
         <p className="mb-3 text-center text-sm font-extrabold uppercase tracking-wider text-ink-muted">{d.shareTo}</p>

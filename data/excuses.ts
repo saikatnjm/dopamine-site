@@ -197,6 +197,7 @@ export const excuseCopy = {
     bn: "একটা পরিস্থিতি বাছুন, বোতাম চাপুন, credibility rating-সহ একটা excuse নিন। দায়িত্ব নিয়ে ব্যবহার করুন (বা না)।",
   },
   pick: { en: "What do you need an excuse for?", bn: "কীসের জন্য excuse লাগবে?" },
+  situation: { en: "Situation", bn: "পরিস্থিতি" },
   generate: { en: "😂 GENERATE EXCUSE", bn: "😂 EXCUSE বানাও" },
   another: { en: "🔁 Another excuse", bn: "🔁 আরেকটা excuse" },
   copy: { en: "📋 Copy", bn: "📋 কপি" },

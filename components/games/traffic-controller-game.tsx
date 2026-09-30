@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode, type RefObject } from "react";
-import { ChallengeBanner, ChallengeOutcome, ResultStamp, ShareActions } from "@/components/games/challenge-ui";
+import { ChallengeBanner, ChallengeOutcome, ShareActions } from "@/components/games/challenge-ui";
+import { ResultCard } from "@/components/share/result-card";
+import { ResultShareKit, useHost, useOrigin } from "@/components/share/result-share-kit";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { approachNames, controllerCopy as copy, eventBanners, flowWords, looks, ranks } from "@/data/games/traffic-controller";
 import { track } from "@/lib/analytics";
-import type { FriendChallenge } from "@/lib/challenge";
+import { challengePath, type FriendChallenge } from "@/lib/challenge";
+import { getGame } from "@/data/games";
+import type { ResultCardData } from "@/lib/result-card";
 import {
   APPROACHES,
   BOX,
@@ -34,9 +38,9 @@ import {
 import { createBestStore, encodeSeed, prefersReducedMotion } from "@/lib/games/shared";
 import { fmt, num, t, type Text } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
-import { copyText } from "@/lib/sharing";
 
 const bestStore = createBestStore(`hottogol:${GAME_SLUG}:best`);
+const gameInfo = getGame(GAME_SLUG)!;
 
 const POOL = 48;
 const COUNTDOWN_MS = 1500;
@@ -629,11 +633,6 @@ function HudTile({ label, highlight = false, children }: { label: string; highli
   );
 }
 
-const noSubscribe = () => () => {};
-function useOrigin(): string {
-  return useSyncExternalStore(noSubscribe, () => window.location.origin, () => "");
-}
-
 function ResultView({
   result,
   challenge,
@@ -649,9 +648,7 @@ function ResultView({
 }) {
   const { lang } = useI18n();
   const origin = useOrigin();
-  const [copied, setCopied] = useState(false);
-  const timer = useRef<number | undefined>(undefined);
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  const host = useHost();
 
   const rankId = rankFor(result.score);
   const rank = ranks[rankId];
@@ -663,25 +660,6 @@ function ResultView({
         ? t(copy.endGridlock, lang)
         : fmt(t(copy.endCrash, lang), { a: t(looks[result.crash?.[0] ?? "car"].name, lang), b: t(looks[result.crash?.[1] ?? "bus"].name, lang) });
 
-  async function shareResult() {
-    const url = `${origin}/games/${GAME_SLUG}`;
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ text: message, url });
-        track("game_share", { game: GAME_SLUG, method: "native-result", rank: rankId });
-      } catch {
-        // dismissed
-      }
-      return;
-    }
-    if (await copyText(`${message} ${url}`)) {
-      setCopied(true);
-      window.clearTimeout(timer.current);
-      timer.current = window.setTimeout(() => setCopied(false), 2000);
-      track("game_share", { game: GAME_SLUG, method: "copy-result", rank: rankId });
-    }
-  }
-
   const stats = [
     { key: "handled", label: copy.statHandled, value: num(result.handled, lang) },
     { key: "flow", label: copy.statFlow, value: num(result.maxStreak, lang) },
@@ -689,44 +667,31 @@ function ResultView({
     { key: "time", label: copy.statTime, value: fmt(t(copy.seconds, lang), { n: num(result.seconds, lang) }) },
   ];
 
+  const card: ResultCardData = {
+    game: t(gameInfo.title, lang),
+    emoji: gameInfo.emoji,
+    accent: rank.accent,
+    headlineLabel: t(copy.scoreLabel, lang),
+    headline: `${num(result.score, lang)} ${t(copy.pts, lang)}`,
+    title: t(rank.title, lang),
+    titleEmoji: rank.emoji,
+    blurb: t(rank.blurb, lang),
+    quote: endLine,
+    stats: stats.map((st) => ({ label: t(st.label, lang), value: st.value })),
+    path: `/games/${GAME_SLUG}`,
+  };
+  const url = `${origin}${challengePath({ game: GAME_SLUG, seed: result.seed, score: result.score }) ?? `/games/${GAME_SLUG}`}`;
+
   return (
     <section className="grid gap-3" aria-labelledby="tc-result">
-      <div className={`${card} overflow-hidden`}>
-        <div className={`${accentBg[rank.accent]} border-b-2 border-ink px-5 py-6 text-center`}>
-          <p className="text-sm font-extrabold">{endLine}</p>
-          <p className="mt-3 text-xs font-extrabold uppercase tracking-wider">{t(copy.scoreLabel, lang)}</p>
-          <p className="font-display text-5xl font-black tabular-nums">
-            {num(result.score, lang)} <span className="text-lg font-bold">{t(copy.pts, lang)}</span>
-          </p>
-          <p aria-hidden className="mt-2 text-6xl drop-shadow-[3px_3px_0_rgb(26_19_37)] motion-safe:animate-wiggle">
-            {rank.emoji}
-          </p>
-          <p className="mt-1 text-xs font-extrabold uppercase tracking-wider">{t(copy.rankLabel, lang)}</p>
-          <h2 id="tc-result" ref={headingRef} tabIndex={-1} className="font-display text-3xl font-extrabold leading-tight outline-none sm:text-4xl">
-            {t(rank.title, lang)}
-          </h2>
-        </div>
-        <div className="p-5">
-          <p className="text-center text-ink-muted">{t(rank.blurb, lang)}</p>
-          {result.newBest && <p className="mt-3 text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-          <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
-          <dl className="mt-4 grid grid-cols-2 gap-2 text-center">
-            {stats.map((s) => (
-              <div key={s.key} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
-                <dt className="text-[11px] font-extrabold uppercase leading-tight tracking-wide text-ink-muted sm:text-xs">{t(s.label, lang)}</dt>
-                <dd className="font-display text-xl font-extrabold tabular-nums">{s.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-3 text-center text-xs font-bold text-ink-muted">
-            {t(copy.shiftCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
-          </p>
-        </div>
-        <ResultStamp game={GAME_SLUG} />
-      </div>
-      <button type="button" onClick={shareResult} className={`${btnPrimary} bg-surface`}>
-        {copied ? "✅" : "📋"} {t(copy.shareResult, lang)}
-      </button>
+      <ResultCard data={card} host={host} headingId="tc-result" headingRef={headingRef}>
+        {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
+        <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
+        <p className="text-center text-xs font-bold text-ink-muted">
+          {t(copy.shiftCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
+        </p>
+      </ResultCard>
+      <ResultShareKit data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankId })} />
       <ShareActions game={GAME_SLUG} seed={result.seed} score={result.score} text={message} accent={rank.accent} rank={rankId} />
       <button type="button" onClick={onRetry} className={`${btnPrimary} ${accentBg.lime}`}>
         {t(copy.retry, lang)}
