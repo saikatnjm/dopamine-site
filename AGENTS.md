@@ -107,6 +107,10 @@ components/games/        game cards + client game components
   RNG from (seed, stall, turn, action) so same seed + same choices = same story.
   8 endings (2 legendary, rare by design — re-run a bot sim if you tune numbers).
   Vendor quotes are Bangla in both languages with an English gloss in EN mode.
+- Tea Balance: fixed-step sim; tea slosh is a damped spring driven by cart
+  acceleration, hazard hits, wind. Spills past `SPILL_ANGLE`; 60 s = delivered.
+  Balance was tuned with bots (`idle` ≈ 28 s; good ≈ 50–55 s, 12–25 % deliver) —
+  re-run a bot sim if you change physics constants.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -200,4 +204,5 @@ components/games/        game cards + client game components
 - [x] Phase 10 — second game: Dhaka Traffic Dodge (`/games/traffic-dodge`)
 - [x] Phase 11 — Daily Hottogol (`/daily` + homepage card; CNG Catch / Traffic Dodge rotation)
 - [x] Phase 12 — third game: Bazar Bargain (`/games/bazar-bargain`)
+- [x] Phase 13 — fourth game: Tea Balance (`/games/tea-balance`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
