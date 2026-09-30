@@ -173,6 +173,15 @@ components/games/        game cards + client game components
   gridlock. Flow multiplier from the exit streak (resets at ≥ 70 % or a
   6 s wait). Bot-tuned: a sensible controller survives ≈ 75 %; idle / fixed
   timer lights fail — re-run a bot sim if you change numbers.
+- Queue Simulator (`/games/queue-sim`, code `qs`): turn-based, ≤ 8 rounds.
+  `createQueue(seed)` rolls place, people ahead (12–18), counters (1–2) and a
+  weighted event order; conditional events (`counter-closes` needs ≥ 2
+  counters, `new-counter` ≤ 2) are skipped when not eligible. Each round: one
+  event (fixed or gamble choice, RNG per (seed, round, choice)), then each
+  counter serves 1–2 people. 6 endings (legendary `front-legend`; front after
+  `CLOSING_MIN` = lunch break). Rank is `rankOf(queue, run)` (not score-only).
+  Bot-tuned: random ≈ 55 % front, 19 % still waiting, 12 % gave up, 2 %
+  legendary — re-run a bot sim if you change numbers.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -304,4 +313,5 @@ components/games/        game cards + client game components
 - [x] Phase 20 — Delivery Simulator (`/games/delivery-sim`)
 - [x] Phase 21 — Chicken Crossing Dhaka (`/games/chicken-crossing`)
 - [x] Phase 22 — Dhaka Traffic Controller (`/games/traffic-controller`)
+- [x] Phase 23 — Queue Simulator (`/games/queue-sim`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

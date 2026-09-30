@@ -161,6 +161,22 @@ export const games: Game[] = [
       description: "Control the traffic lights at a chaotic Dhaka intersection for 60 seconds. Avoid crashes and gridlock, build flow combos, survive VIP cars and U-turns. Free, no sign-up.",
     },
   },
+  {
+    slug: "queue-sim",
+    title: { en: "Queue Simulator", bn: "লাইন সিমুলেটর" },
+    tagline: { en: "“ভাই আমি শুধু একটা জিনিস নিবো।” — 17 items later…", bn: "“ভাই আমি শুধু একটা জিনিস নিবো।” — ১৭টা জিনিস পরে…" },
+    description: {
+      en: "Stand in a Dhaka queue and reach the counter without losing your place: line-cutters, “just one thing”, friends from outside, closing counters, “আর ২ মিনিট” — every choice moves you forward or back.",
+      bn: "ঢাকার এক লাইনে দাঁড়িয়ে জায়গা না হারিয়ে কাউন্টারে পৌঁছান: লাইন-কাটার, “শুধু একটা জিনিস”, বাইরে থেকে বন্ধু, বন্ধ কাউন্টার, “আর ২ মিনিট” — প্রতিটা সিদ্ধান্তে আপনি এগোবেন বা পেছাবেন।",
+    },
+    emoji: "🧍",
+    accent: "sky",
+    durationSec: 90,
+    seo: {
+      title: "Queue Simulator — Funny Dhaka Line-Waiting Game",
+      description: "Survive a Dhaka queue: line-cutters, “just one thing” with 17 items, closing counters and “2 more minutes”. 6 endings, funny ranks, shareable challenges. Free, no sign-up.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {

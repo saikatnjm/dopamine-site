@@ -109,7 +109,8 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     unlocks: (e) =>
       (isGame(e, "bazar-bargain") && (e.params.rank === "amma-approved" || e.params.rank === "free-lemon")) ||
       (isGame(e, "chaos-machine") && e.params.outcome === "early-miracle") ||
-      (isGame(e, "delivery-sim") && e.params.outcome === "legendary"),
+      (isGame(e, "delivery-sim") && e.params.outcome === "legendary") ||
+      (isGame(e, "queue-sim") && e.params.outcome === "front-legend"),
   },
   {
     id: "ten-games",
@@ -189,6 +190,13 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     title: { en: "Junction Hero", bn: "মোড়ের হিরো" },
     description: { en: "Survive a full 60-second shift in Dhaka Traffic Controller.", bn: "ঢাকা ট্রাফিক কন্ট্রোলারে পুরো ৬০ সেকেন্ডের ডিউটি টিকে থাকুন।" },
     unlocks: (e) => isGame(e, "traffic-controller") && e.params.survived === true,
+  },
+  {
+    id: "cutter-detector",
+    emoji: "🕵️",
+    title: { en: "Line Cutter Detector", bn: "লাইন-কাটার শনাক্তকারী" },
+    description: { en: "Catch 3 line-cutters in one Queue Simulator run.", bn: "এক লাইন সিমুলেটর রানে ৩ জন লাইন-কাটার ধরুন।" },
+    unlocks: (e) => isGame(e, "queue-sim") && num(e.params.detected) >= 3,
   },
 ];
 
