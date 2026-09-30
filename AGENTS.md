@@ -144,6 +144,17 @@ components/games/        game cards + client game components
   10 outcomes (1 legendary), score × chaos level. Bot-tuned: random ≈ 4 %
   legendary. Uses the shared challenge/share UI and `game_complete` (with
   `outcome`) for achievements.
+- Delivery Simulator (`/games/delivery-sim`, challenge code `ds`): turn-based
+  rider sim. `createOrder(seed)` rolls restaurant/food/area/distance/pay/
+  weather/promised time and one event per stage (7 stages: accept →
+  restaurant → pickup → find → traffic → contact → deliver; `heavy-rain` only
+  when raining). Choices are fixed effects or seeded gambles (`chance`,
+  win/lose copy); RNG per (seed, stage, choice). 8 endings (1 legendary),
+  score/earnings/chaos/★ rating are pure functions of the run. Rules in
+  `lib/games/delivery-sim.ts`, copy (same ids) in `data/games/delivery-sim.ts`.
+  Bot-tuned: random play ≈ 40 % late, 21 % perfect, 0.3 % legendary — re-run a
+  bot sim if you change numbers. `game_complete` sends `outcome` + `rating`
+  (achievements `five-star-rider`, `legendary-ending`).
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -272,4 +283,5 @@ components/games/        game cards + client game components
 - [x] Phase 17 — Chaos Machine (`/games/chaos-machine`)
 - [x] Phase 18 — Excuse Generator (`/excuses` + homepage card)
 - [x] Phase 19 — "What Kind of Dhaka Person Are You?" quiz (`/dhaka-person` + homepage card)
+- [x] Phase 20 — Delivery Simulator (`/games/delivery-sim`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

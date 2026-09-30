@@ -113,6 +113,22 @@ export const games: Game[] = [
       description: "Press one button to roll a random Dhaka trip — vehicle, weather, traffic, mission and chaos — then survive it in five choices. Free, funny, shareable challenges.",
     },
   },
+  {
+    slug: "delivery-sim",
+    title: { en: "Delivery Simulator", bn: "ডেলিভারি সিমুলেটর" },
+    tagline: { en: "This time, you're the rider.", bn: "এবার আপনিই রাইডার।" },
+    description: {
+      en: "A 1–2 minute rider simulation: accept the order, survive the kitchen, the rain, the pin in a lake, the traffic, “ভাই নিচে আসেন” and a broken lift — then see your score, earnings and star rating.",
+      bn: "১–২ মিনিটের রাইডার সিমুলেশন: অর্ডার নিন, রেস্টুরেন্টের অপেক্ষা, বৃষ্টি, লেকের মাঝে পিন, জ্যাম, “ভাই নিচে আসেন” আর নষ্ট লিফট পার হোন — তারপর দেখুন স্কোর, আয় আর স্টার রেটিং।",
+    },
+    emoji: "🏍️",
+    accent: "lime",
+    durationSec: 90,
+    seo: {
+      title: "Delivery Simulator — Funny Dhaka Delivery Rider Game",
+      description: "Be a Dhaka delivery rider for 90 seconds: late kitchens, wrong pins, rain, traffic, broken lifts and vanishing customers. 8 endings, star ratings, shareable challenges. Free.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {
