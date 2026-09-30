@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ComingSoonCard, ExperienceCard } from "@/components/experience/experience-card";
 import { DailyCard } from "@/components/daily/daily-card";
+import { DhakaPersonCard } from "@/components/dhaka-person/dhaka-person-card";
 import { ExcuseCard } from "@/components/excuses/excuse-card";
 import { SurpriseButton } from "@/components/experience/surprise-button";
 import { Marquee } from "@/components/ui/marquee";
@@ -82,6 +83,11 @@ export default async function HomePage() {
       {/* Excuse generator teaser */}
       <section className="mx-auto max-w-5xl px-4 pb-12">
         <ExcuseCard />
+      </section>
+
+      {/* Dhaka Person quiz teaser */}
+      <section className="mx-auto max-w-5xl px-4 pb-12">
+        <DhakaPersonCard />
       </section>
 
       <div className="overflow-hidden py-3">

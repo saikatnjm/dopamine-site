@@ -11,6 +11,7 @@ export async function SiteFooter() {
     { href: "/daily", label: d.footerDaily },
     { href: "/achievements", label: d.footerAchievements },
     { href: "/excuses", label: d.footerExcuses },
+    { href: "/dhaka-person", label: d.footerPerson },
     { href: "/about", label: d.footerAbout },
     { href: "/privacy", label: d.footerPrivacy },
     { href: "/terms", label: d.footerTerms },

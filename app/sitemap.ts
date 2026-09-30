@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/daily"), changeFrequency: "daily", priority: 0.9 },
     { url: absoluteUrl("/games"), changeFrequency: "weekly", priority: 0.8 },
     { url: absoluteUrl("/excuses"), changeFrequency: "monthly", priority: 0.7 },
+    { url: absoluteUrl("/dhaka-person"), changeFrequency: "monthly", priority: 0.7 },
     ...listGames().map((g) => ({
       url: absoluteUrl(`/games/${g.slug}`),
       changeFrequency: "monthly" as const,
