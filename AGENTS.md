@@ -214,6 +214,18 @@ components/games/        game cards + client game components
   lazily via dynamic import — no dependency, no server. OG images (Satori,
   English-only) are still used for link previews.
 - Simulator mapping: `simulatorCard()` in `lib/experience/result-card-data.ts`.
+## Hottogol World (`/world`, header 🗺️ + footer link)
+
+- Discovery map. `data/world.ts` lists only ids + a zone tag per world
+  (Bangladesh / Life / Arcade); titles, emoji, accents and durations come from
+  the real registries (`getExperience`, `getGame`, page copy) in
+  `app/world/page.tsx`. Add a node when a new activity ships.
+- Progress (client, `components/world/world-map.tsx`) comes only from this
+  device: achievements `stats.games` / `stats.sims`, best scores, quiz
+  `found`, today's daily record. Nothing is locked (no gating system); no
+  global numbers. `stats.sims` (distinct simulator slugs) was added to the
+  achievements store — older stores migrate to `[]`, so sims played before
+  that show as unplayed.
 
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
@@ -345,4 +357,5 @@ components/games/        game cards + client game components
 - [x] Phase 23 — Queue Simulator (`/games/queue-sim`)
 - [x] Phase 24 — Programmer Rage Simulator (`/games/programmer-rage`)
 - [x] Phase 25 — Shared result cards: one card design, Copy result, canvas image download, for every experience
+- [x] Phase 26 — Hottogol World discovery map (`/world`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

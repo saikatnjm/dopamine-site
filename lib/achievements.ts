@@ -22,6 +22,8 @@ export type Stats = {
   games: string[];
   /** Finished story simulators. */
   simsPlayed: number;
+  /** Distinct simulator slugs finished (added later; older stores migrate to []). */
+  sims: string[];
 };
 
 type StoreV1 = {
@@ -219,7 +221,7 @@ export function getAchievement(id: string): Achievement | undefined {
 // ---------------------------------------------------------------------------
 
 export function emptyStore(): Store {
-  return { v: STORE_VERSION, unlocked: {}, stats: { gamesPlayed: 0, games: [], simsPlayed: 0 } };
+  return { v: STORE_VERSION, unlocked: {}, stats: { gamesPlayed: 0, games: [], simsPlayed: 0, sims: [] } };
 }
 
 /** Bring any stored value up to the current version, or start fresh. */
@@ -243,6 +245,7 @@ export function migrate(raw: unknown): Store {
           gamesPlayed: Number.isInteger(s.gamesPlayed) && s.gamesPlayed >= 0 ? s.gamesPlayed : 0,
           games: Array.isArray(s.games) ? [...new Set(s.games.filter((g): g is string => typeof g === "string"))].slice(0, 50) : [],
           simsPlayed: Number.isInteger(s.simsPlayed) && s.simsPlayed >= 0 ? s.simsPlayed : 0,
+          sims: Array.isArray(s.sims) ? [...new Set(s.sims.filter((g): g is string => typeof g === "string"))].slice(0, 50) : [],
         },
       };
     }
@@ -308,7 +311,11 @@ export function recordEvent(name: AnalyticsEvent, params: AnalyticsParams): stri
     const game = typeof params.game === "string" ? params.game : null;
     if (game && !stats.games.includes(game)) stats.games.push(game);
   }
-  if (name === "experience_complete") stats.simsPlayed += 1;
+  if (name === "experience_complete") {
+    stats.simsPlayed += 1;
+    const sim = typeof params.experience === "string" ? params.experience : null;
+    if (sim && !stats.sims.includes(sim)) stats.sims.push(sim);
+  }
 
   const ev: Ev = { name, params };
   const now = Date.now();

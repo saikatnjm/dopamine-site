@@ -23,6 +23,14 @@ export async function SiteHeader() {
           {d.navExperiences}
         </Link>
         <Link
+          href="/world"
+          aria-label={d.navWorld}
+          className="inline-flex min-h-11 items-center gap-1 rounded-pill px-2 py-2 font-bold hover:underline sm:px-3"
+        >
+          <span aria-hidden>🗺️</span>
+          <span className="hidden sm:inline">{d.navWorld}</span>
+        </Link>
+        <Link
           href="/games"
           aria-label={d.navGames}
           className="inline-flex min-h-11 items-center gap-1 rounded-pill px-2 py-2 font-bold hover:underline sm:px-3"
