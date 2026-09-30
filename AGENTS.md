@@ -182,6 +182,15 @@ components/games/        game cards + client game components
   `CLOSING_MIN` = lunch break). Rank is `rankOf(queue, run)` (not score-only).
   Bot-tuned: random ≈ 55 % front, 19 % still waiting, 12 % gave up, 2 %
   legendary — re-run a bot sim if you change numbers.
+- Programmer Rage Simulator (`/games/programmer-rage`, code `pr`): fictional
+  deploy comedy (no real commands). `createIncident(seed)` rolls a hidden root
+  cause, Friday (35 %), start time and 4 offered actions per turn (deploy-again
+  always; rollback from turn 5). Actions add debug progress by relevance to the
+  cause (`RELEVANCE`; x1.5 after the logs reveal it); ask-ai and deploy-again
+  are seeded gambles (deploy chance = progress / 160, sure at 100). Seeded
+  events pile on a second problem (−18) or "suddenly works". 6 endings;
+  success between 02:30 and 04:30 = legendary 3 AM fix. Bot-tuned: random ≈
+  4 % legendary, sensible ≈ 60 % success + 19 % legendary.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -314,4 +323,5 @@ components/games/        game cards + client game components
 - [x] Phase 21 — Chicken Crossing Dhaka (`/games/chicken-crossing`)
 - [x] Phase 22 — Dhaka Traffic Controller (`/games/traffic-controller`)
 - [x] Phase 23 — Queue Simulator (`/games/queue-sim`)
+- [x] Phase 24 — Programmer Rage Simulator (`/games/programmer-rage`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

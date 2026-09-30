@@ -177,6 +177,22 @@ export const games: Game[] = [
       description: "Survive a Dhaka queue: line-cutters, “just one thing” with 17 items, closing counters and “2 more minutes”. 6 endings, funny ranks, shareable challenges. Free, no sign-up.",
     },
   },
+  {
+    slug: "programmer-rage",
+    title: { en: "Programmer Rage Simulator", bn: "প্রোগ্রামার রেজ সিমুলেটর" },
+    tagline: { en: "“It works on my machine.” — famous last words before production.", bn: "“আমার মেশিনে তো চলে।” — প্রোডাকশনের আগের বিখ্যাত শেষ কথা।" },
+    description: {
+      en: "Your deploy just failed. Check logs, restart things, blame frontend, ask AI or deploy again — survive missing env vars, busy ports and SSL drama. A fictional comedy for developers.",
+      bn: "ডিপ্লয় মাত্র ফেইল করেছে। লগ দেখুন, রিস্টার্ট দিন, ফ্রন্টএন্ডের দোষ দিন, এআই-কে জিজ্ঞেস করুন বা আবার ডিপ্লয় করুন — টিকে থাকুন হারানো env var, ব্যস্ত পোর্ট আর এসএসএল নাটকে। ডেভেলপারদের জন্য কাল্পনিক কমেডি।",
+    },
+    emoji: "🧑‍💻",
+    accent: "violet",
+    durationSec: 90,
+    seo: {
+      title: "Programmer Rage Simulator — Funny Deploy Debugging Game",
+      description: "A fictional comedy for developers: your production deploy fails. Check logs, blame frontend, ask AI, deploy again. 6 endings incl. the Legendary 3 AM Fix. Free, no sign-up.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {

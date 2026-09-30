@@ -110,7 +110,8 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
       (isGame(e, "bazar-bargain") && (e.params.rank === "amma-approved" || e.params.rank === "free-lemon")) ||
       (isGame(e, "chaos-machine") && e.params.outcome === "early-miracle") ||
       (isGame(e, "delivery-sim") && e.params.outcome === "legendary") ||
-      (isGame(e, "queue-sim") && e.params.outcome === "front-legend"),
+      (isGame(e, "queue-sim") && e.params.outcome === "front-legend") ||
+      (isGame(e, "programmer-rage") && e.params.outcome === "legendary-3am"),
   },
   {
     id: "ten-games",
@@ -197,6 +198,13 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     title: { en: "Line Cutter Detector", bn: "লাইন-কাটার শনাক্তকারী" },
     description: { en: "Catch 3 line-cutters in one Queue Simulator run.", bn: "এক লাইন সিমুলেটর রানে ৩ জন লাইন-কাটার ধরুন।" },
     unlocks: (e) => isGame(e, "queue-sim") && num(e.params.detected) >= 3,
+  },
+  {
+    id: "shipped-it",
+    emoji: "🚀",
+    title: { en: "Shipped It", bn: "শিপ করে দিয়েছি" },
+    description: { en: "Deploy successfully in the Programmer Rage Simulator.", bn: "প্রোগ্রামার রেজ সিমুলেটরে সফলভাবে ডিপ্লয় করুন।" },
+    unlocks: (e) => isGame(e, "programmer-rage") && (e.params.outcome === "success" || e.params.outcome === "legendary-3am"),
   },
 ];
 
