@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, type Accent } from "@/components/ui/styles";
 import { parseStore, readRaw as readAchievements, subscribe as subscribeAchievements } from "@/lib/achievements";
@@ -46,6 +46,13 @@ function read(key: string): string {
     return "";
   }
 }
+
+/** Everything we read, as one stable string (useSyncExternalStore needs equality). Module-level: no impure calls in render. */
+function readSnapshot(slugsKey: string): string {
+  const bests = slugsKey ? slugsKey.split(",").map((s) => read(`hottogol:${s}:best`)) : [];
+  return JSON.stringify([readAchievements() ?? "", read(QUIZ_KEY), readDailyRaw(bdDateKey(Date.now())) ?? "", ...bests]);
+}
+const serverSnapshot = () => "";
 
 function subscribeAll(cb: () => void) {
   const offA = subscribeAchievements(cb);
@@ -93,12 +100,8 @@ function parse(snapshot: string, gameSlugs: readonly string[]): Progress {
 export function WorldMap({ worlds, labels }: { worlds: WorldView[]; labels: Labels }) {
   const gameSlugs = worlds.flatMap((w) => w.nodes.flatMap((n) => (n.track.kind === "game" ? [n.track.slug] : [])));
   const key = gameSlugs.join(",");
-  // One stable string snapshot of everything we read (useSyncExternalStore needs equality).
-  const snapshot = useSyncExternalStore(
-    subscribeAll,
-    () => JSON.stringify([readAchievements() ?? "", read(QUIZ_KEY), readDailyRaw(bdDateKey(Date.now())) ?? "", ...key.split(",").map((s) => read(`hottogol:${s}:best`))]),
-    () => "",
-  );
+  const getSnapshot = useCallback(() => readSnapshot(key), [key]);
+  const snapshot = useSyncExternalStore(subscribeAll, getSnapshot, serverSnapshot);
   const progress = parse(snapshot, gameSlugs);
 
   return (
