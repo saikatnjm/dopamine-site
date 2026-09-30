@@ -4,10 +4,12 @@ import { DailyCard } from "@/components/daily/daily-card";
 import { DhakaPersonCard } from "@/components/dhaka-person/dhaka-person-card";
 import { ExcuseCard } from "@/components/excuses/excuse-card";
 import { SurpriseButton } from "@/components/experience/surprise-button";
+import { ChaosRoulette } from "@/components/experience/chaos-roulette";
 import { Marquee } from "@/components/ui/marquee";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
 import { upcoming } from "@/data/upcoming";
 import { listCategories, listExperiences } from "@/lib/experience/registry";
+import { listActivities } from "@/lib/activities";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl, siteConfig } from "@/lib/site";
@@ -69,6 +71,7 @@ export default async function HomePage() {
         </p>
         <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <SurpriseButton slugs={slugs} className="w-full sm:w-auto" />
+          <ChaosRoulette activities={listActivities(lang)} className="w-full sm:w-auto" />
           <Link href="#play" className={`${btnPrimary} w-full bg-surface sm:w-auto`}>
             {d.explore}
           </Link>
