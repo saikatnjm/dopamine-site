@@ -63,6 +63,7 @@ export const worlds: readonly World[] = [
     name: { en: "Arcade World", bn: "আর্কেড ওয়ার্ল্ড" },
     tagline: { en: "Fast fingers, faster traffic. Beat your best, then a friend's.", bn: "দ্রুত আঙুল, আরও দ্রুত ট্রাফিক। নিজের রেকর্ড ভাঙুন, তারপর বন্ধুর।" },
     nodes: [
+      { kind: "game", slug: "traffic-boss", zone: { en: "👹 Boss", bn: "👹 বস" } },
       { kind: "game", slug: "dont-tap", zone: { en: "🎮 Reaction", bn: "🎮 রিঅ্যাকশন" } },
       { kind: "game", slug: "cng-catch", zone: { en: "🛺 Reflex", bn: "🛺 রিফ্লেক্স" } },
       { kind: "game", slug: "traffic-dodge", zone: { en: "🚗 Dodge", bn: "🚗 ডজ" } },

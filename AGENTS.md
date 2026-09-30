@@ -214,6 +214,17 @@ components/games/        game cards + client game components
   lazily via dynamic import — no dependency, no server. OG images (Satori,
   English-only) are still used for link previews.
 - Simulator mapping: `simulatorCard()` in `lib/experience/result-card-data.ts`.
+
+## Weekly Boss (`/boss`)
+
+- One special challenge per Bangladesh week. Pure date math (like Daily): the week key (Saturday that starts the week, UTC+6, no DST) picks the boss from `BOSS_ROTATION` (append-only, `lib/weekly-boss.ts`) and hashes to the seed. Same boss and traffic for everyone that week. No server, no global leaderboard — records live in this browser only: `localStorage["hottogol:boss:v1:<weekKey>"]` = `{boss, best, attempts, defeated}`.
+- Framework: a boss is an id in `BOSS_ROTATION` + copy in `data/bosses.ts` + a component registered in `components/boss/boss-games.tsx` that implements `BossGameProps` (`components/boss/types.ts`). The shared shell (`components/boss/boss-arena.tsx`) handles intro, countdown, attempts, records, results, sharing and challenge links for every boss.
+- First boss: `lib/bosses/traffic-boss.ts` (own engine, Traffic Dodge untouched): 5 lanes, 3 lives, 3 phases ramping chaos, 60-second fight. Fixed step + RNG streams from seed: same seed = same fight. Never use `Math.random()` in gameplay.
+- Challenge code: "wb" (`lib/challenge.ts`), `/c/<token>` links work.
+- Achievements: `boss-slayer` (defeat a weekly boss), `flawless-boss` (hidden, defeat without losing a life).
+- No global leaderboard. Scores stay local.
+- Bot-tuned: a careful bot defeats the boss ≈ 50 % (flawless ≈ 12 %); idle loses in ≈ 14 s — re-run a bot sim if you change density/speeds. `/games/traffic-boss` redirects to `/boss` (the games registry lists the boss so `/c/<token>` works).
+
 ## Hottogol World (`/world`, header 🗺️ + footer link)
 
 - Discovery map. `data/world.ts` lists only ids + a zone tag per world
@@ -358,4 +369,5 @@ components/games/        game cards + client game components
 - [x] Phase 24 — Programmer Rage Simulator (`/games/programmer-rage`)
 - [x] Phase 25 — Shared result cards: one card design, Copy result, canvas image download, for every experience
 - [x] Phase 26 — Hottogol World discovery map (`/world`)
+- [x] Phase 27 — Weekly Boss framework + 👹 Dhaka Traffic Boss (`/boss`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
