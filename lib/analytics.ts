@@ -15,7 +15,10 @@ export type AnalyticsEvent =
   | "game_share"
   | "daily_complete"
   | "daily_share"
-  | "challenge_won";
+  | "challenge_won"
+  | "excuse_generate"
+  | "excuse_copy"
+  | "excuse_share";
 // page_view is sent automatically by GA4 (enhanced measurement).
 
 export type AnalyticsParams = Record<string, string | number | boolean | undefined>;

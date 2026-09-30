@@ -148,6 +148,18 @@ components/games/        game cards + client game components
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
 
+## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
+
+- Content (fragments with ids, credibility/chaos weights, verdicts) in
+  `data/excuses.ts`; engine in `lib/excuses.ts`. Excuse = opener (category) +
+  reason (category-weighted or shared) + twist + optional closer.
+- Deterministic: `generateExcuse(category, seed)`; share link
+  `/excuses?c=<category>&s=<seed36>` reproduces it. `?go=1` (homepage button)
+  starts with a fresh one. `freshSeed()` avoids recently used fragments.
+- Never reuse/rename fragment ids. Keep humor about situations, not people,
+  and keep religion out of the jokes.
+- Events: `excuse_generate`, `excuse_copy`, `excuse_share`.
+
 ## Engine rules
 
 - Experience = ordered `steps` (`choice` = user picks, `beat` = seeded random
@@ -242,4 +254,5 @@ components/games/        game cards + client game components
 - [x] Phase 15 — Challenge a Friend: shared `/c/<token>` links + share UI for all games
 - [x] Phase 16 — Achievements (local, versioned storage; 13 achievements incl. 2 secret)
 - [x] Phase 17 — Chaos Machine (`/games/chaos-machine`)
+- [x] Phase 18 — Excuse Generator (`/excuses` + homepage card)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

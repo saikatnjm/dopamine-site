@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ComingSoonCard, ExperienceCard } from "@/components/experience/experience-card";
 import { DailyCard } from "@/components/daily/daily-card";
+import { ExcuseCard } from "@/components/excuses/excuse-card";
 import { SurpriseButton } from "@/components/experience/surprise-button";
 import { Marquee } from "@/components/ui/marquee";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
@@ -76,6 +77,11 @@ export default async function HomePage() {
       {/* Daily challenge */}
       <section className="mx-auto max-w-5xl px-4 pb-12">
         <DailyCard />
+      </section>
+
+      {/* Excuse generator teaser */}
+      <section className="mx-auto max-w-5xl px-4 pb-12">
+        <ExcuseCard />
       </section>
 
       <div className="overflow-hidden py-3">

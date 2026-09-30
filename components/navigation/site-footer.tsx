@@ -10,6 +10,7 @@ export async function SiteFooter() {
     { href: "/games", label: d.footerGames },
     { href: "/daily", label: d.footerDaily },
     { href: "/achievements", label: d.footerAchievements },
+    { href: "/excuses", label: d.footerExcuses },
     { href: "/about", label: d.footerAbout },
     { href: "/privacy", label: d.footerPrivacy },
     { href: "/terms", label: d.footerTerms },
