@@ -91,7 +91,7 @@ export function freshSeed(requested: CategoryId, recent: readonly string[]): num
   let seed = newSeed();
   for (let i = 0; i < 12; i++) {
     const ex = generateExcuse(requested, seed);
-    const twistRepeat = ex.twist.text.en !== "" && recent.includes(ex.twist.id);
+    const twistRepeat = t(ex.twist.text, "en") !== "" && recent.includes(ex.twist.id);
     if (!recent.includes(ex.reason.id) && !recent.includes(ex.opener.id) && !twistRepeat) return seed;
     seed = newSeed();
   }

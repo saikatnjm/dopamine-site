@@ -73,13 +73,14 @@ export function ExcuseGenerator({ initial, shared }: { initial: Current | null; 
   const text = excuseText(excuse, lang);
   const message = shareMessage(copy.shareText, excuse, lang, num);
   const targets = shareTargets(url, message);
-  const info = categoryInfo[excuse.category];
-  const shared_ = (method: ShareMethod) => track("excuse_share", { category: excuse.category, method });
+  const category = excuse.category;
+  const info = categoryInfo[category];
+  const shared_ = (method: ShareMethod) => track("excuse_share", { category, method });
 
   async function copyExcuse() {
     if (await copyText(text)) {
       showToast(t(copy.copied, lang));
-      track("excuse_copy", { category: excuse.category });
+      track("excuse_copy", { category });
     }
   }
   async function copyLink() {
