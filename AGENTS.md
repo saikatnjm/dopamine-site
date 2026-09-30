@@ -76,6 +76,8 @@ components/games/        game cards + client game components
 ## Games (reflex mini-games, separate from story experiences)
 
 - Registry: `data/games/index.ts`; listed at `/games`, in header (🎮), footer, sitemap.
+  A game whose `/games/<slug>` route only redirects (e.g. `traffic-boss` → `/boss`) goes in
+  `GAME_HREF_OVERRIDES`: links use the real page and the sitemap skips the redirect.
 - Rules live in `lib/games/<slug>.ts` as pure functions of `(seed, roundIndex)`;
   the same seed replays identical traffic. Never `Math.random()` in gameplay.
 - Challenge a Friend (shared by all games): `lib/challenge.ts` encodes
