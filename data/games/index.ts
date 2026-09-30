@@ -145,6 +145,22 @@ export const games: Game[] = [
       description: "Hop a chicken across chaotic Dhaka traffic: buses, CNGs, rickshaws, dogs, rain and Dhaka Mode. Near-miss combos, funny levels, personal best and friend challenges. Free.",
     },
   },
+  {
+    slug: "traffic-controller",
+    title: { en: "Dhaka Traffic Controller", bn: "ঢাকা ট্রাফিক কন্ট্রোলার" },
+    tagline: { en: "You have four traffic lights and one minute. Good luck.", bn: "আপনার হাতে চারটা ট্রাফিক লাইট আর এক মিনিট। শুভকামনা।" },
+    description: {
+      en: "Run a chaotic Dhaka junction for 60 seconds: tap the lights, keep buses, CNGs, rickshaws and bikes flowing, and survive U-turns, VIP cars, rain and surprise rush hours.",
+      bn: "৬০ সেকেন্ড ঢাকার এক এলোমেলো মোড় সামলান: লাইটে ট্যাপ করুন, বাস-সিএনজি-রিকশা-বাইক চালু রাখুন, আর টিকে থাকুন ইউ-টার্ন, ভিআইপি গাড়ি, বৃষ্টি আর হঠাৎ ভিড়ে।",
+    },
+    emoji: "🚦",
+    accent: "lime",
+    durationSec: 60,
+    seo: {
+      title: "Dhaka Traffic Controller — Free Traffic Light Game",
+      description: "Control the traffic lights at a chaotic Dhaka intersection for 60 seconds. Avoid crashes and gridlock, build flow combos, survive VIP cars and U-turns. Free, no sign-up.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {

@@ -183,6 +183,13 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     description: { en: "Reach level 3 in Chicken Crossing Dhaka.", bn: "চিকেন ক্রসিং ঢাকায় লেভেল ৩-এ পৌঁছান।" },
     unlocks: (e) => isGame(e, "chicken-crossing") && num(e.params.level) >= 3,
   },
+  {
+    id: "junction-hero",
+    emoji: "🚦",
+    title: { en: "Junction Hero", bn: "মোড়ের হিরো" },
+    description: { en: "Survive a full 60-second shift in Dhaka Traffic Controller.", bn: "ঢাকা ট্রাফিক কন্ট্রোলারে পুরো ৬০ সেকেন্ডের ডিউটি টিকে থাকুন।" },
+    unlocks: (e) => isGame(e, "traffic-controller") && e.params.survived === true,
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));

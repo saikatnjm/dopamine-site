@@ -25,6 +25,7 @@ const GAMES: Record<ChallengeGame, ComponentType<GameProps>> = {
   "chaos-machine": dynamic(() => import("@/components/games/chaos-machine-game").then((m) => m.ChaosMachineGame)),
   "delivery-sim": dynamic(() => import("@/components/games/delivery-sim-game").then((m) => m.DeliverySimGame)),
   "chicken-crossing": dynamic(() => import("@/components/games/chicken-crossing-game").then((m) => m.ChickenCrossingGame)),
+  "traffic-controller": dynamic(() => import("@/components/games/traffic-controller-game").then((m) => m.TrafficControllerGame)),
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

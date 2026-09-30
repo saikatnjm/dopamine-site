@@ -164,6 +164,15 @@ components/games/        game cards + client game components
   behind". Rows and vehicles are fixed DOM pools (17 / 80) moved by one rAF
   loop; the hop tween is visual only (skipped with reduced motion). Bot-tuned
   (careful bot ≈ 30 s, levels 1–3) — re-run a bot sim if you change numbers.
+- Dhaka Traffic Controller (`/games/traffic-controller`, code `tc`): 4-way
+  junction, left-hand traffic, one light per approach (tap / arrows / WASD,
+  Space flips all). Fixed-step sim: seeded spawns (rate rises over 60 s, a
+  "rush" approach moves every 12 s) and events (u-turn in the box, bus stop,
+  rickshaw block, pedestrians, rain, VIP that ignores red, rush). Crossing
+  rects overlapping in the box = crash; congestion ≥ 100 % for 2.5 s =
+  gridlock. Flow multiplier from the exit streak (resets at ≥ 70 % or a
+  6 s wait). Bot-tuned: a sensible controller survives ≈ 75 %; idle / fixed
+  timer lights fail — re-run a bot sim if you change numbers.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -294,4 +303,5 @@ components/games/        game cards + client game components
 - [x] Phase 19 — "What Kind of Dhaka Person Are You?" quiz (`/dhaka-person` + homepage card)
 - [x] Phase 20 — Delivery Simulator (`/games/delivery-sim`)
 - [x] Phase 21 — Chicken Crossing Dhaka (`/games/chicken-crossing`)
+- [x] Phase 22 — Dhaka Traffic Controller (`/games/traffic-controller`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
