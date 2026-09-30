@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
-import { ChallengeBanner, ChallengeOutcome, ResultStamp, ShareActions } from "@/components/games/challenge-ui";
+import { ChallengeBanner, ChallengeOutcome, ShareActions } from "@/components/games/challenge-ui";
+import { ResultCard } from "@/components/share/result-card";
+import { ResultShareKit, useHost, useOrigin } from "@/components/share/result-share-kit";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { bazarCopy as copy, endings, items, lines, vendors } from "@/data/games/bazar-bargain";
 import { track } from "@/lib/analytics";
-import type { FriendChallenge } from "@/lib/challenge";
+import { challengePath, type FriendChallenge } from "@/lib/challenge";
+import { getGame } from "@/data/games";
+import type { ResultCardData } from "@/lib/result-card";
 import {
   GAME_SLUG,
   LEGENDARY,
@@ -26,6 +30,8 @@ import {
 import { createBestStore, encodeSeed, prefersReducedMotion } from "@/lib/games/shared";
 import { fmt, num, t, type Lang, type Text } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
+
+const gameInfo = getGame(GAME_SLUG)!;
 
 const bestStore = createBestStore(`hottogol:${GAME_SLUG}:best`);
 
@@ -357,6 +363,8 @@ function ResultView({
   share: ReactNode;
 }) {
   const { lang } = useI18n();
+  const host = useHost();
+  const origin = useOrigin();
   const { summary, run, states } = result;
   const ending = endings[summary.ending];
   const legendary = LEGENDARY.includes(summary.ending);
@@ -367,38 +375,25 @@ function ResultView({
     { key: "spent", label: copy.statSpent, value: `৳${num(summary.spent, lang)}` },
   ];
 
+  const card: ResultCardData = {
+    game: t(gameInfo.title, lang),
+    emoji: gameInfo.emoji,
+    accent: ending.accent,
+    badge: legendary ? t(copy.legendary, lang) : undefined,
+    titleEmoji: ending.emoji,
+    headline: `${num(summary.score, lang)} ${t(copy.pts, lang)}`,
+    title: t(ending.title, lang),
+    blurb: t(ending.blurb, lang),
+    stats: stats.map((st) => ({ label: t(st.label, lang), value: st.value })),
+    path: `/games/${GAME_SLUG}`,
+  };
+  const url = `${origin}${challengePath({ game: GAME_SLUG, seed: run.seed, score: summary.score }) ?? `/games/${GAME_SLUG}`}`;
+
   return (
     <section className="grid gap-3" aria-labelledby="bz-result">
-      <div className={`${card} overflow-hidden`}>
-        <div className={`${accentBg[ending.accent]} border-b-2 border-ink px-5 py-6 text-center`}>
-          {legendary && (
-            <p className="mx-auto mb-2 w-fit rotate-[-2deg] rounded-pill border-2 border-ink bg-surface px-3 py-0.5 text-sm font-extrabold shadow-pop">
-              {t(copy.legendary, lang)}
-            </p>
-          )}
-          <p aria-hidden className="text-7xl drop-shadow-[3px_3px_0_rgb(26_19_37)] motion-safe:animate-wiggle">
-            {ending.emoji}
-          </p>
-          <h2 id="bz-result" ref={headingRef} tabIndex={-1} className="mt-2 font-display text-4xl font-extrabold leading-tight outline-none">
-            {t(ending.title, lang)}
-          </h2>
-          <p className="mt-1 font-display text-5xl font-black tabular-nums">
-            {num(summary.score, lang)} <span className="text-lg font-bold">{t(copy.pts, lang)}</span>
-          </p>
-        </div>
-        <div className="p-5">
-          <p className="text-center text-ink-muted">{t(ending.blurb, lang)}</p>
-          {result.newBest && <p className="mt-3 text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-          <ChallengeOutcome challenge={challenge} seed={run.seed} score={summary.score} />
-          <dl className="mt-4 grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
-            {stats.map((s) => (
-              <div key={s.key} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
-                <dt className="text-[10px] font-extrabold uppercase leading-tight tracking-wide text-ink-muted sm:text-xs">{t(s.label, lang)}</dt>
-                <dd className="font-display text-xl font-extrabold tabular-nums">{s.value}</dd>
-              </div>
-            ))}
-          </dl>
-
+      <ResultCard data={card} host={host} headingId="bz-result" headingRef={headingRef}>
+        {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
+        <ChallengeOutcome challenge={challenge} seed={run.seed} score={summary.score} />
           {/* Receipt */}
           <h3 className="mt-5 text-sm font-extrabold uppercase tracking-wider text-ink-muted">{t(copy.receipt, lang)}</h3>
           <ul className="mt-2 divide-y-2 divide-dashed divide-ink/20 rounded-xl border-2 border-ink bg-surface px-3 font-mono text-sm">
@@ -427,9 +422,8 @@ function ResultView({
           <p className="mt-3 text-center text-xs font-bold text-ink-muted">
             {t(copy.bazarCode, lang)}: <code className="font-mono">{encodeSeed(run.seed)}</code>
           </p>
-        </div>
-        <ResultStamp game={GAME_SLUG} />
-      </div>
+      </ResultCard>
+      <ResultShareKit data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: summary.ending })} />
       {share}
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}

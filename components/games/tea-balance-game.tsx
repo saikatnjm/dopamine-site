@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject } from "react";
-import { ChallengeBanner, ChallengeOutcome, ResultStamp, ShareActions } from "@/components/games/challenge-ui";
+import { ChallengeBanner, ChallengeOutcome, ShareActions } from "@/components/games/challenge-ui";
+import { ResultCard } from "@/components/share/result-card";
+import { ResultShareKit, useHost, useOrigin } from "@/components/share/result-share-kit";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { eventBanners, hazardLooks, teaCopy as copy, teaRanks } from "@/data/games/tea-balance";
 import { track } from "@/lib/analytics";
-import type { FriendChallenge } from "@/lib/challenge";
+import { getGame } from "@/data/games";
+import { challengePath, type FriendChallenge } from "@/lib/challenge";
+import type { ResultCardData } from "@/lib/result-card";
 import { createBestStore, encodeSeed, prefersReducedMotion } from "@/lib/games/shared";
 import {
   CART,
@@ -28,6 +32,7 @@ import { fmt, num, t, type Text } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
 
 const bestStore = createBestStore(`hottogol:${GAME_SLUG}:best`);
+const gameInfo = getGame(GAME_SLUG)!;
 
 /** Max hazards on screen at once. DOM nodes are reused. */
 const POOL = 16;
@@ -617,6 +622,8 @@ function ResultView({
   share: ReactNode;
 }) {
   const { lang } = useI18n();
+  const host = useHost();
+  const origin = useOrigin();
   const rank = teaRanks[rankFor(result.score)];
   const stats = [
     { key: "time", label: copy.statTime, value: fmt(t(copy.seconds, lang), { n: num(result.seconds, lang) }) },
@@ -624,41 +631,35 @@ function ResultView({
     { key: "hits", label: copy.statHits, value: num(result.hits, lang) },
   ];
 
+  const card: ResultCardData = {
+    game: t(gameInfo.title, lang),
+    emoji: gameInfo.emoji,
+    accent: rank.accent,
+    headline: `${num(result.score, lang)} ${t(copy.pts, lang)}`,
+    title: t(rank.title, lang),
+    titleEmoji: rank.emoji,
+    blurb: t(rank.blurb, lang),
+    headlineLabel: result.delivered ? t(copy.delivered, lang) : fmt(t(copy.spilledAt, lang), { n: num(result.seconds, lang) }),
+    stats: stats.map((s) => ({ label: t(s.label, lang), value: s.value })),
+    path: `/games/${GAME_SLUG}`,
+  };
+  const url = `${origin}${challengePath({ game: GAME_SLUG, seed: result.seed, score: result.score }) ?? `/games/${GAME_SLUG}`}`;
+
   return (
     <section className="grid gap-3" aria-labelledby="tea-result">
-      <div className={`${card} overflow-hidden`}>
-        <div className={`${accentBg[rank.accent]} border-b-2 border-ink px-5 py-6 text-center`}>
-          <p className="text-sm font-extrabold uppercase tracking-wider">
-            {result.delivered ? t(copy.delivered, lang) : fmt(t(copy.spilledAt, lang), { n: num(result.seconds, lang) })}
-          </p>
-          <p aria-hidden className="mt-2 text-7xl drop-shadow-[3px_3px_0_rgb(26_19_37)] motion-safe:animate-wiggle">
-            {rank.emoji}
-          </p>
-          <h2 id="tea-result" ref={headingRef} tabIndex={-1} className="mt-2 font-display text-4xl font-extrabold leading-tight outline-none">
-            {t(rank.title, lang)}
-          </h2>
-          <p className="mt-1 font-display text-5xl font-black tabular-nums">
-            {num(result.score, lang)} <span className="text-lg font-bold">{t(copy.pts, lang)}</span>
-          </p>
-        </div>
-        <div className="p-5">
-          <p className="text-center text-ink-muted">{t(rank.blurb, lang)}</p>
-          {result.newBest && <p className="mt-3 text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-          <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
-          <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
-            {stats.map((s) => (
-              <div key={s.key} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
-                <dt className="text-[10px] font-extrabold uppercase leading-tight tracking-wide text-ink-muted sm:text-xs">{t(s.label, lang)}</dt>
-                <dd className="font-display text-xl font-extrabold tabular-nums">{s.value}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-3 text-center text-xs font-bold text-ink-muted">
-            {t(copy.roadCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
-          </p>
-        </div>
-        <ResultStamp game={GAME_SLUG} />
-      </div>
+      <ResultCard data={card} host={host} headingId="tea-result" headingRef={headingRef}>
+        {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
+        <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
+        <p className="text-center text-xs font-bold text-ink-muted">
+          {t(copy.roadCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
+        </p>
+      </ResultCard>
+      <ResultShareKit
+        data={card}
+        url={url}
+        fileName={`${GAME_SLUG}-result`}
+        onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankFor(result.score) })}
+      />
       {share}
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}
