@@ -104,9 +104,11 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     id: "legendary-ending",
     emoji: "✨",
     title: { en: "Legendary Ending", bn: "কিংবদন্তি এন্ডিং" },
-    description: { en: "Found a legendary ending in Bazar Bargain. Amma is proud.", bn: "বাজার বার্গেইনে কিংবদন্তি এন্ডিং পেয়েছেন। আম্মা গর্বিত।" },
+    description: { en: "Found a legendary ending. Rarer than an empty Dhaka road.", bn: "কিংবদন্তি এন্ডিং পেয়েছেন। ঢাকার ফাঁকা রাস্তার চেয়েও বিরল।" },
     hidden: true,
-    unlocks: (e) => isGame(e, "bazar-bargain") && (e.params.rank === "amma-approved" || e.params.rank === "free-lemon"),
+    unlocks: (e) =>
+      (isGame(e, "bazar-bargain") && (e.params.rank === "amma-approved" || e.params.rank === "free-lemon")) ||
+      (isGame(e, "chaos-machine") && e.params.outcome === "early-miracle"),
   },
   {
     id: "ten-games",
@@ -135,6 +137,13 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     title: { en: "Rival Defeated", bn: "প্রতিদ্বন্দ্বী পরাজিত" },
     description: { en: "Beat a friend's challenge.", bn: "বন্ধুর চ্যালেঞ্জ হারান।" },
     unlocks: (e) => e.name === "challenge_won",
+  },
+  {
+    id: "chaos-engineer",
+    emoji: "🔥",
+    title: { en: "Chaos Engineer", bn: "হট্টগোল ইঞ্জিনিয়ার" },
+    description: { en: "Survive a run of the Chaos Machine.", bn: "কেওস মেশিনের একটা যাত্রা পার করুন।" },
+    unlocks: (e) => isGame(e, "chaos-machine"),
   },
   {
     id: "night-owl",

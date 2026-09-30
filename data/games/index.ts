@@ -97,6 +97,22 @@ export const games: Game[] = [
       description: "Test your reaction time in milliseconds: 5 rounds, fake-out signals, average and best times, funny titles and shareable challenges. Free, no sign-up.",
     },
   },
+  {
+    slug: "chaos-machine",
+    title: { en: "Chaos Machine", bn: "কেওস মেশিন" },
+    tagline: { en: "Press one button. Get a random Dhaka trip. Survive it.", bn: "একটা বোতাম চাপুন। পান র‍্যান্ডম ঢাকা যাত্রা। টিকে থাকুন।" },
+    description: {
+      en: "Roll a random scenario — vehicle, destination, budget, weather, mood, traffic, mission and a chaos modifier — then make five quick choices to survive it.",
+      bn: "র‍্যান্ডম একটা পরিস্থিতি বানান — বাহন, গন্তব্য, বাজেট, আবহাওয়া, মেজাজ, ট্রাফিক, মিশন আর একটা হট্টগোল মডিফায়ার — তারপর পাঁচটা দ্রুত সিদ্ধান্তে টিকে থাকুন।",
+    },
+    emoji: "🔥",
+    accent: "tangerine",
+    durationSec: 60,
+    seo: {
+      title: "Chaos Machine — Random Dhaka Trip Generator Game",
+      description: "Press one button to roll a random Dhaka trip — vehicle, weather, traffic, mission and chaos — then survive it in five choices. Free, funny, shareable challenges.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {
