@@ -74,7 +74,7 @@ export function createScenario(seed: number): Scenario {
   let level = isRush(time) ? 2 + (rng() < 0.5 ? 1 : 0) : 1 + (rng() < 0.4 ? 1 : 0);
   if (isWet(weather)) level += 1;
   if (!isRush(time) && rng() < 0.06) level = 0;
-  const traffic = (["empty", "moving", "slow", "gridlock"] as const)[Math.min(3, level)];
+  const traffic: TrafficId = (["empty", "moving", "slow", "gridlock"] as const)[Math.min(3, level)] ?? "gridlock";
 
   const missions: MissionId[] = ["on-time", "on-time", "under-budget", "eggs", "calm"];
   if (isWet(weather)) missions.push("stay-dry", "stay-dry");
