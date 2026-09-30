@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, type Accent } from "@/components/ui/styles";
 import { parseStore, readRaw as readAchievements, subscribe as subscribeAchievements } from "@/lib/achievements";
@@ -100,8 +100,7 @@ function parse(snapshot: string, gameSlugs: readonly string[]): Progress {
 export function WorldMap({ worlds, labels }: { worlds: WorldView[]; labels: Labels }) {
   const gameSlugs = worlds.flatMap((w) => w.nodes.flatMap((n) => (n.track.kind === "game" ? [n.track.slug] : [])));
   const key = gameSlugs.join(",");
-  const getSnapshot = useCallback(() => readSnapshot(key), [key]);
-  const snapshot = useSyncExternalStore(subscribeAll, getSnapshot, serverSnapshot);
+  const snapshot = useSyncExternalStore(subscribeAll, () => readSnapshot(key), serverSnapshot);
   const progress = parse(snapshot, gameSlugs);
 
   return (

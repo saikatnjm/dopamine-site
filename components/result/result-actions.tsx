@@ -4,7 +4,7 @@ import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
-import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
+import { accentBg, btnGhost, btnPrimary, card as cardStyle } from "@/components/ui/styles";
 import { track } from "@/lib/analytics";
 import type { Experience } from "@/lib/experience/types";
 import { hostOf, resultText, type ResultCardData } from "@/lib/result-card";
@@ -131,7 +131,7 @@ export function ResultActions({ slug, emoji, accent, outcomeId, shareUrl, shareT
         📋 {d.copyResult}
       </button>
 
-      <section aria-label={d.shareTo} className={`${card} mt-2 p-4`}>
+      <section aria-label={d.shareTo} className={`${cardStyle} mt-2 p-4`}>
         <p className="mb-3 text-center text-sm font-extrabold uppercase tracking-wider text-ink-muted">{d.shareTo}</p>
         <div className="grid grid-cols-5 gap-1">
           {links.map((l) => (

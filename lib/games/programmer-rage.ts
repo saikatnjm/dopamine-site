@@ -11,7 +11,7 @@
 // the same choices = the same night. Never use Math.random() here.
 // Copy lives in data/games/programmer-rage.ts under the same ids.
 
-import { createRng, hashString, weightedPick } from "@/lib/random";
+import { createRng, hashString } from "@/lib/random";
 
 export const GAME_SLUG = "programmer-rage";
 export const TURNS = 8;

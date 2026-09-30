@@ -20,7 +20,6 @@ import {
   STEP_MS,
   createSim,
   nudge,
-  pickLine,
   rankFor,
   score,
   setTarget,
