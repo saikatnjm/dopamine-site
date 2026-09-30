@@ -36,12 +36,6 @@ export const trafficDodgeCopy = {
   nearMiss: { en: "CLOSE!", bn: "অল্পের জন্য!" },
   crashed: { en: "💥 CRASH!", bn: "💥 ধাক্কা!" },
   crashedInto: { en: "Crashed into: {what}", bn: "ধাক্কা খেলেন: {what}" },
-  challenge: {
-    en: "A friend scored {score} on this exact traffic. Same vehicles, same timing — beat it.",
-    bn: "এই একই ট্রাফিকে এক বন্ধু {score} পেয়েছে। একই গাড়ি, একই টাইমিং — হারিয়ে দিন।",
-  },
-  challengeWin: { en: "🏆 You beat your friend's {score}!", bn: "🏆 বন্ধুর {score} হারিয়ে দিলেন!" },
-  challengeLose: { en: "😬 Your friend's {score} still stands.", bn: "😬 বন্ধুর {score} এখনো টিকে আছে।" },
   newBest: { en: "🎉 New personal best!", bn: "🎉 নতুন ব্যক্তিগত রেকর্ড!" },
   statTime: { en: "Survived", bn: "টিকেছেন" },
   statNear: { en: "Near-misses", bn: "নিয়ার-মিস" },
@@ -51,7 +45,6 @@ export const trafficDodgeCopy = {
   retry: { en: "↺ Retry (new traffic)", bn: "↺ আবার (নতুন ট্রাফিক)" },
   replay: { en: "Replay this exact traffic", bn: "একই ট্রাফিক আবার খেলুন" },
   share: { en: "📤 Share result", bn: "📤 ফলাফল শেয়ার" },
-  copied: { en: "✅ Link copied!", bn: "✅ লিংক কপি হয়েছে!" },
   shareText: {
     en: "I survived {time}s of Dhaka traffic and got “{title}” ({score} pts) in Traffic Dodge 🛵 Same traffic, your turn:",
     bn: "ট্রাফিক ডজে ঢাকার ট্রাফিকে {time} সেকেন্ড টিকে হলাম “{title}” ({score} পয়েন্ট) 🛵 একই ট্রাফিক, এবার আপনার পালা:",

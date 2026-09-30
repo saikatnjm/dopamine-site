@@ -32,12 +32,6 @@ export const cngCatchCopy = {
     { en: "Hail!", bn: "থামান!" },
   ],
   stop: { en: "STOP", bn: "স্টপ" },
-  challenge: {
-    en: "A friend scored {score} on this exact traffic. Same CNGs, same timing — beat it.",
-    bn: "এই একই ট্রাফিকে এক বন্ধু {score} পেয়েছে। একই সিএনজি, একই টাইমিং — হারিয়ে দিন।",
-  },
-  challengeWin: { en: "🏆 You beat your friend's {score}!", bn: "🏆 বন্ধুর {score} হারিয়ে দিলেন!" },
-  challengeLose: { en: "😬 Your friend's {score} still stands.", bn: "😬 বন্ধুর {score} এখনো টিকে আছে।" },
   newBest: { en: "🎉 New personal best!", bn: "🎉 নতুন ব্যক্তিগত রেকর্ড!" },
   statCatches: { en: "Catches", bn: "ধরেছেন" },
   statPerfects: { en: "Perfects", bn: "পারফেক্ট" },
@@ -47,7 +41,6 @@ export const cngCatchCopy = {
   retry: { en: "↺ Retry (new traffic)", bn: "↺ আবার (নতুন ট্রাফিক)" },
   replay: { en: "Replay this exact traffic", bn: "একই ট্রাফিক আবার খেলুন" },
   share: { en: "📤 Share result", bn: "📤 ফলাফল শেয়ার" },
-  copied: { en: "✅ Link copied!", bn: "✅ লিংক কপি হয়েছে!" },
   shareText: {
     en: "I got “{title}” with {score} pts in CNG Catch 🛺 Same traffic, your turn:",
     bn: "সিএনজি ক্যাচে {score} পয়েন্ট পেয়ে হলাম “{title}” 🛺 একই ট্রাফিক, এবার আপনার পালা:",

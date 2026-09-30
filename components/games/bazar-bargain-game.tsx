@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
+import { ChallengeBanner, ChallengeOutcome, ResultStamp, ShareActions } from "@/components/games/challenge-ui";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { bazarCopy as copy, endings, items, lines, vendors } from "@/data/games/bazar-bargain";
 import { track } from "@/lib/analytics";
+import type { FriendChallenge } from "@/lib/challenge";
 import {
   GAME_SLUG,
   LEGENDARY,
@@ -24,12 +26,11 @@ import {
 import { createBestStore, encodeSeed, prefersReducedMotion } from "@/lib/games/shared";
 import { fmt, num, t, type Lang, type Text } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
-import { copyText } from "@/lib/sharing";
 
 const bestStore = createBestStore(`hottogol:${GAME_SLUG}:best`);
 
 type Phase = "idle" | "playing" | "over";
-type Challenge = { seed: number; score: number } | null;
+type Challenge = FriendChallenge | null;
 type Result = { summary: Summary; run: Run; states: StallState[]; newBest: boolean };
 
 const actionBtn =
@@ -54,12 +55,10 @@ export function BazarBargainGame({ challenge }: { challenge: Challenge }) {
   const [done, setDone] = useState<StallState[]>([]);
   const [budget, setBudget] = useState(0);
   const [result, setResult] = useState<Result | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const toastTimer = useRef<number | undefined>(undefined);
 
   const closed = st !== null && isClosed(st);
 
@@ -70,8 +69,6 @@ export function BazarBargainGame({ challenge }: { challenge: Challenge }) {
   useEffect(() => {
     if (phase === "over") headingRef.current?.focus();
   }, [phase]);
-  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
-
   function start(nextSeed: number, kind: "first" | "retry" | "replay") {
     const r = makeRun(nextSeed);
     setSeed(nextSeed);
@@ -112,33 +109,15 @@ export function BazarBargainGame({ challenge }: { challenge: Challenge }) {
     track("game_complete", { game: GAME_SLUG, score: summary.score, rank: summary.ending, bought: summary.bought });
   }
 
-  function showToast(message: string) {
-    setToast(message);
-    window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 2000);
-  }
-
-  async function share(r: Result) {
+  /** Shared "Challenge a friend" actions for a finished round. */
+  function shareActions(r: Result) {
     const ending = endings[r.summary.ending];
-    const url = `${window.location.origin}/games/${GAME_SLUG}?seed=${encodeSeed(r.run.seed)}&s=${r.summary.score}`;
     const text = fmt(t(copy.shareText, lang), {
       title: t(ending.title, lang),
       saved: num(r.summary.saved, lang),
       score: num(r.summary.score, lang),
     });
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ text, url });
-        track("game_share", { game: GAME_SLUG, method: "native", rank: ending.id });
-      } catch {
-        // share sheet dismissed
-      }
-      return;
-    }
-    if (await copyText(`${text} ${url}`)) {
-      showToast(t(copy.copied, lang));
-      track("game_share", { game: GAME_SLUG, method: "copy", rank: ending.id });
-    }
+    return <ShareActions game={GAME_SLUG} seed={r.run.seed} score={r.summary.score} text={text} accent={ending.accent} rank={ending.id} />;
   }
 
   const isChallenge = challenge !== null && seed === challenge.seed;
@@ -147,11 +126,7 @@ export function BazarBargainGame({ challenge }: { challenge: Challenge }) {
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="bz-how">
-          {isChallenge && (
-            <p className="mb-4 -rotate-1 rounded-2xl border-2 border-ink bg-marigold p-3 font-bold shadow-pop">
-              ⚔️ {fmt(t(copy.challenge, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          {isChallenge && <ChallengeBanner challenge={challenge} />}
           <h2 id="bz-how" className="font-display text-2xl font-extrabold">
             {t(copy.howTitle, lang)}
           </h2>
@@ -196,13 +171,9 @@ export function BazarBargainGame({ challenge }: { challenge: Challenge }) {
           headingRef={headingRef}
           onRetry={() => start(newSeed(), "retry")}
           onReplay={() => start(result.run.seed, "replay")}
-          onShare={() => share(result)}
+          share={shareActions(result)}
         />
       )}
-
-      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">
-        {toast && <p className="rounded-pill border-2 border-ink bg-ink px-5 py-2.5 font-bold text-bg shadow-pop">{toast}</p>}
-      </div>
     </div>
   );
 }
@@ -375,20 +346,20 @@ function ResultView({
   headingRef,
   onRetry,
   onReplay,
-  onShare,
+  share,
 }: {
   result: Result;
   challenge: Challenge;
   headingRef: RefObject<HTMLHeadingElement | null>;
   onRetry: () => void;
   onReplay: () => void;
-  onShare: () => void;
+  /** Share buttons (challenge link). */
+  share: ReactNode;
 }) {
   const { lang } = useI18n();
   const { summary, run, states } = result;
   const ending = endings[summary.ending];
   const legendary = LEGENDARY.includes(summary.ending);
-  const vsFriend = challenge !== null && challenge.seed === run.seed;
   const stats = [
     { key: "saved", label: copy.statSaved, value: `৳${num(summary.saved, lang)}` },
     { key: "bought", label: copy.statBought, value: `${num(summary.bought, lang)}/${num(run.stalls.length, lang)}` },
@@ -418,11 +389,7 @@ function ResultView({
         <div className="p-5">
           <p className="text-center text-ink-muted">{t(ending.blurb, lang)}</p>
           {result.newBest && <p className="mt-3 text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-          {vsFriend && (
-            <p className="mt-3 text-center font-extrabold">
-              {fmt(t(summary.score > challenge.score ? copy.challengeWin : copy.challengeLose, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          <ChallengeOutcome challenge={challenge} seed={run.seed} score={summary.score} />
           <dl className="mt-4 grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
             {stats.map((s) => (
               <div key={s.key} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
@@ -461,10 +428,9 @@ function ResultView({
             {t(copy.bazarCode, lang)}: <code className="font-mono">{encodeSeed(run.seed)}</code>
           </p>
         </div>
+        <ResultStamp game={GAME_SLUG} />
       </div>
-      <button type="button" onClick={onShare} className={`${btnPrimary} ${accentBg[ending.accent]}`}>
-        {t(copy.share, lang)}
-      </button>
+      {share}
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}
       </button>

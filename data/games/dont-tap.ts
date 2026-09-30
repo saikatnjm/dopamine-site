@@ -41,16 +41,9 @@ export const dontTapCopy = {
   rounds: { en: "Your rounds", bn: "আপনার রাউন্ড" },
   newBest: { en: "🎉 New personal best!", bn: "🎉 নতুন ব্যক্তিগত রেকর্ড!" },
   seedCode: { en: "Round code", bn: "রাউন্ড কোড" },
-  challenge: {
-    en: "A friend scored {score} with these exact signals. Same timings, same tricks — beat it.",
-    bn: "এই একই সিগন্যালে এক বন্ধু {score} পেয়েছে। একই টাইমিং, একই কৌশল — হারিয়ে দিন।",
-  },
-  challengeWin: { en: "🏆 You beat your friend's {score}!", bn: "🏆 বন্ধুর {score} হারিয়ে দিলেন!" },
-  challengeLose: { en: "😬 Your friend's {score} still stands.", bn: "😬 বন্ধুর {score} এখনো টিকে আছে।" },
   retry: { en: "↺ Retry (new signals)", bn: "↺ আবার (নতুন সিগন্যাল)" },
   replay: { en: "Replay these exact signals", bn: "একই সিগন্যাল আবার খেলুন" },
   share: { en: "📤 Share result", bn: "📤 ফলাফল শেয়ার" },
-  copied: { en: "✅ Link copied!", bn: "✅ লিংক কপি হয়েছে!" },
   shareText: {
     en: "Don't Tap 🚦 avg {avg} ms, fastest {best} ms — “{title}” ({score} pts). Same signals, your turn:",
     bn: "ডোন্ট ট্যাপ 🚦 গড় {avg} মি.সে., সবচেয়ে দ্রুত {best} মি.সে. — “{title}” ({score} পয়েন্ট)। একই সিগন্যাল, এবার আপনার পালা:",

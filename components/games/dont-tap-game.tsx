@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
+import { ChallengeBanner, ChallengeOutcome, ResultStamp, ShareActions } from "@/components/games/challenge-ui";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { decoys, dontTapCopy as copy, dontTapRanks, reactionComment } from "@/data/games/dont-tap";
 import { track } from "@/lib/analytics";
+import type { FriendChallenge } from "@/lib/challenge";
 import {
   GAME_SLUG,
   MAX_FALSE_STARTS_PER_ROUND,
@@ -21,7 +23,6 @@ import {
 import { createBestStore, encodeSeed, prefersReducedMotion } from "@/lib/games/shared";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
-import { copyText } from "@/lib/sharing";
 
 const bestStore = createBestStore(`hottogol:${GAME_SLUG}:best`);
 
@@ -30,7 +31,7 @@ const SHOW_MS = 1100;
 const EARLY_MS = 1300;
 
 type Phase = "idle" | "playing" | "over";
-type Challenge = { seed: number; score: number } | null;
+type Challenge = FriendChallenge | null;
 type Result = { summary: Summary; rounds: RoundResult[]; seed: number; newBest: boolean };
 type Tone = "ready" | "wait" | "maybe" | "go" | "early" | "show";
 
@@ -56,7 +57,6 @@ export function DontTapGame({ challenge }: { challenge: Challenge }) {
   const [runId, setRunId] = useState(0);
   const [rounds, setRounds] = useState<RoundResult[]>([]);
   const [result, setResult] = useState<Result | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -65,7 +65,6 @@ export function DontTapGame({ challenge }: { challenge: Challenge }) {
   const emojiRef = useRef<HTMLSpanElement>(null);
   const srRef = useRef<HTMLParagraphElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const toastTimer = useRef<number | undefined>(undefined);
 
   // ----- Round controller: timers + rAF drive the button directly. -----
   useEffect(() => {
@@ -247,8 +246,6 @@ export function DontTapGame({ challenge }: { challenge: Challenge }) {
     if (phase === "over") headingRef.current?.focus();
   }, [phase]);
 
-  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
-
   function start(nextSeed: number, kind: "first" | "retry" | "replay") {
     setSeed(nextSeed);
     setRunId((n) => n + 1);
@@ -259,34 +256,16 @@ export function DontTapGame({ challenge }: { challenge: Challenge }) {
     rootRef.current?.scrollIntoView({ block: "start", behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }
 
-  function showToast(message: string) {
-    setToast(message);
-    window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 2000);
-  }
-
-  async function share(r: Result) {
+  /** Shared "Challenge a friend" actions for a finished round. */
+  function shareActions(r: Result) {
     const rank = dontTapRanks[rankFor(r.summary.score, r.summary.falseStarts)];
-    const url = `${window.location.origin}/games/${GAME_SLUG}?seed=${encodeSeed(r.seed)}&s=${r.summary.score}`;
     const text = fmt(t(copy.shareText, lang), {
       avg: num(r.summary.avg, lang),
       best: num(r.summary.best, lang),
       title: t(rank.title, lang),
       score: num(r.summary.score, lang),
     });
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ text, url });
-        track("game_share", { game: GAME_SLUG, method: "native", rank: rank.id });
-      } catch {
-        // share sheet dismissed
-      }
-      return;
-    }
-    if (await copyText(`${text} ${url}`)) {
-      showToast(t(copy.copied, lang));
-      track("game_share", { game: GAME_SLUG, method: "copy", rank: rank.id });
-    }
+    return <ShareActions game={GAME_SLUG} seed={r.seed} score={r.summary.score} text={text} accent={rank.accent} rank={rank.id} />;
   }
 
   const isChallenge = challenge !== null && seed === challenge.seed;
@@ -295,11 +274,7 @@ export function DontTapGame({ challenge }: { challenge: Challenge }) {
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="dt-how">
-          {isChallenge && (
-            <p className="mb-4 -rotate-1 rounded-2xl border-2 border-ink bg-marigold p-3 font-bold shadow-pop">
-              ⚔️ {fmt(t(copy.challenge, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          {isChallenge && <ChallengeBanner challenge={challenge} />}
           <h2 id="dt-how" className="font-display text-2xl font-extrabold">
             {t(copy.howTitle, lang)}
           </h2>
@@ -365,13 +340,9 @@ export function DontTapGame({ challenge }: { challenge: Challenge }) {
           headingRef={headingRef}
           onRetry={() => start(newSeed(), "retry")}
           onReplay={() => start(result.seed, "replay")}
-          onShare={() => share(result)}
+          share={shareActions(result)}
         />
       )}
-
-      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">
-        {toast && <p className="rounded-pill border-2 border-ink bg-ink px-5 py-2.5 font-bold text-bg shadow-pop">{toast}</p>}
-      </div>
     </div>
   );
 }
@@ -405,19 +376,19 @@ function ResultView({
   headingRef,
   onRetry,
   onReplay,
-  onShare,
+  share,
 }: {
   result: Result;
   challenge: Challenge;
   headingRef: RefObject<HTMLHeadingElement | null>;
   onRetry: () => void;
   onReplay: () => void;
-  onShare: () => void;
+  /** Share buttons (challenge link). */
+  share: ReactNode;
 }) {
   const { lang } = useI18n();
   const { summary, rounds } = result;
   const rank = dontTapRanks[rankFor(summary.score, summary.falseStarts)];
-  const vsFriend = challenge !== null && challenge.seed === result.seed;
   const stats = [
     { key: "avg", label: copy.avg, value: fmt(t(copy.ms, lang), { n: num(summary.avg, lang) }) },
     { key: "best", label: copy.bestTime, value: fmt(t(copy.ms, lang), { n: num(summary.best, lang) }) },
@@ -441,11 +412,7 @@ function ResultView({
         <div className="p-5">
           <p className="text-center text-ink-muted">{t(rank.blurb, lang)}</p>
           {result.newBest && <p className="mt-3 text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-          {vsFriend && (
-            <p className="mt-3 text-center font-extrabold">
-              {fmt(t(summary.score > challenge.score ? copy.challengeWin : copy.challengeLose, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          <ChallengeOutcome challenge={challenge} seed={result.seed} score={summary.score} />
           <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
             {stats.map((s) => (
               <div key={s.key} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
@@ -478,10 +445,9 @@ function ResultView({
             {t(copy.seedCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
           </p>
         </div>
+        <ResultStamp game={GAME_SLUG} />
       </div>
-      <button type="button" onClick={onShare} className={`${btnPrimary} ${accentBg[rank.accent]}`}>
-        {t(copy.share, lang)}
-      </button>
+      {share}
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}
       </button>

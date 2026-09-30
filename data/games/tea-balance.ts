@@ -38,16 +38,9 @@ export const teaCopy = {
   statHits: { en: "Bumps hit", bn: "ঝাঁকি খেলেন" },
   newBest: { en: "🎉 New personal best!", bn: "🎉 নতুন ব্যক্তিগত রেকর্ড!" },
   roadCode: { en: "Road code", bn: "রাস্তা কোড" },
-  challenge: {
-    en: "A friend scored {score} on this exact road. Same potholes, same goats — beat it.",
-    bn: "এই একই রাস্তায় এক বন্ধু {score} পেয়েছে। একই গর্ত, একই ছাগল — হারিয়ে দিন।",
-  },
-  challengeWin: { en: "🏆 You beat your friend's {score}!", bn: "🏆 বন্ধুর {score} হারিয়ে দিলেন!" },
-  challengeLose: { en: "😬 Your friend's {score} still stands.", bn: "😬 বন্ধুর {score} এখনো টিকে আছে।" },
   retry: { en: "↺ Retry (new road)", bn: "↺ আবার (নতুন রাস্তা)" },
   replay: { en: "Replay this exact road", bn: "একই রাস্তা আবার খেলুন" },
   share: { en: "📤 Share result", bn: "📤 ফলাফল শেয়ার" },
-  copied: { en: "✅ Link copied!", bn: "✅ লিংক কপি হয়েছে!" },
   shareText: {
     en: "I carried cha for {time}s and got “{title}” ({score} pts) in Tea Balance ☕ Same road, your turn:",
     bn: "টি ব্যালেন্সে {time} সেকেন্ড চা বয়ে হলাম “{title}” ({score} পয়েন্ট) ☕ একই রাস্তা, এবার আপনার পালা:",

@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent, type ReactNode, type RefObject } from "react";
+import { ChallengeBanner, ChallengeOutcome, ResultStamp, ShareActions } from "@/components/games/challenge-ui";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { eventBanners, hazardLooks, teaCopy as copy, teaRanks } from "@/data/games/tea-balance";
 import { track } from "@/lib/analytics";
+import type { FriendChallenge } from "@/lib/challenge";
 import { createBestStore, encodeSeed, prefersReducedMotion } from "@/lib/games/shared";
 import {
   CART,
@@ -24,7 +26,6 @@ import {
 } from "@/lib/games/tea-balance";
 import { fmt, num, t, type Text } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
-import { copyText } from "@/lib/sharing";
 
 const bestStore = createBestStore(`hottogol:${GAME_SLUG}:best`);
 
@@ -39,7 +40,7 @@ const DASH = 40;
 const METER_RANGE = 0.7;
 
 type Phase = "idle" | "playing" | "over";
-type Challenge = { seed: number; score: number } | null;
+type Challenge = FriendChallenge | null;
 type Result = { score: number; seconds: number; tea: number; hits: number; delivered: boolean; seed: number; newBest: boolean };
 
 export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
@@ -54,7 +55,6 @@ export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
   const [line, setLine] = useState<Text | null>(null);
   const [ending, setEnding] = useState<"spilled" | "delivered" | null>(null);
   const [result, setResult] = useState<Result | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -70,7 +70,6 @@ export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
   /** Input shared with the loop: pointer target (0–1) and held direction. */
   const inputRef = useRef<{ pointer: number | null; keyDir: number; buttonDir: number }>({ pointer: null, keyDir: 0, buttonDir: 0 });
-  const toastTimer = useRef<number | undefined>(undefined);
 
   // ----- Game loop -----
   useEffect(() => {
@@ -348,8 +347,6 @@ export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
     if (phase === "over") headingRef.current?.focus();
   }, [phase]);
 
-  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
-
   function start(nextSeed: number, kind: "first" | "retry" | "replay") {
     setSeed(nextSeed);
     setCount(0);
@@ -363,29 +360,11 @@ export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
     rootRef.current?.scrollIntoView({ block: "start", behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }
 
-  function showToast(message: string) {
-    setToast(message);
-    window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 2000);
-  }
-
-  async function share(r: Result) {
+  /** Shared "Challenge a friend" actions for a finished round. */
+  function shareActions(r: Result) {
     const rank = teaRanks[rankFor(r.score)];
-    const url = `${window.location.origin}/games/${GAME_SLUG}?seed=${encodeSeed(r.seed)}&s=${r.score}`;
     const text = fmt(t(copy.shareText, lang), { title: t(rank.title, lang), score: num(r.score, lang), time: num(r.seconds, lang) });
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ text, url });
-        track("game_share", { game: GAME_SLUG, method: "native", rank: rank.id });
-      } catch {
-        // share sheet dismissed
-      }
-      return;
-    }
-    if (await copyText(`${text} ${url}`)) {
-      showToast(t(copy.copied, lang));
-      track("game_share", { game: GAME_SLUG, method: "copy", rank: rank.id });
-    }
+    return <ShareActions game={GAME_SLUG} seed={r.seed} score={r.score} text={text} accent={rank.accent} rank={rank.id} />;
   }
 
   /** Pointer x over the stage → target (0–1). */
@@ -424,11 +403,7 @@ export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="tea-how">
-          {isChallenge && (
-            <p className="mb-4 -rotate-1 rounded-2xl border-2 border-ink bg-marigold p-3 font-bold shadow-pop">
-              ⚔️ {fmt(t(copy.challenge, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          {isChallenge && <ChallengeBanner challenge={challenge} />}
           <h2 id="tea-how" className="font-display text-2xl font-extrabold">
             {t(copy.howTitle, lang)}
           </h2>
@@ -581,13 +556,9 @@ export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
           headingRef={headingRef}
           onRetry={() => start(newSeed(), "retry")}
           onReplay={() => start(result.seed, "replay")}
-          onShare={() => share(result)}
+          share={shareActions(result)}
         />
       )}
-
-      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">
-        {toast && <p className="rounded-pill border-2 border-ink bg-ink px-5 py-2.5 font-bold text-bg shadow-pop">{toast}</p>}
-      </div>
     </div>
   );
 }
@@ -635,18 +606,18 @@ function ResultView({
   headingRef,
   onRetry,
   onReplay,
-  onShare,
+  share,
 }: {
   result: Result;
   challenge: Challenge;
   headingRef: RefObject<HTMLHeadingElement | null>;
   onRetry: () => void;
   onReplay: () => void;
-  onShare: () => void;
+  /** Share buttons (challenge link). */
+  share: ReactNode;
 }) {
   const { lang } = useI18n();
   const rank = teaRanks[rankFor(result.score)];
-  const vsFriend = challenge !== null && challenge.seed === result.seed;
   const stats = [
     { key: "time", label: copy.statTime, value: fmt(t(copy.seconds, lang), { n: num(result.seconds, lang) }) },
     { key: "tea", label: copy.statTea, value: `${num(result.tea, lang)}%` },
@@ -673,11 +644,7 @@ function ResultView({
         <div className="p-5">
           <p className="text-center text-ink-muted">{t(rank.blurb, lang)}</p>
           {result.newBest && <p className="mt-3 text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-          {vsFriend && (
-            <p className="mt-3 text-center font-extrabold">
-              {fmt(t(result.score > challenge.score ? copy.challengeWin : copy.challengeLose, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
           <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
             {stats.map((s) => (
               <div key={s.key} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
@@ -690,10 +657,9 @@ function ResultView({
             {t(copy.roadCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
           </p>
         </div>
+        <ResultStamp game={GAME_SLUG} />
       </div>
-      <button type="button" onClick={onShare} className={`${btnPrimary} ${accentBg[rank.accent]}`}>
-        {t(copy.share, lang)}
-      </button>
+      {share}
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}
       </button>

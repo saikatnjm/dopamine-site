@@ -44,16 +44,9 @@ export const bazarCopy = {
   statSpent: { en: "Spent", bn: "খরচ" },
   receipt: { en: "Today's bazar", bn: "আজকের বাজার" },
   bazarCode: { en: "Bazar code", bn: "বাজার কোড" },
-  challenge: {
-    en: "A friend scored {score} at this exact bazar. Same vendors, same prices — beat it.",
-    bn: "এই একই বাজারে এক বন্ধু {score} পেয়েছে। একই দোকানি, একই দাম — হারিয়ে দিন।",
-  },
-  challengeWin: { en: "🏆 You beat your friend's {score}!", bn: "🏆 বন্ধুর {score} হারিয়ে দিলেন!" },
-  challengeLose: { en: "😬 Your friend's {score} still stands.", bn: "😬 বন্ধুর {score} এখনো টিকে আছে।" },
   retry: { en: "↺ Retry (new bazar)", bn: "↺ আবার (নতুন বাজার)" },
   replay: { en: "Replay this exact bazar", bn: "একই বাজার আবার খেলুন" },
   share: { en: "📤 Share result", bn: "📤 ফলাফল শেয়ার" },
-  copied: { en: "✅ Link copied!", bn: "✅ লিংক কপি হয়েছে!" },
   shareText: {
     en: "My Bazar Bargain ending: “{title}” — saved ৳{saved}, {score} pts 🛒 Same vendors, your turn:",
     bn: "বাজার বার্গেইনে আমার এন্ডিং: “{title}” — বাঁচালাম ৳{saved}, {score} পয়েন্ট 🛒 একই দোকানি, এবার আপনার পালা:",

@@ -78,8 +78,20 @@ components/games/        game cards + client game components
 - Registry: `data/games/index.ts`; listed at `/games`, in header (🎮), footer, sitemap.
 - Rules live in `lib/games/<slug>.ts` as pure functions of `(seed, roundIndex)`;
   the same seed replays identical traffic. Never `Math.random()` in gameplay.
-- Share link: `/games/<slug>?seed=<base36>&s=<score>` → friend plays the same
-  seed with "beat {score}" banner. Score is claimed (client-side), not verified.
+- Challenge a Friend (shared by all games): `lib/challenge.ts` encodes
+  `{game, seed, score}` as `1<code>.<seed36>.<score36>.<check>` → `/c/<token>`
+  (≈18 chars). 2-letter game codes and per-game `maxScore` live in
+  `CHALLENGE_GAMES` — never rename/reuse a code. The checksum only catches
+  truncated/edited links (no secrets client-side; scores can be forged, so the
+  UI only says "your friend scored X" — never rankings). `decodeChallenge` never
+  throws; bad tokens → `app/c/[token]/not-found.tsx`. `/c/[token]` renders the
+  game (code-split via next/dynamic) and has its own OG image.
+  UI: `components/games/challenge-ui.tsx` — `ChallengeBanner`, `ChallengeOutcome`,
+  `ShareActions` (Web Share → copy fallback + WhatsApp/Facebook/X/copy),
+  `ResultStamp` (site + game on result cards for screenshots). A new game must
+  add its slug to `CHALLENGE_GAMES` and to `GAMES` in `app/c/[token]/page.tsx`.
+  Legacy `/games/<slug>?seed=&s=` links still work. Simulators keep their own
+  result-token sharing (`/result/<token>`).
 - Result title is a pure function of score (`rankFor`); never rename rank ids.
 - Best score: `localStorage["hottogol:<slug>:best"]` via `useSyncExternalStore`
   (server snapshot 0, try/catch for blocked storage).
@@ -211,4 +223,5 @@ components/games/        game cards + client game components
 - [x] Phase 12 — third game: Bazar Bargain (`/games/bazar-bargain`)
 - [x] Phase 13 — fourth game: Tea Balance (`/games/tea-balance`)
 - [x] Phase 14 — fifth game: Don't Tap (`/games/dont-tap`)
+- [x] Phase 15 — Challenge a Friend: shared `/c/<token>` links + share UI for all games
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
