@@ -19,6 +19,7 @@ export const CHALLENGE_GAMES = {
   "dont-tap": { code: "dt", maxScore: 3_000 },
   "chaos-machine": { code: "cm", maxScore: 6_000 },
   "delivery-sim": { code: "ds", maxScore: 5_000 },
+  "chicken-crossing": { code: "cx", maxScore: 60_000 },
 } as const;
 
 export type ChallengeGame = keyof typeof CHALLENGE_GAMES;

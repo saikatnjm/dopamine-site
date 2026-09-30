@@ -176,6 +176,13 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     description: { en: "Get a 5-star rating in the Delivery Simulator.", bn: "ডেলিভারি সিমুলেটরে ৫ স্টার রেটিং পান।" },
     unlocks: (e) => isGame(e, "delivery-sim") && num(e.params.rating) >= 5,
   },
+  {
+    id: "road-crosser",
+    emoji: "🐔",
+    title: { en: "Why Did the Chicken…", bn: "মুরগি কেন…" },
+    description: { en: "Reach level 3 in Chicken Crossing Dhaka.", bn: "চিকেন ক্রসিং ঢাকায় লেভেল ৩-এ পৌঁছান।" },
+    unlocks: (e) => isGame(e, "chicken-crossing") && num(e.params.level) >= 3,
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));

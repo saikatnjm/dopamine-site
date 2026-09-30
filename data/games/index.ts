@@ -129,6 +129,22 @@ export const games: Game[] = [
       description: "Be a Dhaka delivery rider for 90 seconds: late kitchens, wrong pins, rain, traffic, broken lifts and vanishing customers. 8 endings, star ratings, shareable challenges. Free.",
     },
   },
+  {
+    slug: "chicken-crossing",
+    title: { en: "Chicken Crossing Dhaka", bn: "চিকেন ক্রসিং ঢাকা" },
+    tagline: { en: "Why did the chicken cross the road? Nobody in Dhaka knows either.", bn: "মুরগি রাস্তা পার হলো কেন? ঢাকার কেউই জানে না।" },
+    description: {
+      en: "Hop a chicken across buses, CNGs, rickshaws, motorbikes, dogs and phone-staring pedestrians. Levels speed up, U-turns happen, and then Dhaka Mode starts.",
+      bn: "বাস, সিএনজি, রিকশা, মোটরবাইক, কুকুর আর ফোনে ডুবে থাকা পথচারীদের ফাঁক দিয়ে মুরগিকে লাফিয়ে পার করান। লেভেল বাড়লে গতি বাড়ে, ইউ-টার্ন হয়, তারপর শুরু হয় ঢাকা মোড।",
+    },
+    emoji: "🐔",
+    accent: "marigold",
+    durationSec: 60,
+    seo: {
+      title: "Chicken Crossing Dhaka — Free Road-Crossing Arcade Game",
+      description: "Hop a chicken across chaotic Dhaka traffic: buses, CNGs, rickshaws, dogs, rain and Dhaka Mode. Near-miss combos, funny levels, personal best and friend challenges. Free.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {
