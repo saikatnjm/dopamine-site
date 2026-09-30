@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { accentBg, card, cardHover } from "@/components/ui/styles";
-import type { Game } from "@/data/games";
+import { GAME_HREF_OVERRIDES, type Game } from "@/data/games";
 import { fmt, num, t, type Lang } from "@/lib/i18n/core";
 import { getDictionary } from "@/lib/i18n/dictionary";
 
@@ -10,7 +10,7 @@ export function GameCard({ game, lang, index = 0 }: { game: Game; lang: Lang; in
   const d = getDictionary(lang);
   return (
     <Link
-      href={`/games/${game.slug}`}
+      href={GAME_HREF_OVERRIDES[game.slug] ?? `/games/${game.slug}`}
       className={`${card} ${cardHover} ${tilts[index % tilts.length]} group flex flex-col overflow-hidden hover:rotate-0`}
     >
       <div className={`${accentBg[game.accent]} relative flex h-32 items-center justify-center border-b-2 border-ink`}>

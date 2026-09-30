@@ -211,6 +211,12 @@ export const games: Game[] = [
   },
 ];
 
+/**
+ * Games whose own route only redirects (the registry entry exists so
+ * challenge links work). Sitemaps and link lists should use this href instead.
+ */
+export const GAME_HREF_OVERRIDES: Readonly<Record<string, string>> = { "traffic-boss": "/boss" };
+
 export function listGames(): Game[] {
   return games;
 }

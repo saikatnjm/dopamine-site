@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
 import { experiencesInCategory, listCategories, listExperiences } from "@/lib/experience/registry";
 import { absoluteUrl } from "@/lib/site";
-import { listGames } from "@/data/games";
+import { GAME_HREF_OVERRIDES, listGames } from "@/data/games";
 
-// Only real, useful pages. Result pages are personal and noindex.
+// Only real, useful, indexable pages. Result (/result), challenge (/c) and
+// achievements pages are personal and noindex; redirecting routes are left out
+// (search engines treat redirects in a sitemap as errors).
 export default function sitemap(): MetadataRoute.Sitemap {
   const pages: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
@@ -22,7 +24,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/games"), changeFrequency: "weekly", priority: 0.8 },
     { url: absoluteUrl("/excuses"), changeFrequency: "monthly", priority: 0.7 },
     { url: absoluteUrl("/dhaka-person"), changeFrequency: "monthly", priority: 0.7 },
-    ...listGames().map((g) => ({
+    ...listGames()
+      .filter((g) => !(g.slug in GAME_HREF_OVERRIDES))
+      .map((g) => ({
       url: absoluteUrl(`/games/${g.slug}`),
       changeFrequency: "monthly" as const,
       priority: 0.9,

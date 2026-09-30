@@ -3,7 +3,7 @@ import Link from "next/link";
 import { WorldMap, type WorldView } from "@/components/world/world-map";
 import { quizCopy } from "@/data/dhaka-person";
 import { excuseCopy } from "@/data/excuses";
-import { getGame } from "@/data/games";
+import { GAME_HREF_OVERRIDES, getGame } from "@/data/games";
 import { worldCopy as copy, worlds, type WorldNodeRef } from "@/data/world";
 import { getExperience } from "@/lib/experience/registry";
 import { fmt, num, t, type Lang } from "@/lib/i18n/core";
@@ -37,7 +37,7 @@ function resolve(ref: WorldNodeRef, lang: Lang, dailyTitle: string): WorldView["
   if (ref.kind === "game") {
     const g = getGame(ref.slug);
     if (!g) return null;
-    return { key: `g:${g.slug}`, track: { kind: "game", slug: g.slug }, href: `/games/${g.slug}`, title: t(g.title, lang), emoji: g.emoji, accent: g.accent, zone, kind: t(copy.kindGame, lang), time: duration(g.durationSec, lang) };
+    return { key: `g:${g.slug}`, track: { kind: "game", slug: g.slug }, href: GAME_HREF_OVERRIDES[g.slug] ?? `/games/${g.slug}`, title: t(g.title, lang), emoji: g.emoji, accent: g.accent, zone, kind: t(copy.kindGame, lang), time: duration(g.durationSec, lang) };
   }
   switch (ref.id) {
     case "daily":

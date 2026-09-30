@@ -5,7 +5,7 @@
 import type { Accent } from "@/components/ui/styles";
 import { quizCopy } from "@/data/dhaka-person";
 import { excuseCopy } from "@/data/excuses";
-import { listGames } from "@/data/games";
+import { GAME_HREF_OVERRIDES, listGames } from "@/data/games";
 import { listExperiences } from "@/lib/experience/registry";
 import { t, type Lang, type Text } from "@/lib/i18n/core";
 
@@ -22,9 +22,6 @@ export type Activity = {
   emoji: string;
   accent: Accent;
 };
-
-/** Games whose page lives elsewhere (the registry entry exists for challenge links). */
-const GAME_HREF: Record<string, string> = { "traffic-boss": "/boss" };
 
 const KIND_LABEL: Record<ActivityKind, Text> = {
   experience: { en: "Simulator", bn: "সিমুলেটর" },
@@ -49,7 +46,7 @@ export function listActivities(lang: Lang): Activity[] {
       key: `g:${g.slug}`,
       kind: "game" as const,
       kindLabel: kl("game"),
-      href: GAME_HREF[g.slug] ?? `/games/${g.slug}`,
+      href: GAME_HREF_OVERRIDES[g.slug] ?? `/games/${g.slug}`,
       title: t(g.title, lang),
       emoji: g.emoji,
       accent: g.accent,
