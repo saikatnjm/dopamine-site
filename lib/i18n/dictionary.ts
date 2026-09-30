@@ -117,6 +117,10 @@ const en = {
   excuseBody: "Office, university, late, friends, family, dating — get a funny excuse with a credibility score.",
   excuseCta: "GENERATE EXCUSE",
   footerExcuses: "Excuse Generator",
+  footerPerson: "Dhaka Person Quiz",
+  personTitle: "What Kind of Dhaka Person Are You?",
+  personBody: "10 questions. CNG fares, biryani, rain, salary day. One very honest personality.",
+  personCta: "TAKE THE QUIZ",
 
   introMeta: "{steps} steps · about {min} min · no sign-up",
   restart: "↺ Restart",
@@ -267,6 +271,10 @@ const bn: Dict = {
   excuseBody: "অফিস, ভার্সিটি, দেরি, বন্ধু, পরিবার, ডেটিং — credibility score-সহ মজার excuse নিন।",
   excuseCta: "EXCUSE বানাও",
   footerExcuses: "অজুহাত জেনারেটর",
+  footerPerson: "ঢাকাবাসী কুইজ",
+  personTitle: "আপনি কেমন ঢাকাবাসী?",
+  personBody: "১০টা প্রশ্ন। সিএনজি ভাড়া, বিরিয়ানি, বৃষ্টি, বেতনের দিন। একদম সৎ একটা পার্সোনালিটি।",
+  personCta: "কুইজ দাও",
 
   introMeta: "{steps} ধাপ · প্রায় {min} মিনিট · সাইন-আপ লাগবে না",
   restart: "↺ আবার শুরু",

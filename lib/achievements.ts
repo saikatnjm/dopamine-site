@@ -153,6 +153,21 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     hidden: true,
     unlocks: (e) => isGame(e) && new Date(Date.now() + BD_OFFSET_MS).getUTCHours() < 4,
   },
+  {
+    id: "dhaka-certified",
+    emoji: "🏙️",
+    title: { en: "Certified Dhaka Person", bn: "সার্টিফায়েড ঢাকাবাসী" },
+    description: { en: "Finish the “What Kind of Dhaka Person Are You?” quiz.", bn: "“আপনি কেমন ঢাকাবাসী?” কুইজ শেষ করুন।" },
+    unlocks: (e) => e.name === "quiz_complete" && e.params.quiz === "dhaka-person",
+  },
+  {
+    id: "identity-crisis",
+    emoji: "🎭",
+    title: { en: "Identity Crisis", bn: "পরিচয় সংকট" },
+    description: { en: "Got 3 different Dhaka personalities. Who are you, really?", bn: "৩টা আলাদা ঢাকা পার্সোনালিটি পেয়েছেন। আসলে আপনি কে?" },
+    hidden: true,
+    unlocks: (e) => e.name === "quiz_complete" && e.params.quiz === "dhaka-person" && num(e.params.distinct) >= 3,
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));
@@ -246,7 +261,7 @@ function save(store: Store) {
 
 /** Update stats from an event, unlock anything newly earned. Returns new ids. */
 export function recordEvent(name: AnalyticsEvent, params: AnalyticsParams): string[] {
-  const relevant = name === "game_complete" || name === "experience_complete" || name === "daily_complete" || name === "challenge_won";
+  const relevant = name === "game_complete" || name === "experience_complete" || name === "daily_complete" || name === "challenge_won" || name === "quiz_complete";
   if (!relevant) return [];
   const store = parseStore(readRaw());
   const stats = store.stats;

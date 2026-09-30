@@ -160,6 +160,22 @@ components/games/        game cards + client game components
   and keep religion out of the jokes.
 - Events: `excuse_generate`, `excuse_copy`, `excuse_share`.
 
+## Dhaka Person quiz (`/dhaka-person`, homepage `DhakaPersonCard`)
+
+- 10 questions, 4 options (a–d). Scoring in `lib/dhaka-person.ts` (pure): each
+  option adds points to 8 traits; totals are normalised by each trait's max,
+  result = closest profile by cosine similarity; an even spread (≥ 7 traits,
+  top share ≤ 20 %) = `final-boss`. Copy (EN/BN) in `data/dhaka-person.ts`
+  under the same ids. 10 results; exhaustive check of all 4¹⁰ answer sets gives
+  7–14 % each — re-run it if you change effects/profiles.
+- Share link `/dhaka-person?a=<letters>&r=<resultId>`; the stored result id
+  wins over recomputation. Never rename/reuse question, option or result ids.
+- Local record `localStorage["hottogol:dhaka-person:v1"] = { found, last }`.
+- Events: `game_start`/`game_retry`/`game_share` (`game: "dhaka-person"`) and
+  `quiz_complete` (`quiz`, `result`, `distinct`) → achievements
+  `dhaka-certified` and hidden `identity-crisis` (3 distinct results).
+- Result card says "just for fun, not science" — no claims about real people.
+
 ## Engine rules
 
 - Experience = ordered `steps` (`choice` = user picks, `beat` = seeded random
@@ -255,4 +271,5 @@ components/games/        game cards + client game components
 - [x] Phase 16 — Achievements (local, versioned storage; 13 achievements incl. 2 secret)
 - [x] Phase 17 — Chaos Machine (`/games/chaos-machine`)
 - [x] Phase 18 — Excuse Generator (`/excuses` + homepage card)
+- [x] Phase 19 — "What Kind of Dhaka Person Are You?" quiz (`/dhaka-person` + homepage card)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
