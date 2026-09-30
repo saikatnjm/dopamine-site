@@ -23,6 +23,10 @@ const en = {
   tagline: "Tiny simulators for everyday chaos.",
 
   footerAll: "All experiences",
+  footerExplore: "Explore",
+  footerChallenges: "Challenges",
+  footerFun: "Just for fun",
+  footerSite: "Hottogol",
   footerAbout: "About",
   footerPrivacy: "Privacy",
   footerTerms: "Terms",
@@ -192,6 +196,10 @@ const bn: Dict = {
   tagline: "প্রতিদিনের হট্টগোলের ছোট্ট সিমুলেটর।",
 
   footerAll: "সব খেলা",
+  footerExplore: "ঘুরে দেখুন",
+  footerChallenges: "চ্যালেঞ্জ",
+  footerFun: "শুধু মজার জন্য",
+  footerSite: "হট্টগোল",
   footerAbout: "আমাদের কথা",
   footerPrivacy: "প্রাইভেসি",
   footerTerms: "শর্তাবলি",
