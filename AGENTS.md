@@ -111,6 +111,11 @@ components/games/        game cards + client game components
   acceleration, hazard hits, wind. Spills past `SPILL_ANGLE`; 60 s = delivered.
   Balance was tuned with bots (`idle` ≈ 28 s; good ≈ 50–55 s, 12–25 % deliver) —
   re-run a bot sim if you change physics constants.
+- Don't Tap: `roundPlan(seed, round, attempt)` gives each round's wait, decoys
+  and real signal. The controller flips `data-tone` + text on the button directly
+  (no React render on the hot path); "go" is applied inside a rAF and `goAt` is
+  stamped right after the DOM change. Input uses native `pointerdown`/`keydown`
+  listeners and `event.timeStamp` (performance.now() clock). No colour transition.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -205,4 +210,5 @@ components/games/        game cards + client game components
 - [x] Phase 11 — Daily Hottogol (`/daily` + homepage card; CNG Catch / Traffic Dodge rotation)
 - [x] Phase 12 — third game: Bazar Bargain (`/games/bazar-bargain`)
 - [x] Phase 13 — fourth game: Tea Balance (`/games/tea-balance`)
+- [x] Phase 14 — fifth game: Don't Tap (`/games/dont-tap`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

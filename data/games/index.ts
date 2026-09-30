@@ -81,6 +81,22 @@ export const games: Game[] = [
       description: "Carry a full cup of tea through potholes, manholes and goats in this free 20–60 second Dhaka balancing game. Smooth moves, funny endings, shareable challenges.",
     },
   },
+  {
+    slug: "dont-tap",
+    title: { en: "Don't Tap", bn: "ডোন্ট ট্যাপ" },
+    tagline: { en: "It says DON'T TAP. Then it lies. Then it says TAP!", bn: "লেখা “চাপবেন না”। তারপর মিথ্যা বলে। তারপর “চাপুন!”" },
+    description: {
+      en: "A 5-round reaction test with fake signals: wait for green TAP!, ignore the tricks, and see your real reaction time in milliseconds.",
+      bn: "নকল সিগন্যালসহ ৫ রাউন্ডের রিঅ্যাকশন টেস্ট: সবুজ “চাপুন!”-এর অপেক্ষা করুন, কৌশলে পা দেবেন না, আর দেখুন আপনার আসল রিঅ্যাকশন টাইম মিলিসেকেন্ডে।",
+    },
+    emoji: "🚦",
+    accent: "chili",
+    durationSec: 30,
+    seo: {
+      title: "Don't Tap — Free Reaction Time Test With Fake Signals",
+      description: "Test your reaction time in milliseconds: 5 rounds, fake-out signals, average and best times, funny titles and shareable challenges. Free, no sign-up.",
+    },
+  },
 ];
 
 export function listGames(): Game[] {
