@@ -68,6 +68,7 @@ lib/
     registry.ts          getExperience(), listExperiences(), categories
     result-token.ts      encode/decodeResultToken()
   games/<slug>.ts        pure, seeded game rules (no DOM/React)
+  games/shared.ts        seed/score share params, createBestStore(), prefersReducedMotion()
 app/games/               Games index + one route per game (e.g. /games/cng-catch)
 components/games/        game cards + client game components
 ```
@@ -90,6 +91,10 @@ components/games/        game cards + client game components
 - Input: pointerdown (tap/click), Space/Enter (global during play), and
   keyboard/AT `click` (`detail === 0`) on the stage button.
 - Analytics events: `game_start`, `game_retry`, `game_complete`, `game_share`.
+- New games use `lib/games/shared.ts` (CNG Catch still has its own copies).
+- Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
+  seed; each row keeps a safe lane within one lane of the previous row's; traffic
+  sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
 
 ## Engine rules
 
@@ -175,4 +180,5 @@ components/games/        game cards + client game components
 - [x] Phase 8 — six more experiences: food delivery, Dhaka bus, job resignation,
       fake shopping, house rent, random life decision (all EN/BN, 11–12 endings)
 - [x] Phase 9 — Games section + first game: CNG Catch (`/games/cng-catch`)
+- [x] Phase 10 — second game: Dhaka Traffic Dodge (`/games/traffic-dodge`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
