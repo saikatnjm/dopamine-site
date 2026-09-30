@@ -238,6 +238,11 @@ components/games/        game cards + client game components
   achievements store — older stores migrate to `[]`, so sims played before
   that show as unplayed.
 
+## Chaos Roulette (homepage hero, next to Surprise Me)
+
+- `lib/activities.ts` → `listActivities(lang)` builds every playable activity from the real registries (experiences, games, quiz, excuses); resolved on the server, passed as plain items. No hand-kept lists.
+- `components/experience/chaos-roulette.tsx`: picks with `pickRandom` (crypto, UI-only), spins a slot window through the items (~1.5 s, decelerating), stops on the pick, shows "THE INTERNET HAS DECIDED.", then navigates. Reduced motion: no spin, instant pick. Surprise Me (`SurpriseButton`) is unchanged.
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -370,4 +375,5 @@ components/games/        game cards + client game components
 - [x] Phase 25 — Shared result cards: one card design, Copy result, canvas image download, for every experience
 - [x] Phase 26 — Hottogol World discovery map (`/world`)
 - [x] Phase 27 — Weekly Boss framework + 👹 Dhaka Traffic Boss (`/boss`)
+- [x] Phase 28 — Chaos Roulette (homepage)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
