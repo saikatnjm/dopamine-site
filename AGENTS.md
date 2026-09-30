@@ -102,6 +102,11 @@ components/games/        game cards + client game components
   registered in `DAILY_GAMES` (`components/daily/daily-play.tsx`). The 1 s clock
   lives in leaf components (`DailyCountdown`) so running games never re-render
   from it. Never show rankings or player counts — scores are local only.
+- Bazar Bargain: turn-based (no rAF). `makeRun(seed)` fixes list, budget, vendor
+  personality, hidden floor and opening price per stall; each reaction uses an
+  RNG from (seed, stall, turn, action) so same seed + same choices = same story.
+  8 endings (2 legendary, rare by design — re-run a bot sim if you tune numbers).
+  Vendor quotes are Bangla in both languages with an English gloss in EN mode.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -194,4 +199,5 @@ components/games/        game cards + client game components
 - [x] Phase 9 — Games section + first game: CNG Catch (`/games/cng-catch`)
 - [x] Phase 10 — second game: Dhaka Traffic Dodge (`/games/traffic-dodge`)
 - [x] Phase 11 — Daily Hottogol (`/daily` + homepage card; CNG Catch / Traffic Dodge rotation)
+- [x] Phase 12 — third game: Bazar Bargain (`/games/bazar-bargain`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
