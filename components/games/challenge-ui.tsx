@@ -28,6 +28,11 @@ export function ChallengeBanner({ challenge }: { challenge: FriendChallenge }) {
 /** Win / tie / lose line on the result card (only when you played the friend's round). */
 export function ChallengeOutcome({ challenge, seed, score }: { challenge: FriendChallenge | null; seed: number; score: number }) {
   const { lang, d } = useI18n();
+  const won = challenge !== null && challenge.seed === seed && score > challenge.score;
+  // Once per result card (it mounts once per finished round).
+  useEffect(() => {
+    if (won) track("challenge_won", { score });
+  }, [won, score]);
   if (!challenge || challenge.seed !== seed) return null;
   const diff = Math.abs(score - challenge.score);
   const text =

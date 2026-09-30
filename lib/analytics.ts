@@ -14,7 +14,8 @@ export type AnalyticsEvent =
   | "game_complete"
   | "game_share"
   | "daily_complete"
-  | "daily_share";
+  | "daily_share"
+  | "challenge_won";
 // page_view is sent automatically by GA4 (enhanced measurement).
 
 export type AnalyticsParams = Record<string, string | number | boolean | undefined>;
@@ -33,8 +34,30 @@ export function getGaId(): string | null {
   return id && GA_ID_PATTERN.test(id) ? id : null;
 }
 
+type LocalListener = (event: AnalyticsEvent, params: AnalyticsParams) => void;
+const localListeners = new Set<LocalListener>();
+
+/**
+ * In-browser subscribers to tracked events (e.g. achievements). They run even
+ * when GA is empty or blocked, and nothing they receive leaves the device.
+ */
+export function onTrack(listener: LocalListener): () => void {
+  localListeners.add(listener);
+  return () => {
+    localListeners.delete(listener);
+  };
+}
+
 export function track(event: AnalyticsEvent, params: AnalyticsParams = {}): void {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  if (typeof window === "undefined") return;
+  localListeners.forEach((listener) => {
+    try {
+      listener(event, params);
+    } catch {
+      // A local feature must never break the app.
+    }
+  });
+  if (typeof window.gtag !== "function") return;
   try {
     window.gtag("event", event, params);
   } catch {
