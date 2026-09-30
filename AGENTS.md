@@ -155,6 +155,15 @@ components/games/        game cards + client game components
   Bot-tuned: random play ≈ 40 % late, 21 % perfect, 0.3 % legendary — re-run a
   bot sim if you change numbers. `game_complete` sends `outcome` + `rating`
   (achievements `five-star-rider`, `legendary-ending`).
+- Chicken Crossing Dhaka (`/games/chicken-crossing`, challenge code `cx`):
+  7-column grid, fixed-step sim. `rowPlan(seed, row, prev)` builds each row
+  (footpath/divider/road, ≤ 4 roads in a row, mix + speed by level every
+  `LEVEL_ROWS`); lanes created later are placed where they'd be since t = 0.
+  Seeded event schedule (u-turn, bus-stop, cng-surprise, dog, rain,
+  dhaka-mode from level 3). Camera creeps forward — idle ≈ 20 s = "left
+  behind". Rows and vehicles are fixed DOM pools (17 / 80) moved by one rAF
+  loop; the hop tween is visual only (skipped with reduced motion). Bot-tuned
+  (careful bot ≈ 30 s, levels 1–3) — re-run a bot sim if you change numbers.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -284,4 +293,5 @@ components/games/        game cards + client game components
 - [x] Phase 18 — Excuse Generator (`/excuses` + homepage card)
 - [x] Phase 19 — "What Kind of Dhaka Person Are You?" quiz (`/dhaka-person` + homepage card)
 - [x] Phase 20 — Delivery Simulator (`/games/delivery-sim`)
+- [x] Phase 21 — Chicken Crossing Dhaka (`/games/chicken-crossing`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
