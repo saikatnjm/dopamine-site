@@ -53,3 +53,16 @@ export function createBestStore(key: string) {
 export function prefersReducedMotion(): boolean {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
+
+/**
+ * Opt-in "Daily Hottogol" mode for a game component. When set, the game plays
+ * `seed`, retries replay the same seed, and results are reported/shared via
+ * the daily page instead of the game's own seed link.
+ */
+export type DailyMode = {
+  seed: number;
+  onComplete: (score: number) => void;
+  onShare: (score: number) => void;
+  /** Label for the retry button, e.g. "Try today's challenge again". */
+  retryLabel: string;
+};
