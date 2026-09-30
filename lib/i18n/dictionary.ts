@@ -113,6 +113,10 @@ const en = {
   achStatSims: "Simulators finished",
   achLink: "🏆 Your achievements",
   footerAchievements: "Achievements",
+  excuseTitle: "😂 NEED AN EXCUSE?",
+  excuseBody: "Office, university, late, friends, family, dating — get a funny excuse with a credibility score.",
+  excuseCta: "GENERATE EXCUSE",
+  footerExcuses: "Excuse Generator",
 
   introMeta: "{steps} steps · about {min} min · no sign-up",
   restart: "↺ Restart",
@@ -259,6 +263,10 @@ const bn: Dict = {
   achStatSims: "শেষ করা সিমুলেটর",
   achLink: "🏆 আপনার অ্যাচিভমেন্ট",
   footerAchievements: "অ্যাচিভমেন্ট",
+  excuseTitle: "😂 EXCUSE লাগবে?",
+  excuseBody: "অফিস, ভার্সিটি, দেরি, বন্ধু, পরিবার, ডেটিং — credibility score-সহ মজার excuse নিন।",
+  excuseCta: "EXCUSE বানাও",
+  footerExcuses: "অজুহাত জেনারেটর",
 
   introMeta: "{steps} ধাপ · প্রায় {min} মিনিট · সাইন-আপ লাগবে না",
   restart: "↺ আবার শুরু",
