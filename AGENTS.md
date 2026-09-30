@@ -128,6 +128,14 @@ components/games/        game cards + client game components
   (no React render on the hot path); "go" is applied inside a rAF and `goAt` is
   stamped right after the DOM change. Input uses native `pointerdown`/`keydown`
   listeners and `event.timeStamp` (performance.now() clock). No colour transition.
+- Achievements (`/achievements`, toast via `AchievementToaster` in the root
+  layout): all definitions + unlock rules live in `lib/achievements.ts`. They
+  unlock from events already sent through `track()` — `onTrack()` is an
+  in-browser listener that runs even when GA is blocked and sends nothing.
+  So changing a game's `track("game_complete", …)` params can break a rule.
+  Storage `localStorage["hottogol:achievements"] = { v: 1, unlocked, stats }`;
+  bump the version + add a `migrate()` case for schema changes. `hidden: true`
+  achievements show "Secret achievement" until unlocked. Never rename ids.
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
@@ -224,4 +232,5 @@ components/games/        game cards + client game components
 - [x] Phase 13 — fourth game: Tea Balance (`/games/tea-balance`)
 - [x] Phase 14 — fifth game: Don't Tap (`/games/dont-tap`)
 - [x] Phase 15 — Challenge a Friend: shared `/c/<token>` links + share UI for all games
+- [x] Phase 16 — Achievements (local, versioned storage; 13 achievements incl. 2 secret)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

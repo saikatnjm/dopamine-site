@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Noto_Sans_Bengali } from "next/font/google";
+import { AchievementToaster } from "@/components/achievements/achievement-toaster";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { CreditBadge } from "@/components/navigation/github-credit";
 import { SiteFooter } from "@/components/navigation/site-footer";
@@ -75,6 +76,7 @@ export default async function RootLayout({
           </div>
           <SiteFooter />
           <CreditBadge />
+          <AchievementToaster />
         </LangProvider>
         <GoogleAnalytics />
       </body>
