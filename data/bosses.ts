@@ -107,7 +107,7 @@ export const trafficBossCopy = {
   statHits: { en: "💥 Hits", bn: "💥 ধাক্কা" },
   survivedLine: { en: "You defeated the traffic boss! The road trembles.", bn: "আপনি ট্রাফিক বসকে হারিয়ে দিলেন! রাস্তা কাঁপছে।" },
   knockedLine: { en: "The boss knocked you off the bike. Retry — it's the same traffic all week.", bn: "বস আপনাকে বাইক থেকে ফেলে দিয়েছে। আবার চেষ্টা করুন — পুরো সপ্তাহ একই ট্রাফিক।" },
-} as const satisfies Record<string, Text | readonly Text[]>;
+} as const;
 
 export const trafficBossRanks: Record<RankId, { emoji: string; title: Text; accent: Accent }> = {
   "boss-slayer": {
