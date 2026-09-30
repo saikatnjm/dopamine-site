@@ -204,8 +204,8 @@ export function TrafficDodgeGame({ challenge }: { challenge: Challenge }) {
       if (r.crash) {
         setCrashed(true);
         setLine({
-          en: fmt(copy.crashedInto.en, { what: obstacleLooks[r.crash.kind].name.en }),
-          bn: fmt(copy.crashedInto.bn, { what: obstacleLooks[r.crash.kind].name.bn }),
+          en: fmt(copy.crashedInto.en, { what: t(obstacleLooks[r.crash.kind].name, "en") }),
+          bn: fmt(copy.crashedInto.bn, { what: t(obstacleLooks[r.crash.kind].name, "bn") }),
         });
         if (!reduce) {
           stage.animate(
