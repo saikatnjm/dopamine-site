@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
+import { ChallengeBanner, ChallengeOutcome, ResultStamp, ShareActions } from "@/components/games/challenge-ui";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { cngCatchCopy as copy, feedbackLines, ranks, soundWords } from "@/data/games/cng-catch";
 import { track } from "@/lib/analytics";
+import type { FriendChallenge } from "@/lib/challenge";
 import type { DailyMode } from "@/lib/games/shared";
 import {
   DURATION_MS,
@@ -25,7 +27,6 @@ import {
 } from "@/lib/games/cng-catch";
 import { fmt, num, t, type Text } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
-import { copyText } from "@/lib/sharing";
 
 // ---------------------------------------------------------------------------
 // Best score in localStorage (external store → no hydration mismatch).
@@ -79,7 +80,7 @@ export function CngCatchGame({
   challenge,
   daily,
 }: {
-  challenge: { seed: number; score: number } | null;
+  challenge: FriendChallenge | null;
   /** Daily Hottogol mode (fixed seed, results reported to the daily page). */
   daily?: DailyMode;
 }) {
@@ -95,7 +96,6 @@ export function CngCatchGame({
   const [secondsLeft, setSecondsLeft] = useState(DURATION_MS / 1000);
   const [fx, setFx] = useState<Fx | null>(null);
   const [result, setResult] = useState<Result | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
 
   const rootRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLButtonElement>(null);
@@ -106,7 +106,6 @@ export function CngCatchGame({
   const comboRef = useRef<HTMLSpanElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const hailRef = useRef<(() => void) | null>(null);
-  const toastTimer = useRef<number | undefined>(undefined);
 
   // ----- Game loop: all per-frame work writes to the DOM directly. -----
   useEffect(() => {
@@ -302,8 +301,6 @@ export function CngCatchGame({
     if (phase === "over") headingRef.current?.focus();
   }, [phase]);
 
-  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
-
   function start(nextSeed: number, kind: "first" | "retry" | "replay") {
     setSeed(nextSeed);
     setHud(EMPTY_HUD);
@@ -316,29 +313,11 @@ export function CngCatchGame({
     rootRef.current?.scrollIntoView({ block: "start", behavior: prefersReducedMotion() ? "auto" : "smooth" });
   }
 
-  function showToast(message: string) {
-    setToast(message);
-    window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setToast(null), 2000);
-  }
-
-  async function share(r: Result) {
+  /** Shared "Challenge a friend" actions for a finished round. */
+  function shareActions(r: Result) {
     const rank = ranks[rankFor(r.score)];
-    const url = `${window.location.origin}/games/${GAME_SLUG}?seed=${encodeSeed(r.seed)}&s=${r.score}`;
     const text = fmt(t(copy.shareText, lang), { title: t(rank.title, lang), score: num(r.score, lang) });
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({ text, url });
-        track("game_share", { game: GAME_SLUG, method: "native", rank: rank.id });
-      } catch {
-        // share sheet dismissed
-      }
-      return;
-    }
-    if (await copyText(`${text} ${url}`)) {
-      showToast(t(copy.copied, lang));
-      track("game_share", { game: GAME_SLUG, method: "copy", rank: rank.id });
-    }
+    return <ShareActions game={GAME_SLUG} seed={r.seed} score={r.score} text={text} accent={rank.accent} rank={rank.id} />;
   }
 
   const isChallenge = challenge !== null && seed === challenge.seed;
@@ -348,11 +327,7 @@ export function CngCatchGame({
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="cng-how">
-          {isChallenge && (
-            <p className="mb-4 -rotate-1 rounded-2xl border-2 border-ink bg-marigold p-3 font-bold shadow-pop">
-              ⚔️ {fmt(t(copy.challenge, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          {isChallenge && <ChallengeBanner challenge={challenge} />}
           <h2 id="cng-how" className="font-display text-2xl font-extrabold">
             {t(copy.howTitle, lang)}
           </h2>
@@ -486,13 +461,17 @@ export function CngCatchGame({
           retryLabel={daily?.retryLabel}
           onRetry={() => (daily ? start(daily.seed, "replay") : start(newSeed(), "retry"))}
           onReplay={daily ? undefined : () => start(result.seed, "replay")}
-          onShare={() => (daily ? daily.onShare(result.score) : share(result))}
+          share={
+            daily ? (
+              <button type="button" onClick={() => daily.onShare(result.score)} className={`${btnPrimary} ${accentBg.marigold}`}>
+                {t(copy.share, lang)}
+              </button>
+            ) : (
+              shareActions(result)
+            )
+          }
         />
       )}
-
-      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">
-        {toast && <p className="rounded-pill border-2 border-ink bg-ink px-5 py-2.5 font-bold text-bg shadow-pop">{toast}</p>}
-      </div>
     </div>
   );
 }
@@ -543,20 +522,20 @@ function ResultView({
   retryLabel,
   onRetry,
   onReplay,
-  onShare,
+  share,
 }: {
   result: Result;
-  challenge: { seed: number; score: number } | null;
+  challenge: FriendChallenge | null;
   headingRef: RefObject<HTMLHeadingElement | null>;
   retryLabel?: string;
   onRetry: () => void;
   /** Omitted in daily mode (retry already replays the same traffic). */
   onReplay?: () => void;
-  onShare: () => void;
+  /** Share buttons (challenge link, or the daily share). */
+  share: ReactNode;
 }) {
   const { lang } = useI18n();
   const rank = ranks[rankFor(result.score)];
-  const vsFriend = challenge !== null && challenge.seed === result.seed;
   const stats = [
     { label: copy.statCatches, value: result.catches },
     { label: copy.statPerfects, value: result.perfects },
@@ -582,11 +561,7 @@ function ResultView({
         <div className="p-5">
           <p className="text-center text-ink-muted">{t(rank.blurb, lang)}</p>
           {result.newBest && <p className="mt-3 text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-          {vsFriend && (
-            <p className="mt-3 text-center font-extrabold">
-              {fmt(t(result.score > challenge.score ? copy.challengeWin : copy.challengeLose, lang), { score: num(challenge.score, lang) })}
-            </p>
-          )}
+          <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
           <dl className="mt-4 grid grid-cols-4 gap-2 text-center">
             {stats.map((s) => (
               <div key={t(s.label, "en")} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
@@ -599,10 +574,9 @@ function ResultView({
             {t(copy.trafficCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
           </p>
         </div>
+        <ResultStamp game={GAME_SLUG} />
       </div>
-      <button type="button" onClick={onShare} className={`${btnPrimary} ${accentBg[rank.accent]}`}>
-        {t(copy.share, lang)}
-      </button>
+      {share}
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {retryLabel ?? t(copy.retry, lang)}
       </button>
