@@ -3,12 +3,15 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
+import { ResultCard } from "@/components/share/result-card";
+import { ResultShareKit, useHost } from "@/components/share/result-share-kit";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { CATEGORIES, categoryInfo, excuseCopy as copy, type CategoryId } from "@/data/excuses";
 import { track } from "@/lib/analytics";
 import { excuseText, freshSeed, generateExcuse, shareMessage, usedIds } from "@/lib/excuses";
 import { encodeSeed } from "@/lib/games/shared";
 import { num, t } from "@/lib/i18n/core";
+import type { ResultCardData } from "@/lib/result-card";
 import { copyText, shareTargets, type ShareMethod } from "@/lib/sharing";
 
 type Current = { requested: CategoryId; seed: number };
@@ -32,6 +35,7 @@ export function ExcuseGenerator({ initial, shared }: { initial: Current | null; 
   const timer = useRef<number | undefined>(undefined);
   const resultRef = useRef<HTMLDivElement>(null);
   const origin = useOrigin();
+  const host = useHost();
 
   const excuse = useMemo(() => (current ? generateExcuse(current.requested, current.seed) : null), [current]);
   useEffect(() => () => window.clearTimeout(timer.current), []);
@@ -76,6 +80,21 @@ export function ExcuseGenerator({ initial, shared }: { initial: Current | null; 
   const category = excuse.category;
   const info = categoryInfo[category];
   const shared_ = (method: ShareMethod) => track("excuse_share", { category, method });
+  const cardData: ResultCardData = {
+    game: t(copy.title, lang),
+    emoji: "😂",
+    accent: info.accent,
+    headlineLabel: t(copy.credibility, lang),
+    titleEmoji: info.emoji,
+    headline: `${num(excuse.credibility, lang)}%`,
+    title: t(excuse.verdict, lang),
+    stats: [
+      { label: t(copy.chaos, lang), value: `${num(excuse.chaos, lang)}%` },
+      { label: t(copy.situation, lang), value: t(info.label, lang) },
+    ],
+    quote: text,
+    path: path(current),
+  };
 
   async function copyExcuse() {
     if (await copyText(text)) {
@@ -116,37 +135,9 @@ export function ExcuseGenerator({ initial, shared }: { initial: Current | null; 
         <p className="-rotate-1 rounded-2xl border-2 border-ink bg-marigold p-3 text-center font-extrabold shadow-pop">{t(copy.sharedBanner, lang)}</p>
       )}
 
-      {/* Result — built to screenshot well */}
-      <div
-        ref={resultRef}
-        tabIndex={-1}
-        aria-live="polite"
-        className={`${card} overflow-hidden outline-none focus-visible:outline-3 focus-visible:outline-offset-4`}
-      >
-        <div className={`${accentBg[info.accent]} flex items-center justify-between gap-2 border-b-2 border-ink px-4 py-2`}>
-          <p className="text-sm font-extrabold">
-            {info.emoji} {t(info.label, lang)}
-          </p>
-          <span aria-hidden key={current.seed} className="text-2xl motion-safe:animate-wiggle">
-            😂
-          </span>
-        </div>
-        <blockquote className="px-5 pb-4 pt-5">
-          <p lang={lang} className="font-display text-2xl font-extrabold leading-snug sm:text-3xl">
-            “{text}”
-          </p>
-        </blockquote>
-        <div className="grid gap-3 px-5 pb-4">
-          <Meter label={t(copy.credibility, lang)} value={excuse.credibility} color="bg-lime" />
-          <Meter label={t(copy.chaos, lang)} value={excuse.chaos} color="bg-chili" />
-          <div className="rounded-2xl border-2 border-ink bg-surface-2 p-3">
-            <p className="text-xs font-extrabold uppercase tracking-wider text-ink-muted">{t(copy.verdict, lang)}</p>
-            <p className="font-bold">{t(excuse.verdict, lang)}</p>
-          </div>
-        </div>
-        <p className="border-t-2 border-dashed border-ink/30 px-4 py-2 text-center text-xs font-extrabold text-ink-muted">
-          🧠 Hottogol · {origin.replace(/^https?:\/\//, "")}/excuses
-        </p>
+      {/* Result — shared Hottogol card, built to screenshot well */}
+      <div ref={resultRef} tabIndex={-1} aria-live="polite" className="outline-none focus-visible:outline-3 focus-visible:outline-offset-4">
+        <ResultCard data={cardData} host={host} level={2} />
       </div>
 
       <button type="button" onClick={() => generate()} className={`${btnPrimary} ${accentBg.marigold}`}>
@@ -186,6 +177,7 @@ export function ExcuseGenerator({ initial, shared }: { initial: Current | null; 
           </button>
         </div>
       </section>
+      <ResultShareKit data={cardData} url={url} fileName="hottogol-excuse" onShared={shared_} primary={false} copy={false} />
       <Link href="/" className={btnGhost}>
         {t(copy.back, lang)}
       </Link>
@@ -224,20 +216,5 @@ function CategoryPicker({ value, onChange }: { value: CategoryId; onChange: (c: 
         })}
       </div>
     </fieldset>
-  );
-}
-
-function Meter({ label, value, color }: { label: string; value: number; color: string }) {
-  const { lang } = useI18n();
-  return (
-    <div>
-      <div className="flex items-baseline justify-between text-sm font-extrabold uppercase tracking-wider">
-        <span>{label}</span>
-        <span className="font-display text-xl tabular-nums">{num(value, lang)}%</span>
-      </div>
-      <div role="meter" aria-label={label} aria-valuemin={0} aria-valuemax={100} aria-valuenow={value} className="mt-1 h-4 overflow-hidden rounded-pill border-2 border-ink bg-surface">
-        <span className={`block h-full ${color}`} style={{ width: `${value}%` }} />
-      </div>
-    </div>
   );
 }

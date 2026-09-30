@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
+import { ResultCard as SharedResultCard } from "@/components/share/result-card";
+import { ResultShareKit, useHost } from "@/components/share/result-share-kit";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { questions, quizCopy as copy, results, traitInfo } from "@/data/dhaka-person";
 import { track } from "@/lib/analytics";
@@ -19,6 +21,7 @@ import {
 } from "@/lib/dhaka-person";
 import { prefersReducedMotion } from "@/lib/games/shared";
 import { fmt, num, t, type Lang } from "@/lib/i18n/core";
+import type { ResultCardData } from "@/lib/result-card";
 import { copyText, shareTargets, type ShareMethod } from "@/lib/sharing";
 
 export type Shared = { answers: OptionKey[]; result: ResultId };
@@ -334,6 +337,13 @@ function ResultView({
           </button>
         </div>
       </section>
+      <ResultShareKit
+        data={quizCard(result, answers, lang, t(copy.youAre, lang))}
+        url={url}
+        fileName="dhaka-person-result"
+        onShared={shared}
+        primary={false}
+      />
       <div className="grid grid-cols-2 gap-3">
         <button type="button" onClick={onRetake} className={`${btnPrimary} ${accentBg.cng} px-3 text-base`}>
           {t(copy.retake, lang)}
@@ -353,7 +363,27 @@ function ResultView({
   );
 }
 
-/** Screenshot-friendly result card. */
+/** Quiz result → shared card data (only real values: your answers' trait mix). */
+function quizCard(result: ResultId, answers: readonly OptionKey[], lang: Lang, heading: string): ResultCardData {
+  const info = results[result];
+  return {
+    game: t(copy.title, lang),
+    emoji: "🏙️",
+    accent: info.accent,
+    headlineLabel: heading,
+    titleEmoji: info.emoji,
+    headline: t(info.title, lang),
+    blurb: t(info.description, lang),
+    stats: topTraits(answers).map(({ trait, percent }) => ({
+      label: `${traitInfo[trait].emoji} ${t(traitInfo[trait].label, lang)}`,
+      value: `${num(percent, lang)}%`,
+    })),
+    quote: t(info.quote, lang).replace(/^[“"]|[”"]$/g, ""),
+    path: "/dhaka-person",
+  };
+}
+
+/** Screenshot-friendly result card (shared Hottogol design). */
 function ResultCard({
   result,
   answers,
@@ -365,63 +395,10 @@ function ResultCard({
   lang: Lang;
   heading: string;
 }) {
-  const origin = useOrigin();
-  const info = results[result];
-  const stats = topTraits(answers);
+  const host = useHost();
   return (
-    <article className={`${card} overflow-hidden`}>
-      <div className={`${accentBg[info.accent]} border-b-2 border-ink px-5 pb-4 pt-5 text-center`}>
-        <p className="text-sm font-extrabold uppercase tracking-wider">{heading}</p>
-        <p aria-hidden className="mt-1 text-6xl motion-safe:animate-wiggle">
-          {info.emoji}
-        </p>
-        <h2 lang={lang} className="mt-1 font-display text-3xl font-extrabold leading-tight sm:text-4xl">
-          {t(info.title, lang)}
-        </h2>
-      </div>
-      <div className="grid gap-4 p-5">
-        <p lang={lang} className="text-lg font-bold">
-          {t(info.description, lang)}
-        </p>
-        <blockquote lang={lang} className="-rotate-1 rounded-2xl border-2 border-ink bg-surface-2 p-3 text-center font-display text-xl font-extrabold">
-          {t(info.quote, lang)}
-        </blockquote>
-        {stats.length > 0 && (
-          <div>
-            <p className="mb-2 text-xs font-extrabold uppercase tracking-wider text-ink-muted">{t(copy.stats, lang)}</p>
-            <div className="grid gap-2">
-              {stats.map(({ trait, percent }) => {
-                const tr = traitInfo[trait];
-                const label = t(tr.label, lang);
-                return (
-                  <div key={trait}>
-                    <div className="flex items-baseline justify-between text-sm font-extrabold">
-                      <span>
-                        <span aria-hidden>{tr.emoji}</span> {label}
-                      </span>
-                      <span className="tabular-nums">{num(percent, lang)}%</span>
-                    </div>
-                    <div
-                      role="meter"
-                      aria-label={label}
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-valuenow={percent}
-                      className="mt-1 h-3 overflow-hidden rounded-pill border-2 border-ink bg-surface"
-                    >
-                      <span className={`block h-full ${tr.color}`} style={{ width: `${percent}%` }} />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-        <p className="text-center text-xs font-bold text-ink-muted">{t(copy.note, lang)}</p>
-      </div>
-      <p className="border-t-2 border-dashed border-ink/30 px-4 py-2 text-center text-xs font-extrabold text-ink-muted">
-        🏙️ Hottogol · {origin.replace(/^https?:\/\//, "")}/dhaka-person
-      </p>
-    </article>
+    <SharedResultCard data={quizCard(result, answers, lang, heading)} host={host} level={2}>
+      <p className="text-center text-xs font-bold text-ink-muted">{t(copy.note, lang)}</p>
+    </SharedResultCard>
   );
 }
