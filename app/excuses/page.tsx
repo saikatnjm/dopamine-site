@@ -8,6 +8,7 @@ import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { newSeed } from "@/lib/random";
 import { absoluteUrl } from "@/lib/site";
+import { RelatedLinks } from "@/components/related/related-links";
 
 type Props = { searchParams: Promise<{ c?: string | string[]; s?: string | string[]; go?: string | string[] }> };
 
@@ -59,6 +60,7 @@ export default async function ExcusesPage({ searchParams }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(copy.lead, lang)}</p>
       </header>
       <ExcuseGenerator initial={initial} shared={shared} />
+      <RelatedLinks current="p:excuses" />
     </main>
   );
 }

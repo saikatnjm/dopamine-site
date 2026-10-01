@@ -299,6 +299,15 @@ components/games/        game cards + client game components
 - SEO: canonical, OG/Twitter, CollectionPage + ItemList, BreadcrumbList (+ visible breadcrumb), FAQPage only when the guide has an FAQ; in sitemap; footer group "Lists"; linked from `/bored`.
 - Rules: no thin/spun pages — a new guide needs genuinely different picks and hand-written copy. Only claim what the activity actually does.
 
+## Internal links (`<RelatedLinks>`, every activity + content page)
+
+- Server-rendered, deterministic (crawlable) "keep playing" sections under each activity page: `components/related/related-links.tsx`; logic `lib/related.ts`. Client-side, personalised "LIKED THAT?" on result screens is separate.
+- Sections: Related games · Related simulators · More from {category} · You might also like · More things to do when bored (`/bored` + 2 fitting guides via `boredGuidesFor`).
+- Standard plans (`activityPagePlan`): game → games 3 + sims 2; simulator → category 3 + sims 2 + games 2; quiz/tool → also-like 3. Max 5 activity links per page; each activity at most once per page, never the page itself; a section with < 2 items is dropped.
+- Ranking: summed `relatedness()` to the page's anchors, hub-damped (÷ √(degree/avg)) so widely related activities don't top every page, plus a per-page hashed jitter so near-ties rotate.
+- Wired into: 11 game pages, `/boss`, `/experiences/[slug]`, `/dhaka-person`, `/excuses`, `/daily` (quick reflex games), `/categories/[slug]` (games in that category), guide pages (related games for the picks, excluding listed ones).
+- Every activity gets ≥ 3 inbound links site-wide (re-check after adding activities).
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -439,4 +448,5 @@ components/games/        game cards + client game components
 - [x] Phase 33 — "You might also like" (registry category/mechanic/tags, local recent-play history)
 - [x] Phase 34 — 🔥 Hot right now (curated, `data/hot.ts`)
 - [x] Phase 35 — SEO guide pages (5 hand-written guides, shared template, validation)
+- [x] Phase 36 — Internal linking (`<RelatedLinks>` on every activity + content page)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

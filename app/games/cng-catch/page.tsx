@@ -9,6 +9,7 @@ import { decodeScore, decodeSeed, GAME_SLUG } from "@/lib/games/cng-catch";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { RelatedLinks } from "@/components/related/related-links";
 
 type Props = { searchParams: Promise<{ seed?: string | string[]; s?: string | string[] }> };
 
@@ -63,6 +64,7 @@ export default async function CngCatchPage({ searchParams }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(game.description, lang)}</p>
       </header>
       <CngCatchGame challenge={challenge} />
+      <RelatedLinks current={`g:${GAME_SLUG}`} />
     </main>
   );
 }

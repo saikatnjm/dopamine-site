@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ActivityCard } from "@/components/experience/activity-card";
+import { RelatedLinks } from "@/components/related/related-links";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
 import type { Activity } from "@/lib/activities";
 import { getGuide, guides, type GuideSlug } from "@/lib/guides";
@@ -148,6 +149,14 @@ export async function GuidePage({ slug }: { slug: GuideSlug }) {
           </ul>
         </section>
       )}
+
+      <RelatedLinks
+        pageKey={`guide:${slug}`}
+        anchors={picks.map((p) => p.activity.key)}
+        exclude={[...picks.map((p) => p.activity.key), ...related.map((a) => a.key)]}
+        sections={[{ id: "games", max: 3 }]}
+        bored={false}
+      />
 
       <nav aria-labelledby="guide-other" className="mt-12">
         <h2 id="guide-other" className="font-display text-2xl font-extrabold sm:text-3xl">

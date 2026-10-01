@@ -8,6 +8,7 @@ import { experiencesInCategory, getCategory, listCategories } from "@/lib/experi
 import type { CategorySlug } from "@/lib/experience/types";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
+import { RelatedLinks } from "@/components/related/related-links";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -81,6 +82,7 @@ export default async function CategoryPage({ params }: Props) {
             </li>
           ))}
       </ul>
+      <RelatedLinks pageKey={`category:${category.slug}`} sections={[{ id: "games", max: 4 }]} pool={(a) => a.kind === "game" && a.category === category.slug} bored={false} />
     </main>
   );
 }

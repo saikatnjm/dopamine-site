@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DailyPlay } from "@/components/daily/daily-play";
 import { getI18n } from "@/lib/i18n/server";
+import { RelatedLinks } from "@/components/related/related-links";
 
 export const metadata: Metadata = {
   title: "Daily Hottogol — One Challenge a Day",
@@ -21,6 +22,7 @@ export default async function DailyPage() {
       </h1>
       {/* The challenge is computed in the browser from today's Bangladesh date. */}
       <DailyPlay />
+      <RelatedLinks pageKey="page:daily" sections={[{ id: "games", max: 4 }]} pool={(a) => a.mechanic === "reflex" && (a.durationSec ?? 99) <= 60} />
     </main>
   );
 }
