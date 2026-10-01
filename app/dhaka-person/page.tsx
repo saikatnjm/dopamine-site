@@ -6,6 +6,7 @@ import { decodeAnswers, isResultId, resultFor } from "@/lib/dhaka-person";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { RelatedLinks } from "@/components/related/related-links";
 
 type Props = { searchParams: Promise<{ a?: string | string[]; r?: string | string[] }> };
 
@@ -53,6 +54,7 @@ export default async function DhakaPersonPage({ searchParams }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(copy.lead, lang)}</p>
       </header>
       <DhakaPersonQuiz friend={friend} />
+      <RelatedLinks current="p:dhaka-person" />
     </main>
   );
 }

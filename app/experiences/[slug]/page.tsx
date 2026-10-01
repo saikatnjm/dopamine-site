@@ -7,6 +7,7 @@ import { getCategory, getExperience, listExperiences } from "@/lib/experience/re
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { RelatedLinks } from "@/components/related/related-links";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -64,6 +65,7 @@ export default async function ExperiencePage({ params }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(experience.description, lang)}</p>
       </header>
       <ExperiencePlayer slug={experience.slug} />
+      <RelatedLinks current={`x:${experience.slug}`} />
     </main>
   );
 }

@@ -5,6 +5,7 @@ import { bossCopy as copy } from "@/data/bosses";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { RelatedLinks } from "@/components/related/related-links";
 
 const TITLE = "Weekly Boss — 👹 Dhaka Traffic Boss | Hottogol";
 const DESCRIPTION =
@@ -48,6 +49,7 @@ export default async function BossPage() {
         <p className="mt-2 text-lg text-ink-muted">{t(copy.localNote, lang)}</p>
       </header>
       <BossArena mode={{ kind: "weekly" }} />
+      <RelatedLinks current="g:traffic-boss" />
     </main>
   );
 }
