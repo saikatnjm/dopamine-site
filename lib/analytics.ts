@@ -1,8 +1,17 @@
 // The only place the app talks to analytics. Swap providers here.
 // Safe everywhere: no-ops on the server, when GA is not configured,
 // or when it is blocked. Never send personal data in params.
+//
+// Two audiences:
+// - local listeners (onTrack): get the raw internal event + params
+//   (achievements, recent plays, daily, challenge banner depend on them);
+// - GA4: gets the normalised taxonomy event (lib/analytics-taxonomy.ts) with
+//   allowlisted, non-sensitive params only. Duplicates/noise are not sent.
+
+import { normalizeEvent } from "@/lib/analytics-taxonomy";
 
 export type AnalyticsEvent =
+  | "activity_view"
   | "experience_start"
   | "experience_complete"
   | "result_view"
@@ -75,7 +84,8 @@ export function track(event: AnalyticsEvent, params: AnalyticsParams = {}): void
   });
   if (typeof window.gtag !== "function") return;
   try {
-    window.gtag("event", event, params);
+    const ga = normalizeEvent(event, params);
+    if (ga) window.gtag("event", ga.name, ga.params);
   } catch {
     // Analytics must never break the app.
   }
