@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Noto_Sans_Bengali } from "next/font/google";
 import { AchievementToaster } from "@/components/achievements/achievement-toaster";
+import { ActivityViewTracker } from "@/components/analytics/activity-view-tracker";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { CreditBadge } from "@/components/navigation/github-credit";
 import { SiteFooter } from "@/components/navigation/site-footer";
@@ -78,6 +79,7 @@ export default async function RootLayout({
           <SiteHeader />
           <div id="main" className="flex-1">
             <ActivitiesProvider activities={activityLinks}>
+              <ActivityViewTracker />
               <MotionProvider>{children}</MotionProvider>
             </ActivitiesProvider>
           </div>

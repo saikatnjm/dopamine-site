@@ -404,7 +404,23 @@ components/games/        game cards + client game components
 - Owner feedback: the site must feel fun and playful, never bland (inspired
   by the energy of foodnevercomes.com, but 100% original design and copy).
 - Analytics: call `track()` from `lib/analytics.ts` only. No personal data in
-  params. App must work with GA empty or blocked.
+  params. App must work with GA empty or blocked. GA4 is the only provider.
+  **Taxonomy (Phase 40):** call sites keep their internal events (local
+  `onTrack` listeners — achievements, recent plays, daily, challenge banner —
+  depend on them); `lib/analytics-taxonomy.ts` `normalizeEvent()` maps them at
+  the GA boundary to: page_view (GA auto), activity_view (`ActivityViewTracker`
+  in the root layout), activity_start/complete/retry, result_view/share,
+  challenge_created/opened/started/completed/shared,
+  daily_challenge_view/start/complete, recommendation_click, surprise_me_click,
+  mood_selection. Not sent to GA (duplicates): daily_complete, daily_share,
+  challenge_won, daily_challenge_share{kind:challenge}, viral_landing_view.
+  Every GA event gets `activity` (key), `activity_type`, `category` (catalog
+  set by `ActivitiesProvider`); other params pass an allowlist (result, score,
+  method, context, source, mood, position, surface, day, attempt, target, best,
+  viewer, utm_source, referrer host, from, again, retry), strings cleaned to
+  `[a-z0-9_:./-]` ≤ 40. Unknown events/params are dropped. GA4 timestamps
+  events itself. A new event must be added to the taxonomy or it never
+  reaches GA.
 - Humor targets situations (traffic, haggling), never people or groups.
 - Mobile first: design at 360–412 px, 44 px+ touch targets, no horizontal scroll.
 - Code file names follow framework conventions (`page.tsx` etc.). Non-code
@@ -478,4 +494,5 @@ components/games/        game cards + client game components
 - [x] Phase 37 — Continue playing (local play history v2: starts, finishes, latest score)
 - [x] Phase 38 — Daily Challenge upgrade (today's score, personal best, streak, challenge a friend, daily_challenge_* events)
 - [x] Phase 39 — `/viral` social landing page (deep links, OG image, UTM tracking without storage)
+- [x] Phase 40 — Analytics taxonomy (normalised GA events, param allowlist, activity_view)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
