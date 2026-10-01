@@ -276,6 +276,14 @@ components/games/        game cards + client game components
 - Cards: `components/experience/activity-card.tsx` (server, no JS). `Activity.durationSec` comes from the registries (quiz = 90).
 - Canonical/OG/Twitter metadata, CollectionPage + ItemList JSON-LD, in sitemap, footer link ("Just for fun"). Not in the header (kept uncluttered).
 
+## You might also like (every result screen)
+
+- "😂 LIKED THAT?" + 3 related activities: `components/share/you-might-also-like.tsx`, rendered by `ResultShareKit` (games, boss, quiz, excuses) and simulator `ResultActions`. The current activity is found by `ResultCardData.path`. Cards reuse `ActivityCard`.
+- Metadata lives in the registries only: `Game.category/mechanic/tags` (`data/games/index.ts`), `Experience.tags` (+ existing `category`; mechanic = "choices"), quiz/excuses entries in `lib/activities.ts`. Moods come from `lib/moods.ts` (`moodsOf`). Tag vocabulary = `ActivityTag` in `lib/experience/types.ts` — add a tag there, not ad hoc.
+- Scoring (`lib/recommend.ts`, pure): category +3, mechanic +2, shared tag +2 each, shared mood +1 each; recently played (last 5) −5, older −2, ever finished (achievement stats) −1; small jitter. Unrelated (0) never shown; < 3 related → section hidden.
+- History: `localStorage["hottogol:recent:v1"]` = `[{key, at}]` newest first, max 20 (`lib/recent-plays.ts`), filled by `RecentPlaysRecorder` (root layout) from existing completion events via `onTrack` — no per-game wiring.
+- Event: `recommendation_click` {source: "also_like", activity, from, position}.
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -413,4 +421,5 @@ components/games/        game cards + client game components
 - [x] Phase 30 — `/bored` landing page
 - [x] Phase 31 — Challenge a Friend upgrade (challenge card, accept button, "you cooked them" outcome, challenge_* events)
 - [x] Phase 32 — Result cards: 9:16 share image, ≤ 4 stats, challenge-first actions, 🎲 Play another everywhere
+- [x] Phase 33 — "You might also like" (registry category/mechanic/tags, local recent-play history)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

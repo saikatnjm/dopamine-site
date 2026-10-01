@@ -21,6 +21,7 @@ export const lifeDecision: Experience = {
   },
   startLabel: { en: "Roll the dice of fate 🎲", bn: "ভাগ্যের ছক্কা ঘোরান 🎲" },
   category: "random",
+  tags: ["life"],
   emoji: "🎲",
   durationSec: 45,
   accent: "marigold",

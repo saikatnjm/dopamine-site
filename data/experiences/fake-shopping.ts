@@ -23,6 +23,7 @@ export const fakeShopping: Experience = {
   },
   startLabel: { en: "Start shopping 🛒", bn: "শপিং শুরু 🛒" },
   category: "shopping",
+  tags: ["shopping", "money"],
   emoji: "🛍️",
   durationSec: 60,
   accent: "chili",

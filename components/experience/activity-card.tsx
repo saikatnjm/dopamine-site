@@ -6,8 +6,19 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 
 const tilts = ["rotate-1", "-rotate-1", "rotate-0"] as const;
 
-/** Compact card for any registry activity (server component, no JS). */
-export function ActivityCard({ activity: a, lang, index = 0 }: { activity: Activity; lang: Lang; index?: number }) {
+/** Compact card for any registry activity (no hooks: works in server and client components). */
+export function ActivityCard({
+  activity: a,
+  lang,
+  index = 0,
+  onClick,
+}: {
+  activity: Activity;
+  lang: Lang;
+  index?: number;
+  /** Optional (client callers only), e.g. analytics on click. */
+  onClick?: () => void;
+}) {
   const d = getDictionary(lang);
   const time =
     a.durationSec === undefined
@@ -18,6 +29,7 @@ export function ActivityCard({ activity: a, lang, index = 0 }: { activity: Activ
   return (
     <Link
       href={a.href}
+      onClick={onClick}
       className={`${accentBg[a.accent]} ${cardHover} ${tilts[index % tilts.length]} flex h-full min-h-36 flex-col rounded-card border-2 border-ink p-4 shadow-pop hover:rotate-0`}
     >
       <span className="flex items-start justify-between gap-2">

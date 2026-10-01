@@ -27,6 +27,7 @@ export const dhakaCng: Experience = {
   },
   startLabel: { en: "Start the ride 🛺", bn: "যাত্রা শুরু 🛺" },
   category: "bangladesh",
+  tags: ["cng", "traffic", "haggling"],
   emoji: "🛺",
   durationSec: 60,
   accent: "cng",

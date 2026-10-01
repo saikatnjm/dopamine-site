@@ -21,6 +21,7 @@ export const foodDelivery: Experience = {
   },
   startLabel: { en: "Place the order 🍔", bn: "অর্ডার দিন 🍔" },
   category: "food",
+  tags: ["delivery", "food"],
   emoji: "🍔",
   durationSec: 60,
   accent: "tangerine",

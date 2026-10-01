@@ -3,6 +3,7 @@
 import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { PlayAnother } from "@/components/share/play-another";
+import { YouMightAlsoLike } from "@/components/share/you-might-also-like";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnPrimary, card as cardStyle } from "@/components/ui/styles";
@@ -159,6 +160,7 @@ export function ResultActions({ slug, emoji, accent, outcomeId, shareUrl, shareT
         </div>
       </section>
 
+      <YouMightAlsoLike path={`/experiences/${slug}`} />
       <PlayAnother exclude={`/experiences/${slug}`} />
 
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">

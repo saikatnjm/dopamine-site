@@ -1,4 +1,5 @@
 import type { Accent } from "@/components/ui/styles";
+import type { ActivityTag, CategorySlug, Mechanic } from "@/lib/experience/types";
 import type { Text } from "@/lib/i18n/core";
 
 // Registry of quick reflex games (separate from story "experiences").
@@ -12,6 +13,10 @@ export type Game = {
   emoji: string;
   accent: Accent;
   durationSec: number;
+  /** For "You might also like" (same vocabulary as experiences). */
+  category: CategorySlug;
+  mechanic: Mechanic;
+  tags: readonly ActivityTag[];
   /** English SEO copy (crawlers have no language cookie). */
   seo: { title: string; description: string };
 };
@@ -28,6 +33,9 @@ export const games: Game[] = [
     emoji: "🛺",
     accent: "cng",
     durationSec: 30,
+    category: "bangladesh",
+    mechanic: "reflex",
+    tags: ["cng", "traffic"],
     seo: {
       title: "CNG Catch — 30-Second Dhaka Reflex Game",
       description: "Tap the speeding CNG at the perfect moment. A free 30-second Dhaka reflex game with combos, funny results and shareable challenges. No sign-up.",
@@ -44,6 +52,9 @@ export const games: Game[] = [
     emoji: "🛵",
     accent: "violet",
     durationSec: 45,
+    category: "travel",
+    mechanic: "reflex",
+    tags: ["traffic", "bike"],
     seo: {
       title: "Dhaka Traffic Dodge — Free Arcade Dodging Game",
       description: "Weave a motorbike through buses, CNGs, rickshaws and goats in this free 30–60 second Dhaka traffic arcade game. Near-miss combos, funny titles, shareable challenges.",
@@ -60,6 +71,9 @@ export const games: Game[] = [
     emoji: "🛒",
     accent: "tangerine",
     durationSec: 90,
+    category: "shopping",
+    mechanic: "choices",
+    tags: ["haggling", "money", "food"],
     seo: {
       title: "Bazar Bargain — Bangladesh Market Haggling Game",
       description: "Haggle with stubborn, dramatic and sleepy vendors in this free Bangladesh bazar negotiation game. Save money, avoid getting refused, unlock legendary endings. No sign-up.",
@@ -76,6 +90,9 @@ export const games: Game[] = [
     emoji: "☕",
     accent: "marigold",
     durationSec: 60,
+    category: "food",
+    mechanic: "reflex",
+    tags: ["food"],
     seo: {
       title: "Tea Balance — Don't Spill the Cha (Dhaka Balancing Game)",
       description: "Carry a full cup of tea through potholes, manholes and goats in this free 20–60 second Dhaka balancing game. Smooth moves, funny endings, shareable challenges.",
@@ -92,6 +109,9 @@ export const games: Game[] = [
     emoji: "🚦",
     accent: "chili",
     durationSec: 30,
+    category: "random",
+    mechanic: "reflex",
+    tags: ["reaction"],
     seo: {
       title: "Don't Tap — Free Reaction Time Test With Fake Signals",
       description: "Test your reaction time in milliseconds: 5 rounds, fake-out signals, average and best times, funny titles and shareable challenges. Free, no sign-up.",
@@ -108,6 +128,9 @@ export const games: Game[] = [
     emoji: "🔥",
     accent: "tangerine",
     durationSec: 60,
+    category: "bangladesh",
+    mechanic: "choices",
+    tags: ["traffic", "cng", "money"],
     seo: {
       title: "Chaos Machine — Random Dhaka Trip Generator Game",
       description: "Press one button to roll a random Dhaka trip — vehicle, weather, traffic, mission and chaos — then survive it in five choices. Free, funny, shareable challenges.",
@@ -124,6 +147,9 @@ export const games: Game[] = [
     emoji: "🏍️",
     accent: "lime",
     durationSec: 90,
+    category: "food",
+    mechanic: "choices",
+    tags: ["delivery", "food", "traffic"],
     seo: {
       title: "Delivery Simulator — Funny Dhaka Delivery Rider Game",
       description: "Be a Dhaka delivery rider for 90 seconds: late kitchens, wrong pins, rain, traffic, broken lifts and vanishing customers. 8 endings, star ratings, shareable challenges. Free.",
@@ -140,6 +166,9 @@ export const games: Game[] = [
     emoji: "🐔",
     accent: "marigold",
     durationSec: 60,
+    category: "travel",
+    mechanic: "reflex",
+    tags: ["traffic", "reaction"],
     seo: {
       title: "Chicken Crossing Dhaka — Free Road-Crossing Arcade Game",
       description: "Hop a chicken across chaotic Dhaka traffic: buses, CNGs, rickshaws, dogs, rain and Dhaka Mode. Near-miss combos, funny levels, personal best and friend challenges. Free.",
@@ -156,6 +185,9 @@ export const games: Game[] = [
     emoji: "🚦",
     accent: "lime",
     durationSec: 60,
+    category: "travel",
+    mechanic: "reflex",
+    tags: ["traffic"],
     seo: {
       title: "Dhaka Traffic Controller — Free Traffic Light Game",
       description: "Control the traffic lights at a chaotic Dhaka intersection for 60 seconds. Avoid crashes and gridlock, build flow combos, survive VIP cars and U-turns. Free, no sign-up.",
@@ -172,6 +204,9 @@ export const games: Game[] = [
     emoji: "🧍",
     accent: "sky",
     durationSec: 90,
+    category: "bangladesh",
+    mechanic: "choices",
+    tags: ["queue", "office"],
     seo: {
       title: "Queue Simulator — Funny Dhaka Line-Waiting Game",
       description: "Survive a Dhaka queue: line-cutters, “just one thing” with 17 items, closing counters and “2 more minutes”. 6 endings, funny ranks, shareable challenges. Free, no sign-up.",
@@ -188,6 +223,9 @@ export const games: Game[] = [
     emoji: "🧑‍💻",
     accent: "violet",
     durationSec: 90,
+    category: "work",
+    mechanic: "choices",
+    tags: ["office", "tech"],
     seo: {
       title: "Programmer Rage Simulator — Funny Deploy Debugging Game",
       description: "A fictional comedy for developers: your production deploy fails. Check logs, blame frontend, ask AI, deploy again. 6 endings incl. the Legendary 3 AM Fix. Free, no sign-up.",
@@ -204,6 +242,9 @@ export const games: Game[] = [
     emoji: "👹",
     accent: "chili",
     durationSec: 60,
+    category: "travel",
+    mechanic: "reflex",
+    tags: ["traffic", "bike"],
     seo: {
       title: "Weekly Boss — Dhaka Traffic Boss Fight (Free 60-Second Game)",
       description: "A new Hottogol boss every week: survive 60 seconds of Dhaka traffic with 3 lives. Same challenge for everyone this week, personal best saved locally. Free, no sign-up.",
