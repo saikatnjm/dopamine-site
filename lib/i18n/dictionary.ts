@@ -19,6 +19,11 @@ const en = {
   rouletteAgain: "Spin again",
   rouletteClose: "Close",
   rouletteTaking: "Taking you there…",
+  moodTitle: "What are you in the mood for?",
+  moodSub: "Pick a vibe. We'll hand you three things to play.",
+  moodPicksFor: "Picks for",
+  moodSurpriseHeading: "🎲 Pure chaos",
+  moodShuffle: "Show me 3 others",
   language: "Language",
   tagline: "Tiny simulators for everyday chaos.",
 
@@ -192,6 +197,11 @@ const bn: Dict = {
   rouletteAgain: "আবার ঘোরাও",
   rouletteClose: "বন্ধ করো",
   rouletteTaking: "নিয়ে যাচ্ছি…",
+  moodTitle: "এখন কী মুডে আছেন?",
+  moodSub: "একটা মুড বেছে নিন। আমরা খেলার জন্য তিনটা জিনিস দেব।",
+  moodPicksFor: "আপনার জন্য:",
+  moodSurpriseHeading: "🎲 পুরো হট্টগোল",
+  moodShuffle: "অন্য ৩টা দেখাও",
   language: "ভাষা",
   tagline: "প্রতিদিনের হট্টগোলের ছোট্ট সিমুলেটর।",
 

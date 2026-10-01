@@ -5,11 +5,13 @@ import { DhakaPersonCard } from "@/components/dhaka-person/dhaka-person-card";
 import { ExcuseCard } from "@/components/excuses/excuse-card";
 import { SurpriseButton } from "@/components/experience/surprise-button";
 import { ChaosRoulette } from "@/components/experience/chaos-roulette";
+import { MoodPicker } from "@/components/experience/mood-picker";
 import { Marquee } from "@/components/ui/marquee";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
 import { upcoming } from "@/data/upcoming";
 import { listCategories, listExperiences } from "@/lib/experience/registry";
 import { listActivities } from "@/lib/activities";
+import { unknownMoodKeys } from "@/lib/moods";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl, siteConfig } from "@/lib/site";
@@ -33,6 +35,12 @@ export default async function HomePage() {
   const { lang, d } = await getI18n();
   const experiences = listExperiences();
   const slugs = experiences.map((e) => e.slug);
+  const activities = listActivities(lang);
+  // Fail the build/dev server if a mood points at an activity that no longer exists.
+  if (process.env.NODE_ENV !== "production" || process.env.NEXT_PHASE === "phase-production-build") {
+    const missing = unknownMoodKeys(activities);
+    if (missing.length) throw new Error(`lib/moods.ts references unknown activities: ${missing.join(", ")}`);
+  }
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -71,7 +79,7 @@ export default async function HomePage() {
         </p>
         <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <SurpriseButton slugs={slugs} className="w-full sm:w-auto" />
-          <ChaosRoulette activities={listActivities(lang)} className="w-full sm:w-auto" />
+          <ChaosRoulette activities={activities} className="w-full sm:w-auto" />
           <Link href="#play" className={`${btnPrimary} w-full bg-surface sm:w-auto`}>
             {d.explore}
           </Link>
@@ -82,6 +90,11 @@ export default async function HomePage() {
       <section className="mx-auto max-w-5xl px-4 pb-12">
         <DailyCard />
       </section>
+
+      {/* Mood-based discovery */}
+      <div id="mood" className="mx-auto max-w-5xl scroll-mt-4 px-4 pb-12">
+        <MoodPicker activities={activities} />
+      </div>
 
       {/* Excuse generator teaser */}
       <section className="mx-auto max-w-5xl px-4 pb-12">
