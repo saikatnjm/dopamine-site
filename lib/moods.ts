@@ -73,6 +73,11 @@ const MOOD_KEYS: Record<MoodId, readonly string[]> = {
 
 export const MOOD_PICKS = 3;
 
+/** Moods an activity key is listed under (for recommendations). */
+export function moodsOf(key: string): MoodId[] {
+  return MOOD_IDS.filter((m) => MOOD_KEYS[m].includes(key));
+}
+
 /** Registered activities for a mood, in priority order. Unknown keys are skipped. */
 export function activitiesForMood(mood: MoodId, all: readonly Activity[]): Activity[] {
   const byKey = new Map(all.map((a) => [a.key, a]));

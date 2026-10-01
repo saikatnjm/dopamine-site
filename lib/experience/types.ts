@@ -19,6 +19,26 @@ export type CategorySlug =
   | "shopping"
   | "random";
 
+/** How an activity plays (for "You might also like"). */
+export type Mechanic = "reflex" | "choices" | "quiz" | "generator";
+
+/** Topic tags shared by games, simulators and tools (keep the list short). */
+export type ActivityTag =
+  | "cng"
+  | "bus"
+  | "bike"
+  | "traffic"
+  | "haggling"
+  | "money"
+  | "food"
+  | "delivery"
+  | "office"
+  | "tech"
+  | "queue"
+  | "reaction"
+  | "shopping"
+  | "life";
+
 export type Category = {
   slug: CategorySlug;
   title: Text;
@@ -101,6 +121,8 @@ export type Experience = {
   /** Label on the start button, e.g. "Start the ride 🛺". */
   startLabel: Text;
   category: CategorySlug;
+  /** Topic tags for recommendations (1–3). */
+  tags: readonly ActivityTag[];
   emoji: string;
   /** Rough play time in seconds, for display. */
   durationSec: number;

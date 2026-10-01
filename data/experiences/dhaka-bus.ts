@@ -22,6 +22,7 @@ export const dhakaBus: Experience = {
   },
   startLabel: { en: "Wait for the bus 🚌", bn: "বাসের জন্য দাঁড়ান 🚌" },
   category: "bangladesh",
+  tags: ["bus", "traffic"],
   emoji: "🚌",
   durationSec: 60,
   accent: "sky",

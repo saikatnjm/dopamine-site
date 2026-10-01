@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/navigation/site-header";
 import { ActivitiesProvider } from "@/components/providers/activities-provider";
 import { LangProvider } from "@/components/providers/lang-provider";
 import { MotionProvider } from "@/components/providers/motion-provider";
+import { RecentPlaysRecorder } from "@/components/providers/recent-plays-recorder";
 import { listActivities } from "@/lib/activities";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
@@ -62,8 +63,8 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const { lang, d } = await getI18n();
-  // Slim list for "Play another" on result screens (~2 KB).
-  const activityLinks = listActivities(lang).map(({ key, href, title, emoji }) => ({ key, href, title, emoji }));
+  // For "Play another" / "You might also like" on result screens (~4 KB).
+  const activityLinks = listActivities(lang);
   return (
     <html lang={lang} className={`${bricolage.variable} ${bangla.variable}`}>
       <body className="flex min-h-dvh flex-col">
@@ -83,6 +84,7 @@ export default async function RootLayout({
           <SiteFooter />
           <CreditBadge />
           <AchievementToaster />
+          <RecentPlaysRecorder />
         </LangProvider>
         <GoogleAnalytics />
       </body>

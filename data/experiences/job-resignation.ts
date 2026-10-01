@@ -22,6 +22,7 @@ export const jobResignation: Experience = {
   },
   startLabel: { en: "Write the resignation ✍️", bn: "রিজাইন লেটার লিখুন ✍️" },
   category: "work",
+  tags: ["office"],
   emoji: "💼",
   durationSec: 60,
   accent: "violet",

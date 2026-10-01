@@ -24,6 +24,7 @@ export const houseRent: Experience = {
   },
   startLabel: { en: "Start house hunting 🔑", bn: "বাসা খোঁজা শুরু 🔑" },
   category: "bangladesh",
+  tags: ["money", "haggling"],
   emoji: "🏠",
   durationSec: 60,
   accent: "lime",
