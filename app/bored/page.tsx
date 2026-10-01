@@ -3,8 +3,9 @@ import Link from "next/link";
 import { ActivityCard } from "@/components/experience/activity-card";
 import { ChaosRoulette } from "@/components/experience/chaos-roulette";
 import { btnPrimary, card, chip } from "@/components/ui/styles";
+import { GUIDE_SLUGS, guides } from "@/data/guides";
 import { listActivities, type Activity } from "@/lib/activities";
-import type { Lang } from "@/lib/i18n/core";
+import { t, type Lang } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
 
@@ -98,6 +99,7 @@ export default async function BoredPage() {
     { href: "/world", label: d.footerWorld },
     { href: "/excuses", label: d.footerExcuses },
     { href: "/dhaka-person", label: d.footerPerson },
+    ...GUIDE_SLUGS.map((s) => ({ href: `/${s}`, label: t(guides[s].name, lang) })),
   ];
 
   return (
