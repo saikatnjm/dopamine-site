@@ -2,15 +2,15 @@
 
 import { useEffect } from "react";
 import { onTrack } from "@/lib/analytics";
-import { activityKeyForEvent, recordPlay } from "@/lib/recent-plays";
+import { playEventFor, recordPlay } from "@/lib/recent-plays";
 
-/** Keeps the local "recently finished" list from existing completion events. Renders nothing. */
+/** Keeps the local play history (starts + finishes) from existing events. Renders nothing. */
 export function RecentPlaysRecorder() {
   useEffect(
     () =>
       onTrack((event, params) => {
-        const key = activityKeyForEvent(event, params);
-        if (key) recordPlay(key);
+        const ev = playEventFor(event, params);
+        if (ev) recordPlay(ev);
       }),
     [],
   );

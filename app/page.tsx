@@ -6,6 +6,7 @@ import { ExcuseCard } from "@/components/excuses/excuse-card";
 import { SurpriseButton } from "@/components/experience/surprise-button";
 import { ChaosRoulette } from "@/components/experience/chaos-roulette";
 import { MoodPicker } from "@/components/experience/mood-picker";
+import { ContinuePlaying } from "@/components/experience/continue-playing";
 import { HotRightNow, unknownHotKeys } from "@/components/experience/hot-right-now";
 import { Marquee } from "@/components/ui/marquee";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
@@ -86,6 +87,9 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* Continue playing (client-only; renders nothing for new visitors) */}
+      <ContinuePlaying />
 
       {/* Daily challenge */}
       <section className="mx-auto max-w-5xl px-4 pb-12">

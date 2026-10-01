@@ -1,6 +1,6 @@
 // "You might also like": pure scoring over the activity registry.
 // Relatedness: same category +3, same mechanic +2, each shared tag +2, each
-// shared mood +1. History: played in the last 5 −5, played earlier −2, ever
+// shared mood +1. History: in the recent-play history (max 5) −5, ever
 // finished (achievement stats) −1. A little jitter breaks ties so repeat
 // visits vary. Unrelated activities (relatedness 0) are never suggested; if
 // fewer than `count` qualify, returns [] so the caller hides the section.
