@@ -12,6 +12,8 @@ import { normalizeEvent } from "@/lib/analytics-taxonomy";
 
 export type AnalyticsEvent =
   | "activity_view"
+  | "homepage_cta_view"
+  | "homepage_cta_click"
   | "experience_start"
   | "experience_complete"
   | "result_view"
@@ -86,6 +88,21 @@ export function track(event: AnalyticsEvent, params: AnalyticsParams = {}): void
   try {
     const ga = normalizeEvent(event, params);
     if (ga) window.gtag("event", ga.name, ga.params);
+  } catch {
+    // Analytics must never break the app.
+  }
+}
+
+/**
+ * Set a GA4 user property (e.g. an experiment variant) so later events —
+ * like activity_start — carry it. Only short tokens; never personal data.
+ * Non-blocking: no-ops when GA is missing or blocked.
+ */
+export function setUserProperty(name: string, value: string): void {
+  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  if (!/^[a-z0-9_]{1,24}$/.test(name) || !/^[a-z0-9_-]{1,24}$/.test(value)) return;
+  try {
+    window.gtag("set", "user_properties", { [name]: value });
   } catch {
     // Analytics must never break the app.
   }

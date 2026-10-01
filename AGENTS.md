@@ -334,6 +334,13 @@ components/games/        game cards + client game components
 - OG image: `app/viral/opengraph-image.tsx` (shared `renderOgCard`).
 - Tracking (`components/viral/viral-tracker.tsx`): `viral_landing_view` {utm_source, utm_medium, utm_campaign, utm_content (sanitized `[a-z0-9_-]`, ≤ 40), featured, deep_link}; play clicks → `recommendation_click` {source: "viral", utm_source}. **Nothing stored** (no cookies/localStorage/sessionStorage); GA4 reads utm_* from the URL itself.
 
+## UI experiments (`lib/experiments.ts`)
+
+- **UI experimentation only.** Assignment is per browser (client-side), so numbers are rough signals — never report them as statistically significant A/B results.
+- `localStorage["hottogol:exp:v1"]` = `{ [experimentId]: variant }`; first visit gets a uniform crypto-random variant, returning visitors keep it; blocked storage → per-page-load assignment. No personal data.
+- Running: **`home-cta`** — homepage hero primary CTA (`HomeCtaExperiment` wraps `SurpriseButton`): A "🎲 SURPRISE ME", B "🔥 GIVE ME SOMETHING FUN". Label hidden until the variant is read (no visible swap). Events `homepage_cta_view` / `homepage_cta_click` {experiment, variant}; GA user property `exp_home_cta` (via `setUserProperty`) so later events like `activity_start` carry the variant. The closing "Surprise me" CTA is not part of the test.
+- **Remove `home-cta`:** in `app/page.tsx` swap `<HomeCtaExperiment …/>` back to `<SurpriseButton …/>`; delete `components/experience/home-cta-experiment.tsx`, the `home-cta` entry in `EXPERIMENTS`, `homepage_cta_*` in `lib/analytics.ts` + `lib/analytics-taxonomy.ts`, and `expCtaA/B` in the dictionary. (`SurpriseButton`'s optional `label/icon/labelHidden/onRoll` props can stay.)
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -495,4 +502,5 @@ components/games/        game cards + client game components
 - [x] Phase 38 — Daily Challenge upgrade (today's score, personal best, streak, challenge a friend, daily_challenge_* events)
 - [x] Phase 39 — `/viral` social landing page (deep links, OG image, UTM tracking without storage)
 - [x] Phase 40 — Analytics taxonomy (normalised GA events, param allowlist, activity_view)
+- [x] Phase 41 — Client-side UI experiment system + `home-cta` test
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

@@ -4,6 +4,7 @@ import { DailyCard } from "@/components/daily/daily-card";
 import { DhakaPersonCard } from "@/components/dhaka-person/dhaka-person-card";
 import { ExcuseCard } from "@/components/excuses/excuse-card";
 import { SurpriseButton } from "@/components/experience/surprise-button";
+import { HomeCtaExperiment } from "@/components/experience/home-cta-experiment";
 import { ChaosRoulette } from "@/components/experience/chaos-roulette";
 import { MoodPicker } from "@/components/experience/mood-picker";
 import { ContinuePlaying } from "@/components/experience/continue-playing";
@@ -80,7 +81,8 @@ export default async function HomePage() {
           {d.heroLead}
         </p>
         <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <SurpriseButton slugs={slugs} className="w-full sm:w-auto" />
+          {/* Experiment "home-cta" — see components/experience/home-cta-experiment.tsx to remove. */}
+          <HomeCtaExperiment slugs={slugs} className="w-full sm:w-auto" />
           <ChaosRoulette activities={activities} className="w-full sm:w-auto" />
           <Link href="#play" className={`${btnPrimary} w-full bg-surface sm:w-auto`}>
             {d.explore}

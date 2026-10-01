@@ -12,12 +12,19 @@ type Props = {
   slugs: readonly string[];
   size?: "lg" | "sm";
   className?: string;
+  /** Override the big button's text/icon (UI experiments). */
+  label?: string;
+  icon?: string;
+  /** Keep the label invisible (space reserved) until it's known. */
+  labelHidden?: boolean;
+  /** Extra click hook (e.g. experiment tracking). */
+  onRoll?: () => void;
 };
 
 const smallButton =
   "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-pill border-2 border-ink bg-marigold px-4 text-base font-extrabold shadow-pop transition-all duration-100 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none";
 
-export function SurpriseButton({ slugs, size = "lg", className = "" }: Props) {
+export function SurpriseButton({ slugs, size = "lg", className = "", label, icon = "🎲", labelHidden = false, onRoll }: Props) {
   const router = useRouter();
   const { d } = useI18n();
   const [rolling, setRolling] = useState(false);
@@ -26,6 +33,7 @@ export function SurpriseButton({ slugs, size = "lg", className = "" }: Props) {
     const slug = pickRandom(slugs);
     if (!slug || rolling) return;
     setRolling(true);
+    onRoll?.();
     track("surprise_me_click", { experience: slug });
     window.setTimeout(() => {
       router.push(`/experiences/${slug}`);
@@ -36,10 +44,10 @@ export function SurpriseButton({ slugs, size = "lg", className = "" }: Props) {
   const classes = size === "lg" ? `${btnPrimary} bg-marigold` : smallButton;
   return (
     <button type="button" onClick={roll} aria-busy={rolling} className={`${classes} whitespace-nowrap ${className}`}>
-      <span aria-hidden className={`inline-block ${rolling ? "animate-spin-once" : ""}`}>
-        🎲
+      <span aria-hidden className={`inline-block ${rolling ? "animate-spin-once" : ""} ${labelHidden ? "invisible" : ""}`}>
+        {icon}
       </span>
-      {size === "lg" ? (rolling ? d.rolling : d.surpriseMe) : d.surprise}
+      <span className={labelHidden ? "invisible" : ""}>{size === "lg" ? (rolling ? d.rolling : (label ?? d.surpriseMe)) : d.surprise}</span>
     </button>
   );
 }

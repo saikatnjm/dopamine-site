@@ -29,6 +29,9 @@ export const GA_EVENTS = [
   "recommendation_click",
   "surprise_me_click",
   "mood_selection",
+  // UI experiment (lib/experiments.ts) — remove with the experiment.
+  "homepage_cta_view",
+  "homepage_cta_click",
 ] as const;
 export type GaEvent = (typeof GA_EVENTS)[number];
 
@@ -114,7 +117,7 @@ function gaName(event: AnalyticsEvent, p: AnalyticsParams): GaEvent | null {
 }
 
 /** Params that may reach GA, and how to read each one. */
-const STRING_PARAMS = ["method", "source", "mood", "surface", "day", "viewer", "utm_source", "referrer", "from"] as const;
+const STRING_PARAMS = ["method", "source", "mood", "surface", "day", "viewer", "utm_source", "referrer", "from", "experiment", "variant"] as const;
 const NUMBER_PARAMS = ["score", "position", "attempt", "target", "best"] as const;
 const BOOL_PARAMS = ["again", "retry"] as const;
 
