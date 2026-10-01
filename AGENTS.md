@@ -127,6 +127,18 @@ components/games/        game cards + client game components
   registered in `DAILY_GAMES` (`components/daily/daily-play.tsx`). The 1 s clock
   lives in leaf components (`DailyCountdown`) so running games never re-render
   from it. Never show rankings or player counts — scores are local only.
+  Upgrade (Phase 38): shared `DailySummary` (homepage card + `/daily`): "🔥 TODAY'S
+  HOTTOGOL · #n" → game → "Everyone gets today's same challenge." → PLAY; after a
+  result "🏆 TODAY'S SCORE" (first score), best today, **personal best**
+  (`hottogol:daily:best:v1` = {game: best}, updated in `recordDailyResult`), **🔥
+  day streak** (≥ 2; consecutive BD days with a record, `dailyStreak`, today
+  unplayed keeps it alive), "Come back tomorrow." + countdown, Share (`/daily`),
+  ⚔️ Challenge a friend (`/c/<token>` of the daily round, best score), Retry.
+  `DailyChallenge.type` ("game" today) — future types add a player registry in
+  `daily-play.tsx`. Events: `daily_challenge_view` {surface}, `daily_challenge_start`
+  (heard via `onTrack` from the daily game's `game_start`/`game_retry`),
+  `daily_challenge_complete`, `daily_challenge_share` {kind: result|challenge};
+  legacy `daily_complete`/`daily_share` kept (achievements).
 - Bazar Bargain: turn-based (no rAF). `makeRun(seed)` fixes list, budget, vendor
   personality, hidden floor and opening price per stall; each reaction uses an
   RNG from (seed, stall, turn, action) so same seed + same choices = same story.
@@ -456,4 +468,5 @@ components/games/        game cards + client game components
 - [x] Phase 35 — SEO guide pages (5 hand-written guides, shared template, validation)
 - [x] Phase 36 — Internal linking (`<RelatedLinks>` on every activity + content page)
 - [x] Phase 37 — Continue playing (local play history v2: starts, finishes, latest score)
+- [x] Phase 38 — Daily Challenge upgrade (today's score, personal best, streak, challenge a friend, daily_challenge_* events)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

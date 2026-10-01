@@ -7,6 +7,9 @@
 //
 // To add a game: support the `daily` prop in its component (see DailyMode in
 // lib/games/shared.ts), then append its slug to DAILY_ROTATION.
+// Future challenge types (a daily quiz, simulator…): add the type to
+// DailyChallengeType, give its entries `type`, and register a player for it
+// in components/daily/daily-play.tsx. Records/best/streak are type-agnostic.
 
 import { hashString } from "@/lib/random";
 
@@ -19,7 +22,11 @@ const EPOCH_KEY = "2026-09-30";
 export const DAILY_ROTATION = ["cng-catch", "traffic-dodge"] as const;
 export type DailyGameSlug = (typeof DAILY_ROTATION)[number];
 
+/** Kinds of daily challenge. Only reflex games today. */
+export type DailyChallengeType = "game";
+
 export type DailyChallenge = {
+  type: DailyChallengeType;
   /** Bangladesh date, YYYY-MM-DD. */
   dateKey: string;
   /** Challenge number (#1 on EPOCH_KEY). */
@@ -39,6 +46,11 @@ export function msUntilNextDay(nowMs: number): number {
   return DAY_MS - (((bd % DAY_MS) + DAY_MS) % DAY_MS);
 }
 
+/** The Bangladesh date before `dateKey` (YYYY-MM-DD). */
+export function prevDateKey(dateKey: string): string {
+  return new Date(Date.parse(`${dateKey}T00:00:00Z`) - DAY_MS).toISOString().slice(0, 10);
+}
+
 function dayIndex(dateKey: string): number {
   return Math.round((Date.parse(`${dateKey}T00:00:00Z`) - Date.parse(`${EPOCH_KEY}T00:00:00Z`)) / DAY_MS);
 }
@@ -48,6 +60,7 @@ export function dailyChallenge(dateKey: string): DailyChallenge {
   const index = dayIndex(dateKey);
   const len = DAILY_ROTATION.length;
   return {
+    type: "game",
     dateKey,
     number: index + 1,
     game: DAILY_ROTATION[((index % len) + len) % len]!,
@@ -118,8 +131,78 @@ export function recordDailyResult(challenge: DailyChallenge, score: number): Dai
   } catch {
     // storage blocked: result still shows for this session
   }
+  const bests = parseBests(readBestsRaw());
+  if (score > (bests[challenge.game] ?? -1)) {
+    try {
+      window.localStorage.setItem(BESTS_KEY, JSON.stringify({ ...bests, [challenge.game]: score }));
+    } catch {
+      // personal best is a nice-to-have
+    }
+  }
   listeners.forEach((l) => l());
   return next;
+}
+
+// ---------------------------------------------------------------------------
+// Personal best (all daily rounds, per game) and day streak — local only.
+// ---------------------------------------------------------------------------
+
+const BESTS_KEY = "hottogol:daily:best:v1";
+const MAX_STREAK_SCAN = 366;
+
+function readBestsRaw(): string | null {
+  try {
+    return window.localStorage.getItem(BESTS_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** { [game]: best daily score } — corrupt/odd values are dropped. */
+export function parseBests(raw: string | null): Partial<Record<DailyGameSlug, number>> {
+  if (!raw) return {};
+  try {
+    const data: unknown = JSON.parse(raw);
+    if (typeof data !== "object" || data === null) return {};
+    const out: Partial<Record<DailyGameSlug, number>> = {};
+    for (const slug of DAILY_ROTATION) {
+      const v = (data as Record<string, unknown>)[slug];
+      if (typeof v === "number" && Number.isFinite(v) && v >= 0) out[slug] = Math.floor(v);
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * Consecutive Bangladesh days with a finished daily, ending today (or
+ * yesterday, if today isn't played yet — the streak is still alive).
+ * `hasRecord` is injectable for tests.
+ */
+export function dailyStreak(todayKey: string, hasRecord: (dateKey: string) => boolean = (k) => parseDailyRecord(readDailyRaw(k)) !== null): number {
+  let key = hasRecord(todayKey) ? todayKey : prevDateKey(todayKey);
+  let n = 0;
+  while (n < MAX_STREAK_SCAN && hasRecord(key)) {
+    n += 1;
+    key = prevDateKey(key);
+  }
+  return n;
+}
+
+/**
+ * Stable snapshot "streak|bestsJSON" for useSyncExternalStore (re-read when
+ * a result is recorded; see subscribeDaily).
+ */
+export function dailyStatsSnapshot(todayKey: string): string {
+  return `${dailyStreak(todayKey)}|${readBestsRaw() ?? ""}`;
+}
+
+export function parseDailyStats(snapshot: string, game: DailyGameSlug): { streak: number; personalBest: number | null } {
+  const bar = snapshot.indexOf("|");
+  const streak = Number(snapshot.slice(0, bar)) || 0;
+  const best = parseBests(snapshot.slice(bar + 1) || null)[game];
+  return { streak, personalBest: best ?? null };
 }
 
 // ---------------------------------------------------------------------------

@@ -6,11 +6,13 @@ import { track } from "@/lib/analytics";
 import {
   bdDateKey,
   dailyChallenge,
+  dailyStatsSnapshot,
   formatCountdown,
   getPinnedKey,
   msUntilNextDay,
   nowSecond,
   parseDailyRecord,
+  parseDailyStats,
   readDailyRaw,
   subscribeDaily,
   subscribePinned,
@@ -20,12 +22,17 @@ import {
 } from "@/lib/daily";
 import { fmt, num, t, type Lang } from "@/lib/i18n/core";
 import type { Dict } from "@/lib/i18n/dictionary";
+import { challengePath } from "@/lib/challenge";
 import { copyText } from "@/lib/sharing";
 
 export type DailyState = {
   challenge: DailyChallenge;
   game: Game;
   record: DailyRecord | null;
+  /** Consecutive days with a finished daily (local). */
+  streak: number;
+  /** Best daily score ever for this game on this device (includes today). */
+  personalBest: number | null;
 };
 
 const noop = () => () => {};
@@ -42,11 +49,19 @@ export function useDaily(): DailyState | null {
     () => (key ? readDailyRaw(key) : null),
     () => null,
   );
+  const stats = useSyncExternalStore(
+    key ? subscribeDaily : noop,
+    () => (key ? dailyStatsSnapshot(key) : null),
+    () => null,
+  );
   if (key === null) return null;
   const challenge = dailyChallenge(key);
   const game = getGame(challenge.game);
   if (!game) return null;
-  return { challenge, game, record: parseDailyRecord(raw) };
+  const record = parseDailyRecord(raw);
+  const { streak, personalBest } = parseDailyStats(stats ?? "0|", challenge.game);
+  const best = Math.max(personalBest ?? -1, record?.best ?? -1);
+  return { challenge, game, record, streak, personalBest: best >= 0 ? best : null };
 }
 
 /**
@@ -81,18 +96,43 @@ export async function shareDailyResult(
     score: num(score, lang),
   });
   const base = { game: state.challenge.game, day: state.challenge.dateKey };
+  const method = await shareOrCopy(text, url);
+  if (method) {
+    track("daily_share", { ...base, method });
+    track("daily_challenge_share", { ...base, method, kind: "result" });
+  }
+  return method;
+}
+
+/**
+ * "Challenge a friend": the existing /c/<token> link replays this exact daily
+ * round with your score to beat. Falls back to /daily if no token fits.
+ */
+export async function shareDailyChallenge(
+  state: Pick<DailyState, "challenge" | "game">,
+  score: number,
+  lang: Lang,
+  d: Dict,
+): Promise<"native" | "copy" | null> {
+  const path = challengePath({ game: state.challenge.game, seed: state.challenge.seed, score }) ?? "/daily";
+  const url = `${window.location.origin}${path}`;
+  const text = fmt(d.dailyChallengeText, { score: num(score, lang), emoji: state.game.emoji, game: t(state.game.title, lang) });
+  const method = await shareOrCopy(text, url);
+  if (method) {
+    track("daily_challenge_share", { game: state.challenge.game, day: state.challenge.dateKey, method, kind: "challenge" });
+    track("challenge_shared", { game: state.challenge.game, method, score });
+  }
+  return method;
+}
+
+async function shareOrCopy(text: string, url: string): Promise<"native" | "copy" | null> {
   if (typeof navigator.share === "function") {
     try {
       await navigator.share({ text, url });
-      track("daily_share", { ...base, method: "native" });
       return "native";
     } catch {
       return null; // share sheet dismissed
     }
   }
-  if (await copyText(`${text} ${url}`)) {
-    track("daily_share", { ...base, method: "copy" });
-    return "copy";
-  }
-  return null;
+  return (await copyText(`${text} ${url}`)) ? "copy" : null;
 }
