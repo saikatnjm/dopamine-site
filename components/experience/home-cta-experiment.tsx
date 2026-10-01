@@ -10,11 +10,14 @@ import { useEffect, useSyncExternalStore } from "react";
 import { SurpriseButton } from "@/components/experience/surprise-button";
 import { useI18n } from "@/components/providers/lang-provider";
 import { setUserProperty, track } from "@/lib/analytics";
-import { getVariant } from "@/lib/experiments";
+import { getVariant, type Variant } from "@/lib/experiments";
 
 const EXPERIMENT = "home-cta";
 const noSubscribe = () => () => {};
-const clientVariant = () => getVariant(EXPERIMENT);
+// Cached: useSyncExternalStore calls getSnapshot on every render, and the
+// variant never changes within a page load (avoids repeated localStorage reads).
+let cachedVariant: Variant<typeof EXPERIMENT> | null = null;
+const clientVariant = () => (cachedVariant ??= getVariant(EXPERIMENT));
 const serverVariant = () => null;
 
 export function HomeCtaExperiment({ slugs, className }: { slugs: readonly string[]; className?: string }) {

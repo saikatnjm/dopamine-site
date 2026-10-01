@@ -8,7 +8,8 @@ import { jobResignation } from "./job-resignation";
 import { lifeDecision } from "./life-decision";
 
 // Register every experience here. Order = default display order.
-// Adding one: create data/experiences/<slug>.ts, import it, add it below.
+// Adding one: create data/experiences/<slug>.ts, import it, add it below,
+// and register its player in components/experience/experience-players.tsx.
 export const experiences: Experience[] = [
   dhakaCng,
   foodDelivery,

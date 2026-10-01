@@ -8,7 +8,6 @@ import { SiteFooter } from "@/components/navigation/site-footer";
 import { SiteHeader } from "@/components/navigation/site-header";
 import { ActivitiesProvider } from "@/components/providers/activities-provider";
 import { LangProvider } from "@/components/providers/lang-provider";
-import { MotionProvider } from "@/components/providers/motion-provider";
 import { RecentPlaysRecorder } from "@/components/providers/recent-plays-recorder";
 import { listActivities } from "@/lib/activities";
 import { getI18n } from "@/lib/i18n/server";
@@ -80,7 +79,7 @@ export default async function RootLayout({
           <div id="main" className="flex-1">
             <ActivitiesProvider activities={activityLinks}>
               <ActivityViewTracker />
-              <MotionProvider>{children}</MotionProvider>
+              {children}
             </ActivitiesProvider>
           </div>
           <SiteFooter />

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BossPage() {
-  const { lang, d } = await getI18n();
+  const { lang } = await getI18n();
 
   const jsonLd = {
     "@context": "https://schema.org",

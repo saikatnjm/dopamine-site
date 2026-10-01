@@ -10,10 +10,13 @@
 
 import { ID_PATTERN, choiceSteps } from "./engine";
 import { getExperience } from "./registry";
+import { RESULT_TOKEN_VERSION } from "./result-token-encode";
 import { t, type Lang } from "@/lib/i18n/core";
 import type { Experience, ExperienceOutcome } from "./types";
 
-const VERSION = "1";
+export { encodeResultToken } from "./result-token-encode";
+
+const VERSION = RESULT_TOKEN_VERSION;
 const MAX_TOKEN_LENGTH = 400;
 
 export type ResultData = {
@@ -23,24 +26,6 @@ export type ResultData = {
   seed: number;
   outcome: ExperienceOutcome;
 };
-
-export function encodeResultToken(input: {
-  experience: Experience;
-  choices: Record<string, string>;
-  seed: number;
-  outcomeId: string;
-}): string {
-  const choicePart = choiceSteps(input.experience)
-    .map((step) => input.choices[step.id] ?? "")
-    .join("~");
-  return [
-    VERSION,
-    input.experience.slug,
-    (input.seed >>> 0).toString(36),
-    input.outcomeId,
-    choicePart,
-  ].join(".");
-}
 
 /** Returns null for anything malformed, unknown or stale. Never throws. */
 export function decodeResultToken(raw: string): ResultData | null {

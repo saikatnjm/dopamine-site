@@ -49,7 +49,8 @@ on the host.
 ```
 app/                     routes (App Router), globals.css = design tokens
 components/
-  providers/             MotionProvider (LazyMotion strict + reducedMotion="user")
+  providers/             MotionProvider (LazyMotion strict + reducedMotion="user"),
+                         wrapped only around the experience player (not the root layout)
   analytics/             GoogleAnalytics (GA4 + Consent Mode defaults)
 data/
   categories.ts
@@ -66,7 +67,8 @@ lib/
     types.ts             Experience schema (single source of types)
     engine.ts            runExperience(), pickBeat(), validateExperience()
     registry.ts          getExperience(), listExperiences(), categories
-    result-token.ts      encode/decodeResultToken()
+    result-token.ts      decodeResultToken() (+ re-exports encode)
+    result-token-encode.ts encodeResultToken() — client-safe, no registry import
   games/<slug>.ts        pure, seeded game rules (no DOM/React)
   games/shared.ts        seed/score share params, createBestStore(), prefersReducedMotion()
 app/games/               Games index + one route per game (e.g. /games/cng-catch)
@@ -403,6 +405,11 @@ components/games/        game cards + client game components
 
 - Server Components by default; `"use client"` only where interaction needs it.
 - Animations: `m.*` components only (LazyMotion strict); CSS for simple ones.
+  Motion is only loaded where `<MotionProvider>` wraps it (currently the
+  experience player); prefer CSS (`animate-pop-in` etc.) for toasts/entrances.
+- Bundle: experience data is code-split per experience
+  (`components/experience/experience-players.tsx`); heavy game components
+  rendered conditionally are loaded with `next/dynamic`.
 - Design language: "sticker zine" — butter-cream dotted paper, loud candy
   accents (cng, marigold, chili, violet, sky, tangerine, lime), thick ink
   borders, offset `shadow-pop`, slight rotations. Light-only on purpose.

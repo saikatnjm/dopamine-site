@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExperiencePlayer } from "@/components/experience/experience-player";
+import { ExperiencePlayerBySlug } from "@/components/experience/experience-players";
 import { accentText } from "@/components/ui/styles";
 import { getCategory, getExperience, listExperiences } from "@/lib/experience/registry";
 import { t } from "@/lib/i18n/core";
@@ -64,7 +64,7 @@ export default async function ExperiencePage({ params }: Props) {
         </h1>
         <p className="mt-2 text-lg text-ink-muted">{t(experience.description, lang)}</p>
       </header>
-      <ExperiencePlayer slug={experience.slug} />
+      <ExperiencePlayerBySlug slug={experience.slug} />
       <RelatedLinks current={`x:${experience.slug}`} />
     </main>
   );

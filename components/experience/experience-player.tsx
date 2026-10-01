@@ -7,18 +7,18 @@ import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnGhost, btnPrimary, card } from "@/components/ui/styles";
 import { track } from "@/lib/analytics";
 import { resolveBeats, runExperience } from "@/lib/experience/engine";
-import { getExperience } from "@/lib/experience/registry";
-import { encodeResultToken } from "@/lib/experience/result-token";
+import { encodeResultToken } from "@/lib/experience/result-token-encode";
 import type { BeatStep, ChoiceStep, Experience } from "@/lib/experience/types";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
 
 type Run = { seed: number; index: number; choices: Record<string, string> };
 
-// The experience is looked up by slug on the client because its data holds
-// weight functions, which can't be passed from a Server Component.
-export function ExperiencePlayer({ slug }: { slug: string }) {
-  const experience = getExperience(slug);
+// Receives the experience from components/experience/experience-players.tsx,
+// which code-splits each experience's data (it holds weight functions, so it
+// can't be passed from a Server Component).
+export function ExperiencePlayer({ experience }: { experience: Experience }) {
+  const slug = experience.slug;
   const router = useRouter();
   const { lang, d } = useI18n();
   const [run, setRun] = useState<Run | null>(null);
@@ -36,7 +36,6 @@ export function ExperiencePlayer({ slug }: { slug: string }) {
     }
   }, [index]);
 
-  if (!experience) return null;
   const total = experience.steps.length;
 
   function start() {
@@ -46,7 +45,6 @@ export function ExperiencePlayer({ slug }: { slug: string }) {
   }
 
   function advance(next: Run) {
-    if (!experience) return;
     if (next.index < total) {
       setRun(next);
       return;

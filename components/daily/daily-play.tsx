@@ -1,8 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState, type ComponentType } from "react";
-import { CngCatchGame } from "@/components/games/cng-catch-game";
-import { TrafficDodgeGame } from "@/components/games/traffic-dodge-game";
 import { useI18n } from "@/components/providers/lang-provider";
 import { btnPrimary, card } from "@/components/ui/styles";
 import { onTrack, track } from "@/lib/analytics";
@@ -11,14 +10,18 @@ import type { DailyMode } from "@/lib/games/shared";
 import { DailySummary } from "./daily-summary";
 import { DailyCountdown, shareDailyResult, useClock, useDaily } from "./use-daily";
 
+// Same footprint as a game card while today's game chunk loads (no layout shift).
+const loadingGame = () => <div className={`${card} min-h-96 animate-pulse bg-surface-2`} aria-busy="true" />;
+
 /**
  * Players for challenge type "game": components that support `daily` mode.
  * Add new daily games here and in DAILY_ROTATION; a future challenge type
  * gets its own registry and a branch where `Game` is chosen below.
+ * Code-split: only today's game is downloaded.
  */
 const DAILY_GAMES: Record<DailyGameSlug, ComponentType<{ challenge: null; daily: DailyMode }>> = {
-  "cng-catch": CngCatchGame,
-  "traffic-dodge": TrafficDodgeGame,
+  "cng-catch": dynamic(() => import("@/components/games/cng-catch-game").then((m) => m.CngCatchGame), { ssr: false, loading: loadingGame }),
+  "traffic-dodge": dynamic(() => import("@/components/games/traffic-dodge-game").then((m) => m.TrafficDodgeGame), { ssr: false, loading: loadingGame }),
 };
 
 export function DailyPlay() {
