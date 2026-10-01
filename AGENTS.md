@@ -326,6 +326,14 @@ components/games/        game cards + client game components
 - Filled by `RecentPlaysRecorder` (root layout) from existing events via `onTrack`: `game_start`/`game_retry`/`game_complete` (`game: "dhaka-person"` → `p:dhaka-person`), `experience_start`/`experience_complete`, `quiz_complete`, `excuse_generate`. Every read/write is try/catch; corrupt data reads as [].
 - `components/experience/continue-playing.tsx`: client-only (`useSyncExternalStore`, null on the server), renders nothing without history → no clutter for new visitors. Up to 3 `ActivityCard`s + status line ("✅ Finished · last score … · 2 hours ago"), CONTINUE → most recent, ✕ dismiss (`hottogol:continue:dismissed` = time; shows again after a newer play). Entries for removed activities are skipped. Clicks: `recommendation_click` {source: "continue"}.
 
+## Social landing page (`/viral`)
+
+- For TikTok / Reels / Shorts / Facebook / X traffic. Hero "YOU SAW THE VIDEO." / "Now try it yourself. 😏", one featured activity with ▶ PLAY NOW, then the rest as `ActivityCard`s, Surprise me (Chaos Roulette) and links to `/bored` + 2 guides. Server-rendered; one tiny client island.
+- Picks: `data/viral.ts` (`VIRAL_PICKS`, activity keys; unknown keys fail dev/build via `lib/viral.ts`). No counts or popularity claims.
+- Deep link: `/viral?play=<slug>` (any registered game/simulator/quiz/tool slug) features that activity ("🎬 The one from the video"); garbage is ignored. Canonical `/viral`; **noindex, follow** (owner decision); not in the sitemap.
+- OG image: `app/viral/opengraph-image.tsx` (shared `renderOgCard`).
+- Tracking (`components/viral/viral-tracker.tsx`): `viral_landing_view` {utm_source, utm_medium, utm_campaign, utm_content (sanitized `[a-z0-9_-]`, ≤ 40), featured, deep_link}; play clicks → `recommendation_click` {source: "viral", utm_source}. **Nothing stored** (no cookies/localStorage/sessionStorage); GA4 reads utm_* from the URL itself.
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -469,4 +477,5 @@ components/games/        game cards + client game components
 - [x] Phase 36 — Internal linking (`<RelatedLinks>` on every activity + content page)
 - [x] Phase 37 — Continue playing (local play history v2: starts, finishes, latest score)
 - [x] Phase 38 — Daily Challenge upgrade (today's score, personal best, streak, challenge a friend, daily_challenge_* events)
+- [x] Phase 39 — `/viral` social landing page (deep links, OG image, UTM tracking without storage)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

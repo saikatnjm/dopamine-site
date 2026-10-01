@@ -15,6 +15,7 @@ export type AnalyticsEvent =
   | "game_share"
   | "daily_complete"
   | "daily_share"
+  | "viral_landing_view"
   | "daily_challenge_view"
   | "daily_challenge_start"
   | "daily_challenge_complete"
