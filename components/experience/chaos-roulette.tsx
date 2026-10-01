@@ -12,6 +12,8 @@ import { pickRandom } from "@/lib/random";
 type Props = {
   activities: readonly Activity[];
   className?: string;
+  /** Button text (defaults to "🎰 Chaos Roulette"). */
+  label?: string;
 };
 
 const AUTO_GO_MS = 1200;
@@ -53,7 +55,7 @@ function buildSequence(items: readonly Activity[], pick: Activity): Activity[] {
   return seq;
 }
 
-export function ChaosRoulette({ activities, className = "" }: Props) {
+export function ChaosRoulette({ activities, className = "", label }: Props) {
   const router = useRouter();
   const { d } = useI18n();
   const titleId = useId();
@@ -172,8 +174,12 @@ export function ChaosRoulette({ activities, className = "" }: Props) {
         onClick={spin}
         className={`${btnPrimary} bg-violet whitespace-nowrap ${className}`}
       >
-        <span aria-hidden>🎰</span>
-        {d.rouletteCta}
+        {label ?? (
+          <>
+            <span aria-hidden>🎰</span>
+            {d.rouletteCta}
+          </>
+        )}
       </button>
 
       {open && current ? (

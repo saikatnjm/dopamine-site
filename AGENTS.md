@@ -251,6 +251,12 @@ components/games/        game cards + client game components
 - `components/experience/mood-picker.tsx`: chip row + 🎲 Surprise me; shows 3 picks (weighted random sample favouring the top of each mood list; re-rolls if the same trio repeats), "Show me 3 others" reshuffles. Entrance uses `motion-safe:animate-pop-in` only.
 - Events: `mood_selection` {mood, again}, `recommendation_click` {mood, activity, position}; Surprise also sends `surprise_me_click` {source: "mood"}.
 
+## Bored landing page (`/bored`)
+
+- SEO landing page ("Bored?"). Sections built from `listActivities()` — every activity lands in exactly one bucket: ⚡ 30 SECONDS = games with `durationSec` ≤ 45, 😂 1 MINUTE = experiences, 🧠 5 MINUTES = everything else (quiz, excuses, longer games). 🎲 I DON'T KNOW = Chaos Roulette (`label` prop) + link to the homepage mood picker.
+- Cards: `components/experience/activity-card.tsx` (server, no JS). `Activity.durationSec` comes from the registries (quiz = 90).
+- Canonical/OG/Twitter metadata, CollectionPage + ItemList JSON-LD, in sitemap, footer link ("Just for fun"). Not in the header (kept uncluttered).
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -385,4 +391,5 @@ components/games/        game cards + client game components
 - [x] Phase 27 — Weekly Boss framework + 👹 Dhaka Traffic Boss (`/boss`)
 - [x] Phase 28 — Chaos Roulette (homepage)
 - [x] Phase 29 — "What are you in the mood for?" mood picker (homepage)
+- [x] Phase 30 — `/bored` landing page
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
