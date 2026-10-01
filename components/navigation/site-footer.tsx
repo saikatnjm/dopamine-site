@@ -26,6 +26,7 @@ export async function SiteFooter() {
     {
       title: d.footerFun,
       links: [
+        { href: "/bored", label: d.footerBored },
         { href: "/excuses", label: d.footerExcuses },
         { href: "/dhaka-person", label: d.footerPerson },
       ],

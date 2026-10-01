@@ -18,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...listCategories()
       .filter((c) => experiencesInCategory(c.slug).length > 0)
       .map((c) => ({ url: absoluteUrl(`/categories/${c.slug}`), changeFrequency: "monthly" as const, priority: 0.6 })),
+    { url: absoluteUrl("/bored"), changeFrequency: "weekly", priority: 0.9 },
     { url: absoluteUrl("/daily"), changeFrequency: "daily", priority: 0.9 },
     { url: absoluteUrl("/boss"), changeFrequency: "weekly", priority: 0.8 },
     { url: absoluteUrl("/world"), changeFrequency: "weekly", priority: 0.8 },

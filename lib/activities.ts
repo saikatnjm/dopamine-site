@@ -21,6 +21,8 @@ export type Activity = {
   title: string;
   emoji: string;
   accent: Accent;
+  /** Typical run length from the registry, when the activity has one. */
+  durationSec?: number;
 };
 
 const KIND_LABEL: Record<ActivityKind, Text> = {
@@ -41,6 +43,7 @@ export function listActivities(lang: Lang): Activity[] {
       title: t(e.title, lang),
       emoji: e.emoji,
       accent: e.accent,
+      durationSec: e.durationSec,
     })),
     ...listGames().map((g) => ({
       key: `g:${g.slug}`,
@@ -50,8 +53,9 @@ export function listActivities(lang: Lang): Activity[] {
       title: t(g.title, lang),
       emoji: g.emoji,
       accent: g.accent,
+      durationSec: g.durationSec,
     })),
-    { key: "p:dhaka-person", kind: "quiz", kindLabel: kl("quiz"), href: "/dhaka-person", title: t(quizCopy.title, lang), emoji: "🏙️", accent: "sky" },
+    { key: "p:dhaka-person", kind: "quiz", kindLabel: kl("quiz"), href: "/dhaka-person", title: t(quizCopy.title, lang), emoji: "🏙️", accent: "sky", durationSec: 90 },
     { key: "p:excuses", kind: "tool", kindLabel: kl("tool"), href: "/excuses?go=1", title: t(excuseCopy.title, lang), emoji: "😂", accent: "marigold" },
   ];
 }
