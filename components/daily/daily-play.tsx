@@ -1,17 +1,21 @@
 "use client";
 
-import { useRef, useState, type ComponentType } from "react";
+import { useEffect, useRef, useState, type ComponentType } from "react";
 import { CngCatchGame } from "@/components/games/cng-catch-game";
 import { TrafficDodgeGame } from "@/components/games/traffic-dodge-game";
 import { useI18n } from "@/components/providers/lang-provider";
-import { accentBg, btnPrimary, card } from "@/components/ui/styles";
-import { track } from "@/lib/analytics";
+import { btnPrimary, card } from "@/components/ui/styles";
+import { onTrack, track } from "@/lib/analytics";
 import { recordDailyResult, repinDaily, type DailyGameSlug } from "@/lib/daily";
 import type { DailyMode } from "@/lib/games/shared";
-import { fmt, num, t } from "@/lib/i18n/core";
+import { DailySummary } from "./daily-summary";
 import { DailyCountdown, shareDailyResult, useClock, useDaily } from "./use-daily";
 
-/** Game components that support `daily` mode. Add new daily games here and in DAILY_ROTATION. */
+/**
+ * Players for challenge type "game": components that support `daily` mode.
+ * Add new daily games here and in DAILY_ROTATION; a future challenge type
+ * gets its own registry and a branch where `Game` is chosen below.
+ */
 const DAILY_GAMES: Record<DailyGameSlug, ComponentType<{ challenge: null; daily: DailyMode }>> = {
   "cng-catch": CngCatchGame,
   "traffic-dodge": TrafficDodgeGame,
@@ -22,6 +26,18 @@ export function DailyPlay() {
   const daily = useDaily();
   const [toast, setToast] = useState(false);
   const timer = useRef<number | undefined>(undefined);
+  const dailyGame = daily?.challenge.game;
+  const dailyDay = daily?.challenge.dateKey;
+
+  // daily_challenge_start: hear the daily game's own game_start/game_retry.
+  useEffect(() => {
+    if (!dailyGame || !dailyDay) return;
+    return onTrack((event, params) => {
+      if ((event === "game_start" || event === "game_retry") && params.game === dailyGame) {
+        track("daily_challenge_start", { game: dailyGame, day: dailyDay, retry: event === "game_retry" });
+      }
+    });
+  }, [dailyGame, dailyDay]);
 
   if (!daily) {
     return (
@@ -31,7 +47,7 @@ export function DailyPlay() {
     );
   }
 
-  const { challenge, game, record } = daily;
+  const { challenge } = daily;
   const Game = DAILY_GAMES[challenge.game];
 
   const mode: DailyMode = {
@@ -40,6 +56,7 @@ export function DailyPlay() {
     onComplete: (score) => {
       const next = recordDailyResult(challenge, score);
       track("daily_complete", { game: challenge.game, day: challenge.dateKey, score, attempt: next.attempts });
+      track("daily_challenge_complete", { game: challenge.game, day: challenge.dateKey, score, attempt: next.attempts, best: next.best });
     },
     onShare: async (score) => {
       if ((await shareDailyResult(daily, score, lang, d)) === "copy") {
@@ -54,40 +71,19 @@ export function DailyPlay() {
     <div className="grid gap-5">
       <RolledBanner />
 
-      <section className={`${card} overflow-hidden`} aria-labelledby="daily-today">
-        <div className={`${accentBg[game.accent]} flex items-center justify-between gap-3 border-b-2 border-ink px-5 py-4`}>
-          <div>
-            <p className="text-sm font-extrabold">{fmt(d.dailyBadge, { n: num(challenge.number, lang) })}</p>
-            <h2 id="daily-today" className="font-display text-2xl font-extrabold leading-tight">
-              {fmt(d.dailyToday, { game: t(game.title, lang) })}
-            </h2>
-          </div>
-          <span aria-hidden className="text-5xl drop-shadow-[3px_3px_0_rgb(26_19_37)]">
-            {game.emoji}
-          </span>
-        </div>
-        <div className="grid gap-3 p-5 sm:grid-cols-2">
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-ink-muted">{d.dailyNext}</p>
-            <DailyCountdown className="block font-display text-3xl font-black" />
-          </div>
-          {record && (
-            <div className="rounded-2xl border-2 border-ink bg-surface-2 p-3">
-              <p className="text-sm font-extrabold">{d.dailyDone}</p>
-              <p className="font-display text-xl font-extrabold tabular-nums">{fmt(d.dailyScore, { score: num(record.first, lang) })}</p>
-              {record.attempts > 1 && (
-                <p className="text-xs font-bold text-ink-muted">
-                  {fmt(d.dailyBest, { score: num(record.best, lang), tries: num(record.attempts, lang) })}
-                </p>
-              )}
-            </div>
-          )}
-          <p className="text-sm text-ink-muted sm:col-span-2">{d.dailySub}</p>
-        </div>
+      <section className={`${card} overflow-hidden p-5 sm:p-6`}>
+        <DailySummary daily={daily} playHref="#daily-game" surface="page" headingId="daily-today" />
+        {!daily.record && (
+          <p className="mt-4 text-sm font-bold text-ink-muted">
+            {d.dailyNext} <DailyCountdown className="font-black text-ink" />
+          </p>
+        )}
       </section>
 
       {/* Keyed by date so a new day starts a fresh game. */}
-      <Game key={challenge.dateKey} challenge={null} daily={mode} />
+      <div id="daily-game" className="scroll-mt-4">
+        <Game key={challenge.dateKey} challenge={null} daily={mode} />
+      </div>
 
       <p className="text-center text-xs text-ink-muted">{d.dailyLocal}</p>
 
