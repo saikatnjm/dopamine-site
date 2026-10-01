@@ -280,8 +280,8 @@ components/games/        game cards + client game components
 
 - "😂 LIKED THAT?" + 3 related activities: `components/share/you-might-also-like.tsx`, rendered by `ResultShareKit` (games, boss, quiz, excuses) and simulator `ResultActions`. The current activity is found by `ResultCardData.path`. Cards reuse `ActivityCard`.
 - Metadata lives in the registries only: `Game.category/mechanic/tags` (`data/games/index.ts`), `Experience.tags` (+ existing `category`; mechanic = "choices"), quiz/excuses entries in `lib/activities.ts`. Moods come from `lib/moods.ts` (`moodsOf`). Tag vocabulary = `ActivityTag` in `lib/experience/types.ts` — add a tag there, not ad hoc.
-- Scoring (`lib/recommend.ts`, pure): category +3, mechanic +2, shared tag +2 each, shared mood +1 each; recently played (last 5) −5, older −2, ever finished (achievement stats) −1; small jitter. Unrelated (0) never shown; < 3 related → section hidden.
-- History: `localStorage["hottogol:recent:v1"]` = `[{key, at}]` newest first, max 20 (`lib/recent-plays.ts`), filled by `RecentPlaysRecorder` (root layout) from existing completion events via `onTrack` — no per-game wiring.
+- Scoring (`lib/recommend.ts`, pure): category +3, mechanic +2, shared tag +2 each, shared mood +1 each; recently played (in the 5-entry history) −5, ever finished (achievement stats) −1; small jitter. Unrelated (0) never shown; < 3 related → section hidden.
+- History: shared with Continue playing — see below (`lib/recent-plays.ts`).
 - Event: `recommendation_click` {source: "also_like", activity, from, position}.
 
 ## Hot right now (homepage, after the Daily card)
@@ -307,6 +307,12 @@ components/games/        game cards + client game components
 - Ranking: summed `relatedness()` to the page's anchors, hub-damped (÷ √(degree/avg)) so widely related activities don't top every page, plus a per-page hashed jitter so near-ties rotate.
 - Wired into: 11 game pages, `/boss`, `/experiences/[slug]`, `/dhaka-person`, `/excuses`, `/daily` (quick reflex games), `/categories/[slug]` (games in that category), guide pages (related games for the picks, excluding listed ones).
 - Every activity gets ≥ 3 inbound links site-wide (re-check after adding activities).
+
+## Continue playing (homepage, under the hero) + play history
+
+- `localStorage["hottogol:recent:v2"]` = `[{ key, at, done, score? }]` newest first, **max 5**, entries > 14 days dropped (`lib/recent-plays.ts`). key = activity key; done = finished vs started; score only when `game_complete` reports one. No personal data. v1 (completions only) is read once as a fallback.
+- Filled by `RecentPlaysRecorder` (root layout) from existing events via `onTrack`: `game_start`/`game_retry`/`game_complete` (`game: "dhaka-person"` → `p:dhaka-person`), `experience_start`/`experience_complete`, `quiz_complete`, `excuse_generate`. Every read/write is try/catch; corrupt data reads as [].
+- `components/experience/continue-playing.tsx`: client-only (`useSyncExternalStore`, null on the server), renders nothing without history → no clutter for new visitors. Up to 3 `ActivityCard`s + status line ("✅ Finished · last score … · 2 hours ago"), CONTINUE → most recent, ✕ dismiss (`hottogol:continue:dismissed` = time; shows again after a newer play). Entries for removed activities are skipped. Clicks: `recommendation_click` {source: "continue"}.
 
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
@@ -449,4 +455,5 @@ components/games/        game cards + client game components
 - [x] Phase 34 — 🔥 Hot right now (curated, `data/hot.ts`)
 - [x] Phase 35 — SEO guide pages (5 hand-written guides, shared template, validation)
 - [x] Phase 36 — Internal linking (`<RelatedLinks>` on every activity + content page)
+- [x] Phase 37 — Continue playing (local play history v2: starts, finishes, latest score)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
