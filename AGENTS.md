@@ -92,7 +92,18 @@ components/games/        game cards + client game components
   `ShareActions` (Web Share → copy fallback + WhatsApp/Facebook/X/copy),
   `ResultStamp` (site + game on result cards for screenshots). A new game must
   add its slug to `CHALLENGE_GAMES` and to `GAMES` in `app/c/[token]/page.tsx`.
-  Legacy `/games/<slug>?seed=&s=` links still work. Simulators keep their own
+  Legacy `/games/<slug>?seed=&s=` links still work (validated by
+  `legacyChallenge()` — same seed/max-score limits as tokens).
+  Challenge flow copy: sender's result shows a challenge card ("😏 I scored
+  X. / You won't beat me.") above `ShareActions`; recipient's `ChallengeBanner`
+  ("😏 You've been challenged. / Beat X." + ⚔️ ACCEPT CHALLENGE → `onAccept`
+  = the game's own start); `ChallengeOutcome` ("YOU SCORED X." + "You cooked
+  them. 💀" / tie / rematch). Banner and outcome take `game` for analytics.
+  Events: `challenge_created` (result with a valid link), `challenge_opened`
+  (banner shown), `challenge_started` (banner hears this game's
+  `game_start`/`game_retry` via `onTrack`), `challenge_completed`
+  {result: win|tie|lose, score, target}, `challenge_shared` {method} (sent
+  alongside `game_share`). `challenge_won` is kept for achievements. Simulators keep their own
   result-token sharing (`/result/<token>`).
 - Result title is a pure function of score (`rankFor`); never rename rank ids.
 - Best score: `localStorage["hottogol:<slug>:best"]` via `useSyncExternalStore`
@@ -392,4 +403,5 @@ components/games/        game cards + client game components
 - [x] Phase 28 — Chaos Roulette (homepage)
 - [x] Phase 29 — "What are you in the mood for?" mood picker (homepage)
 - [x] Phase 30 — `/bored` landing page
+- [x] Phase 31 — Challenge a Friend upgrade (challenge card, accept button, "you cooked them" outcome, challenge_* events)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

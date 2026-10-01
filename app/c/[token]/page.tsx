@@ -36,8 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const challenge = decodeChallenge(token);
   const game = challenge && getGame(challenge.game);
   if (!challenge || !game) return { title: "Challenge link broken", robots: { index: false } };
-  const title = `Beat ${challenge.score.toLocaleString("en-US")} pts in ${t(game.title, "en")} ${game.emoji}`;
-  const description = "Your friend challenged you — same round, same timing. Can you beat their score? Free, no sign-up.";
+  const title = `😏 You've been challenged: beat ${challenge.score.toLocaleString("en-US")} in ${t(game.title, "en")} ${game.emoji}`;
+  const description = "Your friend says you won't beat their score. Same round, same timing — prove them wrong. Free, no sign-up.";
   // Personal links: keep them out of search, but give chat apps a rich preview.
   return {
     title,

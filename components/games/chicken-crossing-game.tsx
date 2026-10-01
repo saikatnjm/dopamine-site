@@ -415,7 +415,7 @@ export function ChickenCrossingGame({ challenge }: { challenge: Challenge }) {
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="cc-how">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => start(seed ?? newSeed(), "first")} />}
           <p aria-hidden className="text-center text-6xl motion-safe:animate-wiggle">
             🐔
           </p>
@@ -651,7 +651,7 @@ function ResultView({
     <section className="grid gap-3" aria-labelledby="cc-result">
       <ResultCard data={card} host={host} headingId="cc-result" headingRef={headingRef}>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={result.seed} score={result.score} />
         <p className="text-center text-xs font-bold text-ink-muted">
           {t(copy.roadCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
         </p>

@@ -84,6 +84,16 @@ export function decodeChallenge(token: unknown): Challenge | null {
   return { game, seed, score };
 }
 
+/**
+ * Legacy `/games/<slug>?seed=&s=` links: apply the same limits as tokens
+ * (seed range, the game's max score) so a hand-edited URL can't show an
+ * impossible score. Returns null when anything is off.
+ */
+export function legacyChallenge(game: ChallengeGame, seed: number | null, score: number | null): FriendChallenge | null {
+  if (seed === null || score === null || !validNumbers(game, seed, score)) return null;
+  return { seed, score };
+}
+
 /** Path for a challenge, e.g. /c/1cc.3ol2kf.1hc.7q (null if invalid). */
 export function challengePath(c: Challenge): string | null {
   const token = encodeChallenge(c);

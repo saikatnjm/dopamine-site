@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { BazarBargainGame } from "@/components/games/bazar-bargain-game";
 import { accentText } from "@/components/ui/styles";
 import { getGame } from "@/data/games";
+import { legacyChallenge } from "@/lib/challenge";
 import { decodeScore, decodeSeed } from "@/lib/games/shared";
 import { GAME_SLUG } from "@/lib/games/bazar-bargain";
 import { fmt, num, t } from "@/lib/i18n/core";
@@ -31,7 +32,7 @@ export default async function BazarBargainPage({ searchParams }: Props) {
   // Shared link: ?seed=<base36>&s=<score> → same bazar + friend's score to beat.
   const seed = decodeSeed(params.seed);
   const score = decodeScore(params.s);
-  const challenge = seed !== null && score !== null ? { seed, score } : null;
+  const challenge = legacyChallenge(GAME_SLUG, seed, score);
 
   const jsonLd = {
     "@context": "https://schema.org",

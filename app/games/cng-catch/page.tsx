@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CngCatchGame } from "@/components/games/cng-catch-game";
 import { accentText } from "@/components/ui/styles";
 import { getGame } from "@/data/games";
+import { legacyChallenge } from "@/lib/challenge";
 import { decodeScore, decodeSeed, GAME_SLUG } from "@/lib/games/cng-catch";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
@@ -30,7 +31,7 @@ export default async function CngCatchPage({ searchParams }: Props) {
   // Shared link: ?seed=<base36>&s=<score> → same traffic + friend's score to beat.
   const seed = decodeSeed(params.seed);
   const score = decodeScore(params.s);
-  const challenge = seed !== null && score !== null ? { seed, score } : null;
+  const challenge = legacyChallenge(GAME_SLUG, seed, score);
 
   const jsonLd = {
     "@context": "https://schema.org",

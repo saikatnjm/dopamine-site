@@ -132,7 +132,7 @@ export function BazarBargainGame({ challenge }: { challenge: Challenge }) {
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="bz-how">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => start(seed ?? newSeed(), "first")} />}
           <h2 id="bz-how" className="font-display text-2xl font-extrabold">
             {t(copy.howTitle, lang)}
           </h2>
@@ -393,7 +393,7 @@ function ResultView({
     <section className="grid gap-3" aria-labelledby="bz-result">
       <ResultCard data={card} host={host} headingId="bz-result" headingRef={headingRef}>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={run.seed} score={summary.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={run.seed} score={summary.score} />
           {/* Receipt */}
           <h3 className="mt-5 text-sm font-extrabold uppercase tracking-wider text-ink-muted">{t(copy.receipt, lang)}</h3>
           <ul className="mt-2 divide-y-2 divide-dashed divide-ink/20 rounded-xl border-2 border-ink bg-surface px-3 font-mono text-sm">
