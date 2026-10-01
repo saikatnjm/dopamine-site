@@ -284,6 +284,12 @@ components/games/        game cards + client game components
 - History: `localStorage["hottogol:recent:v1"]` = `[{key, at}]` newest first, max 20 (`lib/recent-plays.ts`), filled by `RecentPlaysRecorder` (root layout) from existing completion events via `onTrack` — no per-game wiring.
 - Event: `recommendation_click` {source: "also_like", activity, from, position}.
 
+## Hot right now (homepage, after the Daily card)
+
+- **Hand-picked, not measured.** `data/hot.ts` (`HOT_RIGHT_NOW`) is the one place to change it: 3–5 `{ key, label }` with activity keys from `listActivities()`; labels `hot` ("🔥 Hot pick"), `try`, `quick`, `friend`. Unknown keys fail the dev server/build (check in `app/page.tsx`); < 3 valid → hidden.
+- `components/experience/hot-right-now.tsx`: server component, reuses `ActivityCard` + a label sticker; no client JS.
+- Never show popularity numbers or say "popular"/"trending" unless real analytics data backs it (owner decision).
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -422,4 +428,5 @@ components/games/        game cards + client game components
 - [x] Phase 31 — Challenge a Friend upgrade (challenge card, accept button, "you cooked them" outcome, challenge_* events)
 - [x] Phase 32 — Result cards: 9:16 share image, ≤ 4 stats, challenge-first actions, 🎲 Play another everywhere
 - [x] Phase 33 — "You might also like" (registry category/mechanic/tags, local recent-play history)
+- [x] Phase 34 — 🔥 Hot right now (curated, `data/hot.ts`)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
