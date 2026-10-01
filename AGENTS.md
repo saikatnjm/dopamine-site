@@ -245,6 +245,12 @@ components/games/        game cards + client game components
 - `lib/activities.ts` → `listActivities(lang)` builds every playable activity from the real registries (experiences, games, quiz, excuses); resolved on the server, passed as plain items. No hand-kept lists.
 - `components/experience/chaos-roulette.tsx`: picks with `pickRandom` (crypto, UI-only), spins a slot window through the items (~1.5 s, decelerating), stops on the pick, shows "THE INTERNET HAS DECIDED.", then navigates. Reduced motion: no spin, instant pick. Surprise Me (`SurpriseButton`) is unchanged.
 
+## Mood picker (homepage, after the Daily card, `#mood`)
+
+- "What are you in the mood for?" — `lib/moods.ts` maps 6 moods to activity **keys** from `listActivities()` (no titles/routes duplicated). Unknown keys are skipped at runtime and fail the build/dev server (check in `app/page.tsx`), so a renamed slug can't ship a dead link.
+- `components/experience/mood-picker.tsx`: chip row + 🎲 Surprise me; shows 3 picks (weighted random sample favouring the top of each mood list; re-rolls if the same trio repeats), "Show me 3 others" reshuffles. Entrance uses `motion-safe:animate-pop-in` only.
+- Events: `mood_selection` {mood, again}, `recommendation_click` {mood, activity, position}; Surprise also sends `surprise_me_click` {source: "mood"}.
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -378,4 +384,5 @@ components/games/        game cards + client game components
 - [x] Phase 26 — Hottogol World discovery map (`/world`)
 - [x] Phase 27 — Weekly Boss framework + 👹 Dhaka Traffic Boss (`/boss`)
 - [x] Phase 28 — Chaos Roulette (homepage)
+- [x] Phase 29 — "What are you in the mood for?" mood picker (homepage)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

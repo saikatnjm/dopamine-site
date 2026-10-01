@@ -19,7 +19,9 @@ export type AnalyticsEvent =
   | "excuse_generate"
   | "excuse_copy"
   | "excuse_share"
-  | "quiz_complete";
+  | "quiz_complete"
+  | "mood_selection"
+  | "recommendation_click";
 // page_view is sent automatically by GA4 (enhanced measurement).
 
 export type AnalyticsParams = Record<string, string | number | boolean | undefined>;
