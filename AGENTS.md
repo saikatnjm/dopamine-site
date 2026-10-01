@@ -290,6 +290,15 @@ components/games/        game cards + client game components
 - `components/experience/hot-right-now.tsx`: server component, reuses `ActivityCard` + a label sticker; no client JS.
 - Never show popularity numbers or say "popular"/"trending" unless real analytics data backs it (owner decision).
 
+## Guide pages (SEO content/discovery)
+
+- Routes: `/funny-websites`, `/games-to-play-when-bored`, `/one-minute-games`, `/random-things-to-do-online`, `/funny-online-games` — each a 5-line `page.tsx` calling `GuidePage` + `guideMetadata` (`components/guides/guide-page.tsx`). No root catch-all route.
+- Content: `data/guides.ts` (EN + BN; SEO title/description English): H1, intro, 5–7 curated activity keys each with a page-specific "why", related keys, links to other guides/pages, optional FAQ. Names, emoji, routes, durations and taglines come from `listActivities()` (`Activity.tagline` = registry tagline / quiz & excuse `lead`).
+- `lib/guides.ts` validates at build/dev: unknown keys, 5–7 picks, related ≠ picks, valid guide links, and **no paragraph (intro, why, FAQ answer) may appear on two pages**.
+- Each page has a distinct angle (games only / by length / simulators & generator / variety / story endings) so they don't compete; `/bored` stays the time-based landing page.
+- SEO: canonical, OG/Twitter, CollectionPage + ItemList, BreadcrumbList (+ visible breadcrumb), FAQPage only when the guide has an FAQ; in sitemap; footer group "Lists"; linked from `/bored`.
+- Rules: no thin/spun pages — a new guide needs genuinely different picks and hand-written copy. Only claim what the activity actually does.
+
 ## Excuse Generator (`/excuses`, homepage `ExcuseCard`)
 
 - Content (fragments with ids, credibility/chaos weights, verdicts) in
@@ -429,4 +438,5 @@ components/games/        game cards + client game components
 - [x] Phase 32 — Result cards: 9:16 share image, ≤ 4 stats, challenge-first actions, 🎲 Play another everywhere
 - [x] Phase 33 — "You might also like" (registry category/mechanic/tags, local recent-play history)
 - [x] Phase 34 — 🔥 Hot right now (curated, `data/hot.ts`)
+- [x] Phase 35 — SEO guide pages (5 hand-written guides, shared template, validation)
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

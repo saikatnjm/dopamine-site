@@ -21,6 +21,8 @@ export type Activity = {
   kindLabel: string;
   href: string;
   title: string;
+  /** One-line hook from the registry (localized). */
+  tagline: string;
   emoji: string;
   accent: Accent;
   /** Typical run length from the registry, when the activity has one. */
@@ -49,6 +51,7 @@ export function listActivities(lang: Lang): Activity[] {
       kindLabel: kl("experience"),
       href: `/experiences/${e.slug}`,
       title: t(e.title, lang),
+      tagline: t(e.tagline, lang),
       emoji: e.emoji,
       accent: e.accent,
       durationSec: e.durationSec,
@@ -62,6 +65,7 @@ export function listActivities(lang: Lang): Activity[] {
       kindLabel: kl("game"),
       href: GAME_HREF_OVERRIDES[g.slug] ?? `/games/${g.slug}`,
       title: t(g.title, lang),
+      tagline: t(g.tagline, lang),
       emoji: g.emoji,
       accent: g.accent,
       durationSec: g.durationSec,
@@ -69,8 +73,8 @@ export function listActivities(lang: Lang): Activity[] {
       mechanic: g.mechanic,
       tags: g.tags,
     })),
-    { key: "p:dhaka-person", kind: "quiz", kindLabel: kl("quiz"), href: "/dhaka-person", title: t(quizCopy.title, lang), emoji: "🏙️", accent: "sky", durationSec: 90, category: "bangladesh", mechanic: "quiz", tags: ["life", "traffic"] },
-    { key: "p:excuses", kind: "tool", kindLabel: kl("tool"), href: "/excuses?go=1", title: t(excuseCopy.title, lang), emoji: "😂", accent: "marigold", category: "work", mechanic: "generator", tags: ["office", "life"] },
+    { key: "p:dhaka-person", kind: "quiz", kindLabel: kl("quiz"), href: "/dhaka-person", title: t(quizCopy.title, lang), tagline: t(quizCopy.lead, lang), emoji: "🏙️", accent: "sky", durationSec: 90, category: "bangladesh", mechanic: "quiz", tags: ["life", "traffic"] },
+    { key: "p:excuses", kind: "tool", kindLabel: kl("tool"), href: "/excuses?go=1", title: t(excuseCopy.title, lang), tagline: t(excuseCopy.lead, lang), emoji: "😂", accent: "marigold", category: "work", mechanic: "generator", tags: ["office", "life"] },
   ];
   return list.map((a) => ({ ...a, moods: moodsOf(a.key) }));
 }

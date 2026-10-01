@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { GUIDE_SLUGS, guides } from "@/data/guides";
+import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
 import { GitHubIcon } from "./github-credit";
 
 export async function SiteFooter() {
-  const { d } = await getI18n();
+  const { lang, d } = await getI18n();
   // Grouped so the footer reads as a few short lists instead of one long wrap.
   const groups = [
     {
@@ -32,6 +34,10 @@ export async function SiteFooter() {
       ],
     },
     {
+      title: d.footerGuides,
+      links: GUIDE_SLUGS.map((s) => ({ href: `/${s}`, label: t(guides[s].name, lang) })),
+    },
+    {
       title: d.footerSite,
       links: [
         { href: "/about", label: d.footerAbout },
@@ -49,7 +55,7 @@ export async function SiteFooter() {
           <p className="mt-1 max-w-xs text-sm opacity-80">{d.tagline}</p>
           <p className="mt-3 max-w-xs text-xs opacity-60">{d.footerNote}</p>
         </div>
-        <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
+        <nav aria-label="Footer" className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-3 xl:grid-cols-5">
           {groups.map((g) => (
             <div key={g.title}>
               <p className="mb-2 text-xs font-extrabold uppercase tracking-wider text-lime">{g.title}</p>
