@@ -423,8 +423,8 @@ function ResultView({
             {t(copy.bazarCode, lang)}: <code className="font-mono">{encodeSeed(run.seed)}</code>
           </p>
       </ResultCard>
-      <ResultShareKit data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: summary.ending })} />
       {share}
+      <ResultShareKit primary={false} data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: summary.ending })} />
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}
       </button>

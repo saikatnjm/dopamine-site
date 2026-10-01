@@ -691,8 +691,8 @@ function ResultView({
           {t(copy.shiftCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
         </p>
       </ResultCard>
-      <ResultShareKit data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankId })} />
       <ShareActions game={GAME_SLUG} seed={result.seed} score={result.score} text={message} accent={rank.accent} rank={rankId} />
+      <ResultShareKit primary={false} data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankId })} />
       <button type="button" onClick={onRetry} className={`${btnPrimary} ${accentBg.lime}`}>
         {t(copy.retry, lang)}
       </button>

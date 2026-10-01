@@ -2,9 +2,10 @@
 
 import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
+import { PlayAnother } from "@/components/share/play-another";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
-import { accentBg, btnGhost, btnPrimary, card as cardStyle } from "@/components/ui/styles";
+import { accentBg, btnPrimary, card as cardStyle } from "@/components/ui/styles";
 import { track } from "@/lib/analytics";
 import type { Experience } from "@/lib/experience/types";
 import { hostOf, resultText, type ResultCardData } from "@/lib/result-card";
@@ -104,7 +105,7 @@ export function ResultActions({ slug, emoji, accent, outcomeId, shareUrl, shareT
 
   const shareButton = (
     <button type="button" onClick={share} className={`${btnPrimary} ${mine ? accentBg[accent] : "bg-surface"}`}>
-      📤 {d.share}
+      {mine ? d.chShare : `📤 ${d.share}`}
     </button>
   );
   const playButton = (
@@ -158,9 +159,7 @@ export function ResultActions({ slug, emoji, accent, outcomeId, shareUrl, shareT
         </div>
       </section>
 
-      <Link href="/" className={btnGhost}>
-        {d.tryAnother}
-      </Link>
+      <PlayAnother exclude={`/experiences/${slug}`} />
 
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">
         <AnimatePresence>

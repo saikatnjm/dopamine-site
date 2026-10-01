@@ -5,6 +5,7 @@ import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnPrimary } from "@/components/ui/styles";
 import { hostOf, resultText, type ResultCardData } from "@/lib/result-card";
 import { copyText, type ShareMethod } from "@/lib/sharing";
+import { PlayAnother } from "./play-another";
 
 // Share / Copy result / Save image for any ResultCardData. The image is drawn
 // on demand with the Canvas API (lib/result-image.ts, loaded lazily so it
@@ -28,6 +29,7 @@ export function ResultShareKit({
   onShared,
   primary = true,
   copy: showCopy = true,
+  playAnother = true,
 }: {
   data: ResultCardData;
   /** Link to include (a challenge/result link, or the game page). */
@@ -40,6 +42,8 @@ export function ResultShareKit({
   primary?: boolean;
   /** Show "Copy result" (off where the page already has its own copy button). */
   copy?: boolean;
+  /** Show "🎲 Play another" (a random different activity). */
+  playAnother?: boolean;
 }) {
   const { d } = useI18n();
   const [toast, setToast] = useState<string | null>(null);
@@ -131,6 +135,7 @@ export function ResultShareKit({
           🖼️ {busy ? d.imageMaking : d.saveImage}
         </button>
       </div>
+      {playAnother && <PlayAnother />}
       <div className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex justify-center px-4" role="status" aria-live="polite">
         {toast && <p className="rounded-pill border-2 border-ink bg-ink px-5 py-2.5 font-bold text-bg shadow-pop">{toast}</p>}
       </div>

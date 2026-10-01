@@ -1,14 +1,16 @@
-// Draw a ResultCardData as a PNG with the browser's Canvas 2D API — no
+// Draw a ResultCardData as a 1080×1920 (9:16) PNG with the browser's Canvas 2D API — no
 // dependency, no server. The browser shapes Bangla text itself (unlike the
 // Satori OG images, which are English-only). Colours come from the site's
 // CSS variables and fonts from the page, so the image matches the card.
 // Client-only: call from an event handler or effect.
 
-import type { ResultCardData } from "@/lib/result-card";
+import { MAX_CARD_STATS, type ResultCardData } from "@/lib/result-card";
 
+// 9:16 — WhatsApp status / Instagram & Facebook stories, and still reads
+// fine as a tall image in chats.
 const W = 1080;
-const H = 1350;
-const PAD = 72;
+const H = 1920;
+const PAD = 64;
 
 type Palette = Record<"bg" | "surface" | "surface2" | "ink" | "muted" | "accent" | "marigold", string>;
 
@@ -96,7 +98,8 @@ function fit(ctx: CanvasRenderingContext2D, text: string, weight: number, family
 export async function renderResultImage(data: ResultCardData, host: string): Promise<Blob> {
   const p = palette(data.accent);
   const f = fonts();
-  const sample = `${data.game} ${data.headline} ${data.title ?? ""} ${data.quote ?? ""}`;
+  const quoteText = data.quote ? `“${data.quote}”` : data.blurb;
+  const sample = `${data.game} ${data.headline} ${data.title ?? ""} ${quoteText ?? ""}`;
   try {
     await Promise.all([document.fonts.load(`900 64px ${f.display}`, sample), document.fonts.load(`800 32px ${f.sans}`, sample)]);
   } catch {
@@ -120,38 +123,70 @@ export async function renderResultImage(data: ResultCardData, host: string): Pro
 
   const cx = PAD;
   const cw = W - PAD * 2;
-  const top = 60;
-  const cardH = H - top - 150;
-  sticker(ctx, p, cx, top, cw, cardH, 44, p.surface, 16);
+  const mid = W / 2;
+  const top = 96;
+  const cardH = H - top - 200;
+  const BAR = 128;
 
-  // Clip inner content to the card.
+  // ---- Measure everything first, then spread spare height evenly. ----
+  const chip = `${data.emoji} ${data.game.toUpperCase()}`;
+  const chipSize = fit(ctx, chip, 800, f.sans, 40, cw - 160, 24);
+  const chipW = Math.min(cw - 100, ctx.measureText(chip).width + 72);
+  const chipH = chipSize + 40;
+  const hs = fit(ctx, data.headline, 900, f.display, 156, cw - 100, 56);
+  ctx.font = `800 66px ${f.display}`;
+  const titleLines = data.title ? wrap(ctx, data.title, cw - 100, 2) : [];
+  const heroContent =
+    chipH +
+    (data.badge ? 92 : 0) +
+    (data.titleEmoji ? 220 : 40) +
+    (data.headlineLabel ? 60 : 0) +
+    hs * 1.08 +
+    titleLines.length * 78 +
+    (data.rank ? 96 : 0);
+
+  const stats = data.stats.slice(0, MAX_CARD_STATS);
+  const cols = stats.length === 1 ? 1 : 2;
+  const statGap = 28;
+  const bh = 176;
+  const statsH = stats.length ? Math.ceil(stats.length / cols) * (bh + statGap) - statGap : 0;
+
+  ctx.font = `800 50px ${f.display}`;
+  const quoteLines = quoteText ? wrap(ctx, quoteText, cw - 160, 4) : [];
+  const quoteH = quoteLines.length ? quoteLines.length * 66 + 64 : 0;
+
+  // Spread spare height: a minimum gap around each lower section first, then
+  // up to a quarter of what's left pads the hero; the rest widens the gaps.
+  // If it can't all fit, the quote goes first (it's drawn only when it fits).
+  const MIN_GAP = 44;
+  const MIN_PAD = 56;
+  const sections = (q: number) => [statsH, q].filter((h) => h > 0);
+  const need = (q: number) => BAR + heroContent + MIN_PAD * 2 + sections(q).reduce((a, b) => a + b, 0) + MIN_GAP * (sections(q).length + 1);
+  const showQuote = quoteH > 0 && need(quoteH) <= cardH;
+  const below = sections(showQuote ? quoteH : 0);
+  const spare = Math.max(0, cardH - need(showQuote ? quoteH : 0));
+  const heroPad = MIN_PAD + Math.min(spare * 0.25, 120);
+  const gap = MIN_GAP + (spare - (heroPad - MIN_PAD) * 2) / (below.length + 1);
+
+  sticker(ctx, p, cx, top, cw, cardH, 48, p.surface, 18);
   ctx.save();
-  roundRect(ctx, cx + 3, top + 3, cw - 6, cardH - 6, 41);
+  roundRect(ctx, cx + 3, top + 3, cw - 6, cardH - 6, 45);
   ctx.clip();
 
   // HOTTOGOL bar.
   ctx.fillStyle = p.ink;
-  ctx.fillRect(cx, top, cw, 96);
+  ctx.fillRect(cx, top, cw, BAR);
   ctx.fillStyle = p.bg;
-  ctx.font = `900 46px ${f.display}`;
+  ctx.font = `900 58px ${f.display}`;
   ctx.textAlign = "left";
-  ctx.fillText("H O T T O G O L", cx + 40, top + 64);
+  ctx.fillText("H O T T O G O L", cx + 44, top + 84);
   ctx.textAlign = "right";
-  ctx.font = `800 30px ${f.sans}`;
-  ctx.fillText("হট্টগোল", cx + cw - 40, top + 62);
+  ctx.font = `800 36px ${f.sans}`;
+  ctx.fillText("হট্টগোল", cx + cw - 44, top + 80);
 
-  // Accent hero — measure first so long titles never overflow it.
-  const heroTop = top + 96;
-  const mid = W / 2;
-  const chip = `${data.emoji} ${data.game.toUpperCase()}`;
-  const chipSize = fit(ctx, chip, 800, f.sans, 34, cw - 160, 22);
-  const chipW = Math.min(cw - 100, ctx.measureText(chip).width + 60);
-  const hs = fit(ctx, data.headline, 900, f.display, 120, cw - 100, 48);
-  ctx.font = `800 52px ${f.display}`;
-  const titleLines = data.title ? wrap(ctx, data.title, cw - 100, 2) : [];
-  const heroH =
-    40 + chipSize + 34 + (data.badge ? 80 : 0) + (data.titleEmoji ? 178 : 30) + (data.headlineLabel ? 48 : 0) + hs * 1.05 + titleLines.length * 60 + (data.rank ? 76 : 0) + 44;
-
+  // Accent hero.
+  const heroTop = top + BAR;
+  const heroH = heroContent + heroPad * 2;
   ctx.fillStyle = p.accent;
   ctx.fillRect(cx, heroTop, cw, heroH);
   ctx.fillStyle = p.ink;
@@ -159,94 +194,91 @@ export async function renderResultImage(data: ResultCardData, host: string): Pro
   ctx.fillRect(cx, heroTop + heroH - 6, cw, 6);
   ctx.textAlign = "center";
 
-  // Game chip.
-  sticker(ctx, p, mid - chipW / 2, heroTop + 40, chipW, chipSize + 34, 40, p.surface, 0);
+  let y = heroTop + heroPad;
+  sticker(ctx, p, mid - chipW / 2, y, chipW, chipH, chipH / 2, p.surface, 0);
   ctx.fillStyle = p.ink;
   ctx.font = `800 ${chipSize}px ${f.sans}`;
-  ctx.fillText(chip, mid, heroTop + 40 + chipSize + 8);
+  ctx.fillText(chip, mid, y + chipSize + 10);
+  y += chipH;
 
-  let y = heroTop + 40 + chipSize + 34;
   if (data.badge) {
-    ctx.font = `800 30px ${f.sans}`;
-    const bw = ctx.measureText(data.badge).width + 48;
-    sticker(ctx, p, mid - bw / 2, y + 20, bw, 54, 27, p.marigold, 6);
+    ctx.font = `800 34px ${f.sans}`;
+    const bw = ctx.measureText(data.badge).width + 56;
+    sticker(ctx, p, mid - bw / 2, y + 24, bw, 60, 30, p.marigold, 6);
     ctx.fillStyle = p.ink;
-    ctx.fillText(data.badge, mid, y + 58);
-    y += 80;
+    ctx.fillText(data.badge, mid, y + 66);
+    y += 92;
   }
   if (data.titleEmoji) {
-    ctx.font = `120px ${f.sans}`;
-    ctx.fillText(data.titleEmoji, mid, y + 140);
-    y += 178;
-  } else y += 30;
+    ctx.font = `150px ${f.sans}`;
+    ctx.fillText(data.titleEmoji, mid, y + 180);
+    y += 220;
+  } else y += 40;
   if (data.headlineLabel) {
-    ctx.font = `800 28px ${f.sans}`;
-    ctx.fillText(data.headlineLabel.toUpperCase(), mid, y + 30);
-    y += 48;
+    ctx.font = `800 32px ${f.sans}`;
+    ctx.fillText(data.headlineLabel.toUpperCase(), mid, y + 36);
+    y += 60;
   }
   ctx.font = `900 ${hs}px ${f.display}`;
   ctx.fillText(data.headline, mid, y + hs * 0.95);
-  y += hs * 1.05;
-  ctx.font = `800 52px ${f.display}`;
+  y += hs * 1.08;
+  ctx.font = `800 66px ${f.display}`;
   for (const line of titleLines) {
-    ctx.fillText(line, mid, y + 56);
-    y += 60;
+    ctx.fillText(line, mid, y + 70);
+    y += 78;
   }
   if (data.rank) {
-    const rs = fit(ctx, data.rank, 800, f.sans, 30, cw - 160, 20);
-    const rw = Math.min(cw - 100, ctx.measureText(data.rank).width + 48);
-    sticker(ctx, p, mid - rw / 2, y + 16, rw, rs + 26, 26, p.surface, 0);
+    const rs = fit(ctx, data.rank, 800, f.sans, 36, cw - 160, 22);
+    const rw = Math.min(cw - 100, ctx.measureText(data.rank).width + 56);
+    sticker(ctx, p, mid - rw / 2, y + 22, rw, rs + 32, 30, p.surface, 0);
     ctx.fillStyle = p.ink;
     ctx.font = `800 ${rs}px ${f.sans}`;
-    ctx.fillText(data.rank, mid, y + 16 + rs + 5);
-    y += 76;
+    ctx.fillText(data.rank, mid, y + 22 + rs + 7);
   }
 
-  // Stats.
-  y = heroTop + heroH + 40;
-  const stats = data.stats.slice(0, 4);
+  // Stats (max 4).
+  y = heroTop + heroH + gap;
   if (stats.length) {
-    const cols = 2;
-    const gap = 24;
-    const bw = (cw - 80 - gap) / cols;
-    const bh = 132;
+    const bw = (cw - 88 - (cols - 1) * statGap) / cols;
     stats.forEach((s, i) => {
-      const bx = cx + 40 + (i % cols) * (bw + gap);
-      const by = y + Math.floor(i / cols) * (bh + gap);
-      sticker(ctx, p, bx, by, bw, bh, 22, p.surface2, 0);
+      // An odd last stat spans the full row (no hole in the grid).
+      const wide = cols === 2 && i === stats.length - 1 && stats.length % 2 === 1;
+      const w = wide ? cw - 88 : bw;
+      const bx = wide ? cx + 44 : cx + 44 + (i % cols) * (bw + statGap);
+      const by = y + Math.floor(i / cols) * (bh + statGap);
+      sticker(ctx, p, bx, by, w, bh, 26, p.surface2, 0);
       ctx.fillStyle = p.muted;
-      ctx.font = `800 24px ${f.sans}`;
-      ctx.fillText(wrap(ctx, s.label.toUpperCase(), bw - 30, 1)[0] ?? "", bx + bw / 2, by + 44);
+      ctx.font = `800 28px ${f.sans}`;
+      ctx.fillText(wrap(ctx, s.label.toUpperCase(), w - 36, 1)[0] ?? "", bx + w / 2, by + 54);
       ctx.fillStyle = p.ink;
-      const vs = fit(ctx, s.value, 800, f.display, 50, bw - 30, 24);
-      ctx.fillText(s.value, bx + bw / 2, by + 60 + vs);
+      const vs = fit(ctx, s.value, 800, f.display, 64, w - 36, 26);
+      ctx.fillText(s.value, bx + w / 2, by + 72 + vs);
     });
-    y += Math.ceil(stats.length / cols) * (bh + gap) + 8;
+    y += statsH + gap;
   }
 
-  // Quote (or blurb).
-  const line = data.quote ? `“${data.quote}”` : data.blurb;
-  if (line) {
-    ctx.font = `800 40px ${f.display}`;
-    const lines = wrap(ctx, line, cw - 140, 3);
-    const qh = lines.length * 52 + 44;
-    if (y + qh < top + cardH - 20) {
-      ctx.save();
-      ctx.translate(mid, y + qh / 2);
-      ctx.rotate(-0.012);
-      sticker(ctx, p, -(cw - 80) / 2, -qh / 2, cw - 80, qh, 28, p.surface2, 0);
-      ctx.fillStyle = p.ink;
-      lines.forEach((l, i) => ctx.fillText(l, 0, -qh / 2 + 22 + 40 + i * 52));
-      ctx.restore();
-    }
+  // Funny quote (or the result's own one-liner).
+  if (showQuote) {
+    ctx.save();
+    ctx.translate(mid, y + quoteH / 2);
+    ctx.rotate(-0.014);
+    sticker(ctx, p, -(cw - 88) / 2, -quoteH / 2, cw - 88, quoteH, 32, p.surface2, 8);
+    ctx.fillStyle = p.ink;
+    ctx.font = `800 50px ${f.display}`;
+    quoteLines.forEach((l, i) => ctx.fillText(l, 0, -quoteH / 2 + 32 + 50 + i * 66));
+    ctx.restore();
   }
   ctx.restore();
 
-  // Footer URL under the card.
+  // Footer: where to play.
   ctx.fillStyle = p.ink;
   ctx.textAlign = "center";
-  ctx.font = `800 34px ${f.sans}`;
-  ctx.fillText(`🧠 ${host}${data.path}`, mid, H - 70);
+  const footer = `🧠 ${host}${data.path}`;
+  fit(ctx, footer, 800, f.sans, 40, W - PAD * 2, 22);
+  ctx.fillText(footer, mid, H - 104);
+  ctx.fillStyle = p.muted;
+  ctx.font = `700 30px ${f.sans}`;
+  ctx.fillText("Free · no sign-up · ফ্রি", mid, H - 52);
 
   return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/png"));
 }

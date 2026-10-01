@@ -407,8 +407,8 @@ function ResultView({
           {t(copy.queueCode, lang)}: <code className="font-mono">{encodeSeed(q.seed)}</code>
         </p>
       </ResultCard>
-      <ResultShareKit data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankId })} />
       <ShareActions game={GAME_SLUG} seed={q.seed} score={result.score} text={message} accent={ending.accent} rank={rankId} />
+      <ResultShareKit primary={false} data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankId })} />
       <div className="grid grid-cols-2 gap-3">
         <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface px-3 text-base`}>
           {t(copy.retry, lang)}

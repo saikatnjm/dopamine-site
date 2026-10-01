@@ -203,7 +203,7 @@ export const excuseCopy = {
   copy: { en: "📋 Copy", bn: "📋 কপি" },
   copied: { en: "Excuse copied!", bn: "Excuse কপি হয়েছে!" },
   linkCopied: { en: "Link copied!", bn: "লিংক কপি হয়েছে!" },
-  share: { en: "📤 Share", bn: "📤 শেয়ার" },
+  share: { en: "⚔️ Challenge a friend", bn: "⚔️ বন্ধুকে চ্যালেঞ্জ" },
   shareVia: { en: "Or send it via", bn: "অথবা পাঠান" },
   copyLink: { en: "Copy link", bn: "লিংক কপি" },
   back: { en: "← Back to Hottogol", bn: "← হট্টগোলে ফিরুন" },
