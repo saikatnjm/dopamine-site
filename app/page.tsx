@@ -6,6 +6,7 @@ import { ExcuseCard } from "@/components/excuses/excuse-card";
 import { SurpriseButton } from "@/components/experience/surprise-button";
 import { ChaosRoulette } from "@/components/experience/chaos-roulette";
 import { MoodPicker } from "@/components/experience/mood-picker";
+import { HotRightNow, unknownHotKeys } from "@/components/experience/hot-right-now";
 import { Marquee } from "@/components/ui/marquee";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
 import { upcoming } from "@/data/upcoming";
@@ -38,8 +39,8 @@ export default async function HomePage() {
   const activities = listActivities(lang);
   // Fail the build/dev server if a mood points at an activity that no longer exists.
   if (process.env.NODE_ENV !== "production" || process.env.NEXT_PHASE === "phase-production-build") {
-    const missing = unknownMoodKeys(activities);
-    if (missing.length) throw new Error(`lib/moods.ts references unknown activities: ${missing.join(", ")}`);
+    const missing = [...unknownMoodKeys(activities), ...unknownHotKeys(activities)];
+    if (missing.length) throw new Error(`lib/moods.ts or data/hot.ts references unknown activities: ${missing.join(", ")}`);
   }
   const jsonLd = {
     "@context": "https://schema.org",
@@ -90,6 +91,11 @@ export default async function HomePage() {
       <section className="mx-auto max-w-5xl px-4 pb-12">
         <DailyCard />
       </section>
+
+      {/* Hot right now (hand-picked, data/hot.ts) */}
+      <div className="mx-auto max-w-5xl px-4 pb-12">
+        <HotRightNow activities={activities} lang={lang} />
+      </div>
 
       {/* Mood-based discovery */}
       <div id="mood" className="mx-auto max-w-5xl scroll-mt-4 px-4 pb-12">
