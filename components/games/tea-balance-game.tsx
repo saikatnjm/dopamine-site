@@ -653,13 +653,13 @@ function ResultView({
           {t(copy.roadCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
         </p>
       </ResultCard>
-      <ResultShareKit
+      {share}
+      <ResultShareKit primary={false}
         data={card}
         url={url}
         fileName={`${GAME_SLUG}-result`}
         onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankFor(result.score) })}
       />
-      {share}
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}
       </button>

@@ -254,13 +254,13 @@ export function BossArena({ mode }: { mode: BossArenaMode }) {
         {challenge && <ChallengeOutcome game={bossId} challenge={challenge} seed={seed} score={score} />}
       </ResultCard>
 
-      <ResultShareKit
+      <ShareActions game={bossId} seed={seed} score={score} text={shareText} accent={cardData.accent} rank={rankEn} />
+      <ResultShareKit primary={false}
         data={cardData}
         url={challengeUrl}
         fileName="weekly-boss-result"
         onShared={(method) => track("game_share", { game: bossId, method, rank: rankEn })}
       />
-      <ShareActions game={bossId} seed={seed} score={score} text={shareText} accent={cardData.accent} rank={rankEn} />
 
       <button type="button" onClick={startFight} className={`${btnPrimary} ${accentBg[boss.accent]}`}>
         🔁 {t(copy.retry, lang)}

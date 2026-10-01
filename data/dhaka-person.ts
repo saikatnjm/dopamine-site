@@ -266,7 +266,7 @@ export const quizCopy = {
   diffFromFriend: { en: "Your friend got {emoji} {title}.", bn: "আপনার বন্ধু পেয়েছে {emoji} {title}।" },
   stats: { en: "Your mix", bn: "আপনার মিশ্রণ" },
   note: { en: "Based on your answers — just for fun, not science.", bn: "আপনার উত্তরের ভিত্তিতে — শুধু মজার জন্য, বিজ্ঞান না।" },
-  share: { en: "SHARE RESULT", bn: "রেজাল্ট শেয়ার করো" },
+  share: { en: "⚔️ CHALLENGE A FRIEND", bn: "⚔️ বন্ধুকে চ্যালেঞ্জ করো" },
   shareVia: { en: "Share via", bn: "শেয়ার করুন" },
   copyLink: { en: "Copy link", bn: "লিংক কপি" },
   linkCopied: { en: "Link copied!", bn: "লিংক কপি হয়েছে!" },

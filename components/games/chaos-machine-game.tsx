@@ -434,8 +434,8 @@ function ResultView({
           {t(copy.chaosCode, lang)}: <code className="font-mono">{encodeSeed(s.seed)}</code>
         </p>
       </ResultCard>
-      <ResultShareKit data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankFor(result.score) })} />
       {share}
+      <ResultShareKit primary={false} data={card} url={url} fileName={`${GAME_SLUG}-result`} onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: rankFor(result.score) })} />
       <button type="button" onClick={onRetry} className={`${btnPrimary} bg-surface`}>
         {t(copy.retry, lang)}
       </button>

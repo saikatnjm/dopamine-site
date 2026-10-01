@@ -5,8 +5,10 @@ import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { CreditBadge } from "@/components/navigation/github-credit";
 import { SiteFooter } from "@/components/navigation/site-footer";
 import { SiteHeader } from "@/components/navigation/site-header";
+import { ActivitiesProvider } from "@/components/providers/activities-provider";
 import { LangProvider } from "@/components/providers/lang-provider";
 import { MotionProvider } from "@/components/providers/motion-provider";
+import { listActivities } from "@/lib/activities";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -60,6 +62,8 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const { lang, d } = await getI18n();
+  // Slim list for "Play another" on result screens (~2 KB).
+  const activityLinks = listActivities(lang).map(({ key, href, title, emoji }) => ({ key, href, title, emoji }));
   return (
     <html lang={lang} className={`${bricolage.variable} ${bangla.variable}`}>
       <body className="flex min-h-dvh flex-col">
@@ -72,7 +76,9 @@ export default async function RootLayout({
         <LangProvider lang={lang}>
           <SiteHeader />
           <div id="main" className="flex-1">
-            <MotionProvider>{children}</MotionProvider>
+            <ActivitiesProvider activities={activityLinks}>
+              <MotionProvider>{children}</MotionProvider>
+            </ActivitiesProvider>
           </div>
           <SiteFooter />
           <CreditBadge />

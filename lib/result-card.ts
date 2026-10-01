@@ -8,6 +8,9 @@ import type { Accent } from "@/components/ui/styles";
 
 export type CardStat = { label: string; value: string };
 
+/** Stats shown on the card and the image (extra ones stay in "Copy result"). */
+export const MAX_CARD_STATS = 4;
+
 export type ResultCardData = {
   /** Game/experience name, already in the viewer's language. */
   game: string;

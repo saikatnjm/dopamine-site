@@ -1,6 +1,6 @@
 import type { ReactNode, Ref } from "react";
 import { accentBg, card } from "@/components/ui/styles";
-import type { ResultCardData } from "@/lib/result-card";
+import { MAX_CARD_STATS, type ResultCardData } from "@/lib/result-card";
 
 // The shared, screenshot-friendly result card (server- or client-rendered).
 // Layout: HOTTOGOL bar → game chip → big headline + funny title → stats →
@@ -26,6 +26,8 @@ export function ResultCard({
   children?: ReactNode;
 }) {
   const Heading = level === 2 ? "h2" : "h1";
+  // 2–4 stats read best (same cap as the PNG in lib/result-image.ts).
+  const stats = data.stats.slice(0, MAX_CARD_STATS);
   return (
     <article className={`${card} overflow-hidden`} aria-labelledby={headingId}>
       <div className="flex items-center justify-between gap-2 bg-ink px-4 py-2 text-bg">
@@ -66,10 +68,13 @@ export function ResultCard({
       </div>
       <div className="grid gap-4 p-5">
         {data.blurb && <p className="text-center text-ink-muted">{data.blurb}</p>}
-        {data.stats.length > 0 && (
+        {stats.length > 0 && (
           <dl className="grid grid-cols-2 gap-2 text-center">
-            {data.stats.map((s) => (
-              <div key={s.label} className="rounded-xl border-2 border-ink bg-surface-2 px-1 py-2">
+            {stats.map((s, i) => (
+              <div
+                key={s.label}
+                className={`rounded-xl border-2 border-ink bg-surface-2 px-1 py-2 ${i === stats.length - 1 && stats.length % 2 === 1 ? "col-span-2" : ""}`}
+              >
                 <dt className="text-[11px] font-extrabold uppercase leading-tight tracking-wide text-ink-muted sm:text-xs">{s.label}</dt>
                 <dd className={`font-display font-extrabold tabular-nums leading-tight ${s.value.length > 14 ? "text-base" : "text-xl"}`}>{s.value}</dd>
               </div>

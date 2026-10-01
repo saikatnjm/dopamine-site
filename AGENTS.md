@@ -222,7 +222,15 @@ components/games/        game cards + client game components
   Share (Web Share → copy fallback) + Copy result (`resultText()`) + Save image.
   Challenge links stay in `ShareActions`; simulators keep `ResultActions`
   (now with Copy result and the canvas photo card).
-- Image: `lib/result-image.ts` draws the card on a 1080×1350 canvas with the
+- Action order on every result: challenge first (`ShareActions` challenge card
+  + "Challenge a friend"; quiz/excuses/simulators label their main share
+  button as a challenge), then `ResultShareKit` with `primary={false}` (Copy
+  result + Save image) and **🎲 Play another** (`components/share/play-another.tsx`:
+  random *different* activity, list from `ActivitiesProvider` in the root
+  layout — slim `listActivities()` items; event `recommendation_click`
+  {source: "play_another"}). Cards and images show at most `MAX_CARD_STATS`
+  (4) stats; an odd last stat spans the row. Copy result keeps all stats.
+- Image: `lib/result-image.ts` draws the card on a 1080×1920 (9:16, stories) canvas with the
   page's CSS colour variables and fonts (Bangla shaped by the browser), loaded
   lazily via dynamic import — no dependency, no server. OG images (Satori,
   English-only) are still used for link previews.
@@ -404,4 +412,5 @@ components/games/        game cards + client game components
 - [x] Phase 29 — "What are you in the mood for?" mood picker (homepage)
 - [x] Phase 30 — `/bored` landing page
 - [x] Phase 31 — Challenge a Friend upgrade (challenge card, accept button, "you cooked them" outcome, challenge_* events)
+- [x] Phase 32 — Result cards: 9:16 share image, ≤ 4 stats, challenge-first actions, 🎲 Play another everywhere
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
