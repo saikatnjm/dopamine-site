@@ -164,7 +164,7 @@ export function BossArena({ mode }: { mode: BossArenaMode }) {
     return (
       <div ref={rootRef} className="grid scroll-mt-4 gap-5">
         {isWeekly && <NewWeekBanner weekKey={weekKey} />}
-        {challenge && <ChallengeBanner challenge={challenge} />}
+        {challenge && <ChallengeBanner game={bossId} challenge={challenge} onAccept={startFight} />}
         <section className={`${card} overflow-hidden`} aria-labelledby="boss-intro">
           <div className={`${accentBg[boss.accent]} border-b-2 border-ink px-5 py-4`}>
             <p className="w-fit -rotate-2 rounded-pill border-2 border-ink bg-ink px-3 py-0.5 text-sm font-black tracking-widest text-bg">
@@ -251,7 +251,7 @@ export function BossArena({ mode }: { mode: BossArenaMode }) {
           </p>
         )}
         <p className="text-center text-xs font-extrabold text-ink-muted">{fmt(t(copy.attempt, lang), { n: num(attempt, lang) })}</p>
-        {challenge && <ChallengeOutcome challenge={challenge} seed={seed} score={score} />}
+        {challenge && <ChallengeOutcome game={bossId} challenge={challenge} seed={seed} score={score} />}
       </ResultCard>
 
       <ResultShareKit

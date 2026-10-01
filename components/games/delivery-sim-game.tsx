@@ -146,7 +146,7 @@ export function DeliverySimGame({ challenge }: { challenge: Challenge }) {
 
       {phase === "preview" && order && (
         <section aria-labelledby="ds-order">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => begin("first")} />}
           <OrderCard order={order} />
           <div className="mt-4 grid gap-3">
             <button type="button" onClick={() => begin("first")} className={`${btnPrimary} ${accentBg.cng} min-h-16 text-2xl`}>
@@ -416,7 +416,7 @@ function ResultView({
     <section className="grid gap-3" aria-labelledby="ds-result">
       <ResultCard data={card} host={host} headingId="ds-result" headingRef={headingRef}>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={o.seed} score={result.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={o.seed} score={result.score} />
           <div className="mt-4">
             <OrderCard order={o} compact />
           </div>

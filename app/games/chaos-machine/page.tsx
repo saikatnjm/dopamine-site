@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ChaosMachineGame } from "@/components/games/chaos-machine-game";
 import { accentText } from "@/components/ui/styles";
 import { getGame } from "@/data/games";
+import { legacyChallenge } from "@/lib/challenge";
 import { decodeScore, decodeSeed } from "@/lib/games/shared";
 import { GAME_SLUG } from "@/lib/games/chaos-machine";
 import { fmt, num, t } from "@/lib/i18n/core";
@@ -31,7 +32,7 @@ export default async function ChaosMachinePage({ searchParams }: Props) {
   // Shared link: ?seed=<base36>&s=<score> → same scenario + friend's score to beat.
   const seed = decodeSeed(params.seed);
   const score = decodeScore(params.s);
-  const challenge = seed !== null && score !== null ? { seed, score } : null;
+  const challenge = legacyChallenge(GAME_SLUG, seed, score);
 
   const jsonLd = {
     "@context": "https://schema.org",

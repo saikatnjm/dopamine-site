@@ -280,7 +280,7 @@ export function DontTapGame({ challenge }: { challenge: Challenge }) {
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="dt-how">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => start(seed ?? newSeed(), "first")} />}
           <h2 id="dt-how" className="font-display text-2xl font-extrabold">
             {t(copy.howTitle, lang)}
           </h2>
@@ -421,7 +421,7 @@ function ResultView({
     <section className="grid gap-3" aria-labelledby="dt-result">
       <ResultCard data={card} host={host} headingId="dt-result" headingRef={headingRef}>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={result.seed} score={summary.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={result.seed} score={summary.score} />
           <h3 className="mt-5 text-sm font-extrabold uppercase tracking-wider text-ink-muted">{t(copy.rounds, lang)}</h3>
           <ol className="mt-2 grid gap-1.5">
             {rounds.map((r, i) => (

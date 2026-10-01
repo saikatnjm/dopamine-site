@@ -407,7 +407,7 @@ export function TeaBalanceGame({ challenge }: { challenge: Challenge }) {
     <div ref={rootRef} className="scroll-mt-4">
       {phase === "idle" && (
         <section className={`${card} p-5 sm:p-6`} aria-labelledby="tea-how">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => start(seed ?? newSeed(), "first")} />}
           <h2 id="tea-how" className="font-display text-2xl font-extrabold">
             {t(copy.howTitle, lang)}
           </h2>
@@ -648,7 +648,7 @@ function ResultView({
     <section className="grid gap-3" aria-labelledby="tea-result">
       <ResultCard data={card} host={host} headingId="tea-result" headingRef={headingRef}>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={result.seed} score={result.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={result.seed} score={result.score} />
         <p className="text-center text-xs font-bold text-ink-muted">
           {t(copy.roadCode, lang)}: <code className="font-mono">{encodeSeed(result.seed)}</code>
         </p>

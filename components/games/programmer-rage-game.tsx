@@ -148,7 +148,7 @@ export function ProgrammerRageGame({ challenge }: { challenge: Challenge }) {
 
       {phase === "preview" && incident && (
         <section aria-labelledby="pr-ticket">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => begin("first")} />}
           <Ticket incident={incident} />
           <div className="mt-4 grid gap-3">
             <button type="button" onClick={() => begin("first")} className={`${btnPrimary} ${accentBg.chili} min-h-16 text-2xl`}>
@@ -417,7 +417,7 @@ function ResultView({
           {causes[inc.cause].emoji} {fmt(t(copy.cause, lang), { cause: t(causes[inc.cause].name, lang) })}
         </p>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={inc.seed} score={result.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={inc.seed} score={result.score} />
         <Ticket incident={inc} compact />
         <p className="text-center text-xs font-bold text-ink-muted">
           {t(copy.code, lang)}: <code className="font-mono">{encodeSeed(inc.seed)}</code>

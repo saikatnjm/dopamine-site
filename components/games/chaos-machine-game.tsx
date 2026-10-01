@@ -153,7 +153,7 @@ export function ChaosMachineGame({ challenge }: { challenge: Challenge }) {
 
       {phase === "preview" && scenario && (
         <section aria-labelledby="cm-scenario">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => begin("first")} />}
           <ScenarioCard key={scenario.seed} scenario={scenario} />
           <div className="mt-4 grid gap-3">
             <button type="button" onClick={() => begin("first")} className={`${btnPrimary} ${accentBg.chili} min-h-16 text-2xl`}>
@@ -428,7 +428,7 @@ function ResultView({
     <section className="grid gap-3" aria-labelledby="cm-result">
       <ResultCard data={card} host={host} headingId="cm-result" headingRef={headingRef}>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={s.seed} score={result.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={s.seed} score={result.score} />
         <ScenarioCard scenario={s} compact />
         <p className="text-center text-xs font-bold text-ink-muted">
           {t(copy.chaosCode, lang)}: <code className="font-mono">{encodeSeed(s.seed)}</code>

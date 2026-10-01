@@ -136,7 +136,7 @@ export function QueueSimGame({ challenge }: { challenge: Challenge }) {
 
       {phase === "preview" && queue && (
         <section aria-labelledby="qs-queue">
-          {isChallenge && <ChallengeBanner challenge={challenge} />}
+          {isChallenge && <ChallengeBanner game={GAME_SLUG} challenge={challenge} onAccept={() => begin("first")} />}
           <QueueCard queue={queue} />
           <div className="mt-4 grid gap-3">
             <button type="button" onClick={() => begin("first")} className={`${btnPrimary} ${accentBg.marigold} min-h-16 text-2xl`}>
@@ -401,7 +401,7 @@ function ResultView({
     <section className="grid gap-3" aria-labelledby="qs-result">
       <ResultCard data={card} host={host} headingId="qs-result" headingRef={headingRef}>
         {result.newBest && <p className="text-center font-extrabold text-cng-deep">{t(copy.newBest, lang)}</p>}
-        <ChallengeOutcome challenge={challenge} seed={q.seed} score={result.score} />
+        <ChallengeOutcome game={GAME_SLUG} challenge={challenge} seed={q.seed} score={result.score} />
         <QueueCard queue={q} compact />
         <p className="text-center text-xs font-bold text-ink-muted">
           {t(copy.queueCode, lang)}: <code className="font-mono">{encodeSeed(q.seed)}</code>
