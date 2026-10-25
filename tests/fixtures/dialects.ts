@@ -1,54 +1,50 @@
-import type { DialectContent, DialectWord, Difficulty, QuizQuestion, VerificationStatus } from "@/lib/dialects/types";
 import { DISTRICTS } from "@/data/dialects/districts";
+import { REGIONS } from "@/data/dialects/regions";
+import type { Concept, Confidence, DialectContent, Difficulty, RegionalForm, Script, VerificationStatus } from "@/lib/dialects/types";
 
-// TEST-ONLY placeholder content. These are deliberately fake strings
-// ("পরীক্ষা-শব্দ-…"), not dialect facts — they only exercise the structure.
+// TEST-ONLY placeholder content. Forms are deliberately fake strings
+// ("পরীক্ষা-…"), not dialect facts — they only exercise the structure.
+// Real districts/regions are used because seeds and the map depend on them.
 
-export function word(id: string, district: string, status: VerificationStatus = "verified"): DialectWord {
+export function concept(id: string, difficulty: Difficulty = "easy", category: Concept["category"] = "words"): Concept {
+  return { id, standard: `প্রমিত-${id}`, en: `std ${id}`, emoji: "🧪", category, kind: "word", difficulty };
+}
+
+export function form(
+  id: string,
+  conceptId: string,
+  regions: string[],
+  opts: Partial<{ status: VerificationStatus; confidence: Confidence; script: Script; text: string; sources: string[] }> = {},
+): RegionalForm {
   return {
     id,
-    standardWord: `প্রমিত-${id}`,
-    localWord: `পরীক্ষা-শব্দ-${id}`,
-    meaningBn: `অর্থ-${id}`,
-    districtIds: [district],
-    region: "khulna",
+    conceptId,
+    form: opts.text ?? `পরীক্ষা-${id}`,
     variants: [],
-    source: "test fixture",
-    verificationStatus: status,
+    regions,
+    script: opts.script ?? "bangla",
+    sources: opts.sources ?? ["test-source"],
+    confidence: opts.confidence ?? "high",
+    status: opts.status ?? "verified",
   };
 }
 
-export function question(id: string, wordId: string, district: string, difficulty: Difficulty = "easy", status: QuizQuestion["status"] = "published"): QuizQuestion {
-  return {
-    id,
-    wordId,
-    question: { en: `Test question ${id}?`, bn: `পরীক্ষা প্রশ্ন ${id}?` },
-    options: [
-      { id: "a", text: `উত্তর-ক-${id}` },
-      { id: "b", text: `উত্তর-খ-${id}` },
-      { id: "c", text: `উত্তর-গ-${id}` },
-      { id: "d", text: `উত্তর-ঘ-${id}` },
-    ],
-    correctOptionId: "b",
-    explanation: { en: "Test explanation.", bn: "পরীক্ষার ব্যাখ্যা।" },
-    difficulty,
-    districtIds: [district],
-    tags: [],
-    status,
-  };
-}
-
-/** n verified words + published questions per district, difficulties cycling easy/medium/hard. */
-export function fixture(perDistrict = 12, districts = ["jashore", "sylhet"]): DialectContent {
+/**
+ * `perRegion` verified forms in each given region, one concept each,
+ * difficulties cycling easy/medium/hard, 3 categories so distractors exist.
+ */
+export function fixture(perRegion = 12, regions = ["jashore-khulna", "sylhet"]): DialectContent {
   const levels: Difficulty[] = ["easy", "medium", "hard"];
-  const words: DialectWord[] = [];
-  const questions: QuizQuestion[] = [];
-  for (const d of districts) {
-    for (let i = 0; i < perDistrict; i++) {
-      const id = `${d}-${i}`;
-      words.push(word(`w-${id}`, d));
-      questions.push(question(`q-${id}`, `w-${id}`, d, levels[i % 3]));
-    }
-  }
-  return { districts: DISTRICTS, words, questions };
+  const cats: Concept["category"][] = ["words", "animals", "food"];
+  const concepts: Concept[] = [];
+  const forms: RegionalForm[] = [];
+  for (let i = 0; i < perRegion; i++) concepts.push(concept(`c${i}`, levels[i % 3], cats[i % 3]));
+  for (const r of regions) for (let i = 0; i < perRegion; i++) forms.push(form(`${r}-c${i}`, `c${i}`, [r]));
+  return {
+    districts: DISTRICTS,
+    regions: REGIONS,
+    sources: [{ id: "test-source", title: "Test source", type: "owner" }],
+    concepts,
+    forms,
+  };
 }

@@ -1,82 +1,97 @@
-// Regional dialect content: the single source of types for districts, words
-// and quiz questions (data in data/dialects/, checks in lib/dialects/validate.ts).
+// Regional dialect content: the single source of types (data in data/dialects/,
+// checks in lib/dialects/validate.ts).
 //
-// Nothing here is checked for linguistic accuracy by code. A word is only
-// "verified" when a person has reviewed it; only published questions about
-// verified words are ever used in a scored quiz.
+// The model is concept-centric: one Concept (বিড়াল, "কোথায় যাচ্ছ?") has many
+// RegionalForms, each used in one or more DialectRegions. Dialect regions are
+// not districts — a region lists the districts it mainly covers, and borders
+// are approximate.
+//
+// Nothing here is checked for linguistic accuracy by code. Visibility rules
+// (lib/dialects/content.ts):
+//   - map + detective ("source-backed"): verified, or needs_review with a
+//     high/medium-confidence cited source and a Bangla spelling from the source;
+//   - scored quizzes: verified only (a person reviewed it).
 
 import type { Text } from "@/lib/i18n/core";
 
-/** Bangladesh divisions that districts belong to (used as the word's region). */
-export type DivisionId = "barishal" | "chattogram" | "dhaka" | "khulna" | "mymensingh" | "rajshahi" | "rangpur" | "sylhet";
+/** All 64 districts, official lowercase spelling (data/dialects/districts.ts). */
+export type District = { id: string; name: Text };
 
-export type District = {
-  /** Official spelling, lowercase: "jashore", "chattogram". Never rename (share links + seeds). */
+export type DialectRegion = {
+  /** /^[a-z0-9-]{1,40}$/. APPEND-ONLY order in REGIONS (packed into quiz seeds). Never rename. */
   id: string;
   name: Text;
-  division: DivisionId;
-  /** Older/common spellings that should also match ("jessore", "chittagong"). */
-  aliases: readonly string[];
+  /** Districts this dialect is mainly spoken in (district ids). Approximate by nature. */
+  districts: readonly string[];
   emoji: string;
+  /** One-line, sourced description of the area's speech (shown on its page). */
+  blurb: Text;
 };
 
-/** draft → needs_review → verified (by a person, never automatically). */
-export type VerificationStatus = "draft" | "needs_review" | "verified";
+export type SourceType = "encyclopedia" | "academic" | "dictionary" | "government" | "newspaper" | "dataset" | "wiki" | "blog" | "owner";
 
-export type DialectWord = {
-  /** /^[a-z0-9-]{1,40}$/, also the URL slug of /games/words/<id>. Never rename or reuse. */
+export type Source = {
   id: string;
-  /** Standard (প্রমিত) Bangla word, e.g. "ছেলে". */
-  standardWord: string;
-  /** The regional word as written by the source, e.g. "পোলা". Kept exactly as given. */
-  localWord: string;
-  meaningBn: string;
-  /** Optional English gloss shown next to the Bangla in English mode. */
-  meaningEn?: string;
-  districtIds: readonly string[];
-  region: DivisionId;
-  /** Other spellings seen for the same word (never merged into localWord). */
-  variants: readonly string[];
-  pronunciation?: string;
-  exampleSentence?: string;
-  /** Where the entry came from, e.g. "Owner's Jashore dialect image (2026-10)". */
-  source: string;
-  contributor?: string;
-  verificationStatus: VerificationStatus;
-  /** Uncertainty, usage limits, reviewer remarks. */
-  notes?: string;
+  title: string;
+  url?: string;
+  type: SourceType;
 };
 
+export type ConceptCategory = "people" | "animals" | "home" | "food" | "nature" | "words" | "phrases";
 export type Difficulty = "easy" | "medium" | "hard";
 
-/** draft / verified (reviewed, not live yet) / published (used in scored quizzes). */
-export type QuestionStatus = "draft" | "verified" | "published";
-
-export type QuizOption = {
-  /** Unique within the question, e.g. "a". */
+export type Concept = {
+  /** /^[a-z0-9-]{1,40}$/. Never rename or reuse (URLs, share links). */
   id: string;
-  /** Option text exactly as shown (dialect words stay in Bangla in both languages). */
-  text: string;
-  /** Optional English gloss shown under the option in English mode. */
-  gloss?: string;
+  /** Standard (প্রমিত) Bangla, e.g. "বিড়াল" or "কোথায় যাচ্ছ?". */
+  standard: string;
+  /** English gloss for English mode. */
+  en: string;
+  emoji: string;
+  category: ConceptCategory;
+  kind: "word" | "phrase";
+  difficulty: Difficulty;
 };
 
-export type QuizQuestion = {
+/** high = reputable source or 2+ independent sources agree; medium = one decent source; low = blog/social. */
+export type Confidence = "high" | "medium" | "low";
+
+/** draft → needs_review → verified (by a person). rejected = keep the record, never show. */
+export type VerificationStatus = "draft" | "needs_review" | "verified" | "rejected";
+
+/**
+ * bangla = Bangla script exactly as a source wrote it; romanized = the source only
+ * gives Latin/IPA (shown nowhere until a person writes the Bangla and verifies);
+ * rendered = Bangla spelling made by us from a romanized source (unverified).
+ */
+export type Script = "bangla" | "romanized" | "rendered";
+
+export type RegionalForm = {
+  /** /^[a-z0-9-]{1,60}$/, unique. Convention: <region>-<concept>[-n]. Never rename or reuse. */
   id: string;
-  wordId: string;
-  question: Text;
-  /** Exactly four distinct options. */
-  options: readonly QuizOption[];
-  correctOptionId: string;
-  explanation: Text;
-  difficulty: Difficulty;
-  districtIds: readonly string[];
-  tags: readonly string[];
-  status: QuestionStatus;
+  conceptId: string;
+  /** The regional form exactly as the source writes it. */
+  form: string;
+  /** Other spellings seen (never merged into `form`). */
+  variants: readonly string[];
+  regions: readonly string[];
+  /** Area as the source states it, when narrower than the region, e.g. "Banaripara". */
+  area?: string;
+  script: Script;
+  /** Source ids (data/dialects/sources.ts), at least one. */
+  sources: readonly string[];
+  confidence: Confidence;
+  status: VerificationStatus;
+  /** Example sentence, only if the source gives one. */
+  example?: string;
+  /** Uncertainty, conflicts, reviewer remarks. Not shown publicly. */
+  notes?: string;
 };
 
 export type DialectContent = {
   districts: readonly District[];
-  words: readonly DialectWord[];
-  questions: readonly QuizQuestion[];
+  regions: readonly DialectRegion[];
+  sources: readonly Source[];
+  concepts: readonly Concept[];
+  forms: readonly RegionalForm[];
 };

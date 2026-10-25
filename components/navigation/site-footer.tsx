@@ -33,7 +33,8 @@ export async function SiteFooter() {
         { href: "/dhaka-person", label: d.footerPerson },
         { href: "/games/personality", label: d.footerPersonality },
         { href: "/games/ancholik-quiz", label: d.footerDialect },
-        { href: "/games/words", label: d.footerWords },
+        { href: "/games/word-map", label: d.footerWords },
+        { href: "/games/which-region", label: d.footerWhichRegion },
       ],
     },
     {

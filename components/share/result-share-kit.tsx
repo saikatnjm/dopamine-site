@@ -33,6 +33,7 @@ export function ResultShareKit({
   playAnother = true,
   alsoLike = true,
   download = false,
+  renderImage,
 }: {
   data: ResultCardData;
   /** Link to include (a challenge/result link, or the game page). */
@@ -51,6 +52,8 @@ export function ResultShareKit({
   alsoLike?: boolean;
   /** Also show "⬇️ Download PNG" (always a file download, even where the image can be shared). */
   download?: boolean;
+  /** Custom PNG (e.g. a map poster) instead of drawing `data` as a result card. */
+  renderImage?: (host: string) => Promise<Blob>;
 }) {
   const { d } = useI18n();
   const [toast, setToast] = useState<string | null>(null);
@@ -66,8 +69,8 @@ export function ResultShareKit({
   };
 
   async function makeImage(): Promise<File> {
-    const { renderResultImage } = await import("@/lib/result-image");
-    const blob = await renderResultImage(data, hostOf(window.location.origin));
+    const host = hostOf(window.location.origin);
+    const blob = renderImage ? await renderImage(host) : await (await import("@/lib/result-image")).renderResultImage(data, host);
     return new File([blob], `${fileName}.png`, { type: "image/png" });
   }
 

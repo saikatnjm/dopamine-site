@@ -288,6 +288,44 @@ export const games: Game[] = [
       description: "আড্ডার সম্রাট, মিমের রাজা নাকি চায়ের দোকানের দার্শনিক? A free, just-for-fun 8-question Bangali personality test with a shareable result card. No sign-up.",
     },
   },
+  {
+    slug: "which-region",
+    title: { en: "Which Region Are You From?", bn: "তুমি কোন এলাকার মানুষ?" },
+    tagline: { en: "Tell us what you call 10 things. We'll guess your region.", bn: "১০টা জিনিসকে কী বলো জানাও — আমরা বলে দেব তুমি কোন এলাকার।" },
+    description: {
+      en: "A dialect detective: what do you call a cat, a broom, a chicken? Pick your words and Hottogol guesses which part of Bangladesh you're from — then challenge your friends.",
+      bn: "ভাষার গোয়েন্দা: বিড়াল, ঝাড়ু, মুরগিকে তুমি কী বলো? শব্দ বেছে নাও, হট্টগোল আন্দাজ করবে তুমি বাংলাদেশের কোন এলাকার — তারপর বন্ধুদের চ্যালেঞ্জ দাও।",
+    },
+    emoji: "🕵️",
+    accent: "violet",
+    durationSec: 60,
+    category: "bangladesh",
+    mechanic: "quiz",
+    tags: ["language", "life"],
+    seo: {
+      title: "তুমি কোন এলাকার মানুষ? — Which Region of Bangladesh Are You From? (Dialect Quiz)",
+      description: "বিড়ালকে কী বলো — মেকুর, বিলাই নাকি বিলোই? Answer 10 dialect questions and Hottogol guesses your region of Bangladesh. Free, just for fun, words from cited sources.",
+    },
+  },
+  {
+    slug: "word-map",
+    title: { en: "Bangladesh Word Map", bn: "শব্দের মানচিত্র" },
+    tagline: { en: "Same thing, a different name in every region.", bn: "একই জিনিস, এলাকা বদলালেই নাম বদলায়।" },
+    description: {
+      en: "Pick a word — cat, chicken, “where are you going?” — and see what each region of Bangladesh calls it on an interactive map, with sources. Make a poster for your friends.",
+      bn: "একটা শব্দ বেছে নাও — বিড়াল, মুরগি, “কোথায় যাচ্ছ?” — আর মানচিত্রে দেখো বাংলাদেশের কোন এলাকায় একে কী বলে, সূত্রসহ। বন্ধুদের জন্য পোস্টার বানাও।",
+    },
+    emoji: "🗺️",
+    accent: "sky",
+    durationSec: 60,
+    category: "bangladesh",
+    mechanic: "generator",
+    tags: ["language"],
+    seo: {
+      title: "শব্দের মানচিত্র — Bangladesh Dialect Word Map (আঞ্চলিক শব্দ)",
+      description: "বিড়াল, মুরগি, কোথায় — বাংলাদেশের কোন এলাকায় কী বলে? An interactive map of regional Bangla dialect words for Sylhet, Chattogram, Noakhali, Barishal, Rangpur and more, with sources.",
+    },
+  },
 ];
 
 /**

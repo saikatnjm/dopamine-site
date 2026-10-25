@@ -282,8 +282,11 @@ function Building({ lang }: { lang: Lang }) {
         {t(copy.buildingTitle, lang)}
       </h2>
       <p className="font-bold text-ink-muted">{t(copy.buildingBody, lang)}</p>
-      <Link href="/games/personality" className={`${btnPrimary} ${accentBg.violet}`}>
-        {t(copy.buildingCta, lang)}
+      <Link href="/games/word-map" className={`${btnPrimary} ${accentBg.sky}`}>
+        {t(copy.buildingMap, lang)}
+      </Link>
+      <Link href="/games/which-region" className={`${btnPrimary} bg-surface`}>
+        🕵️ {t(copy.buildingDetective, lang)}
       </Link>
     </div>
   );
@@ -506,7 +509,7 @@ function ResultView({
                 <p className="mt-1 text-sm font-bold">
                   {t(copy.answerLabel, lang)} <span lang="bn">{answer?.text}</span>
                 </p>
-                <Link href={`/games/words/${q.word.id}`} className="mt-1 inline-block text-sm font-extrabold underline">
+                <Link href={`/games/word-map?c=${q.word.id}`} className="mt-1 inline-block text-sm font-extrabold underline">
                   <span lang="bn">{q.word.localWord}</span> — {t(copy.aboutWord, lang)}
                 </Link>
               </li>
@@ -523,7 +526,7 @@ function ResultView({
         fileName={`${GAME_SLUG}-result`}
         onShared={(method) => track("game_share", { game: GAME_SLUG, method, rank: tierId })}
       />
-      <Link href="/games/words" className={`${chip} justify-self-center`}>
+      <Link href="/games/word-map" className={`${chip} justify-self-center`}>
         {t(copy.wordsLink, lang)}
       </Link>
     </div>

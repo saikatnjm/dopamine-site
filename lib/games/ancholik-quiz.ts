@@ -7,13 +7,15 @@
 //
 //   seed = shuffle (24 bits) · scope index (6 bits) · level index (2 bits)
 //
-// Scope index 0 = mixed, i ≥ 1 = DISTRICTS[i - 1] (that list is append-only).
+// Scope index 0 = mixed, i ≥ 1 = REGIONS[i - 1] (dialect regions, append-only).
 // If reviewed questions are added later, an old seed may pick a different set
 // from the bigger pool — the score in a challenge link is still the friend's
 // real score on their own round.
 
 import { DISTRICTS } from "@/data/dialects/districts";
-import type { Difficulty, QuizOption, QuizQuestion } from "@/lib/dialects/types";
+import { REGIONS } from "@/data/dialects/regions";
+import type { Difficulty } from "@/lib/dialects/types";
+import type { Text } from "@/lib/i18n/core";
 import { decodeSeed } from "@/lib/games/shared";
 import { createRng, hashString } from "@/lib/random";
 
@@ -25,10 +27,21 @@ export const MIN_QUESTIONS = 5;
 export const LEVELS = ["easy", "medium", "hard"] as const satisfies readonly Difficulty[];
 export const MIXED = "mixed";
 
-/** A published question about a verified word (every one has a /games/words/<id> page). */
-export type PoolQuestion = Pick<QuizQuestion, "id" | "question" | "options" | "correctOptionId" | "explanation" | "difficulty" | "districtIds"> & {
+/** A scored question about a verified regional form (built in lib/dialects/content.ts). */
+export type PoolQuestion = {
+  id: string;
+  question: Text;
+  /** Option ids are concept ids; text is the standard Bangla word, gloss its English meaning. */
+  options: readonly QuizOption[];
+  correctOptionId: string;
+  explanation: Text;
+  difficulty: Difficulty;
+  regionIds: readonly string[];
+  /** word.id = concept id (links to /games/word-map?c=<id>). */
   word: { id: string; localWord: string; standardWord: string; meaningBn: string; meaningEn?: string };
 };
+
+export type QuizOption = { id: string; text: string; gloss?: string };
 
 export type QuizConfig = { scope: string; level: Difficulty; shuffle: number };
 
@@ -40,7 +53,7 @@ const SCOPE_BITS = 63;
 
 function scopeIndex(scope: string): number {
   if (scope === MIXED) return 0;
-  const i = DISTRICTS.findIndex((d) => d.id === scope);
+  const i = REGIONS.findIndex((r) => r.id === scope);
   return i < 0 || i + 1 > SCOPE_BITS ? -1 : i + 1;
 }
 
@@ -65,7 +78,7 @@ export function unpackSeed(seed: number): QuizConfig | null {
   if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) return null;
   const level = LEVELS[seed & 3];
   const s = (seed >>> 2) & SCOPE_BITS;
-  const scope = s === 0 ? MIXED : DISTRICTS[s - 1]?.id;
+  const scope = s === 0 ? MIXED : REGIONS[s - 1]?.id;
   if (!level || !scope) return null;
   return { scope, level, shuffle: seed >>> 8 };
 }
@@ -81,10 +94,10 @@ export function freshConfig(scope: string, level: Difficulty, random32: number):
 
 const RANK: Record<Difficulty, number> = { easy: 0, medium: 1, hard: 2 };
 
-/** Questions a scope + level can draw from: that district (or all) and difficulty ≤ level. */
+/** Questions a scope + level can draw from: that region (or all) and difficulty ≤ level. */
 export function poolFor(pool: readonly PoolQuestion[], scope: string, level: Difficulty): PoolQuestion[] {
   return pool
-    .filter((q) => (scope === MIXED || q.districtIds.includes(scope)) && RANK[q.difficulty] <= RANK[level])
+    .filter((q) => (scope === MIXED || q.regionIds.includes(scope)) && RANK[q.difficulty] <= RANK[level])
     .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)); // data-file order never matters
 }
 
@@ -128,7 +141,7 @@ export function buildRound(pool: readonly PoolQuestion[], config: QuizConfig): P
 // ---------------------------------------------------------------------------
 
 /** Unknown/missing option ids are simply wrong, never an error. */
-export function isCorrect(q: Pick<QuizQuestion, "options" | "correctOptionId">, optionId: unknown): boolean {
+export function isCorrect(q: Pick<PoolQuestion, "options" | "correctOptionId">, optionId: unknown): boolean {
   return typeof optionId === "string" && optionId === q.correctOptionId && q.options.some((o) => o.id === optionId);
 }
 
@@ -165,13 +178,26 @@ function first(v: unknown): unknown {
   return Array.isArray(v) ? v[0] : v;
 }
 
-/** "Jessore" → "jashore"; "mixed" stays; anything else → null. */
+// Old spellings people type into links.
+const DISTRICT_ALIASES: Readonly<Record<string, string>> = {
+  jessore: "jashore",
+  chittagong: "chattogram",
+  comilla: "cumilla",
+  barisal: "barishal",
+  bogra: "bogura",
+  netrakona: "netrokona",
+};
+
+/** A region id, or a district (any common spelling) → its region; "mixed" stays; else null. */
 export function resolveScope(raw: unknown): string | null {
   const v = first(raw);
   if (typeof v !== "string" || v.length > 40) return null;
   const key = v.trim().toLowerCase();
   if (key === MIXED) return MIXED;
-  return DISTRICTS.find((d) => d.id === key || d.aliases.includes(key))?.id ?? null;
+  if (REGIONS.some((r) => r.id === key)) return key;
+  const district = DISTRICT_ALIASES[key] ?? key;
+  if (!DISTRICTS.some((d) => d.id === district)) return null;
+  return REGIONS.find((r) => r.districts.includes(district))?.id ?? null;
 }
 
 /**

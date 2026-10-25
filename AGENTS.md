@@ -59,7 +59,7 @@ data/
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   experiences/index.ts   registry list; one file per experience
   games/index.ts         games registry (slug, title, accent…); games/<slug>.ts = copy
-  dialects/              regional dialect content (districts, words, questions) + README
+  dialects/              regional dialect content (districts, regions, concepts, forms/, sources, map) + README
 lib/
   site.ts                siteConfig, absoluteUrl()
   random.ts              seeded RNG (FNV-1a + Mulberry32), weightedPick
@@ -75,7 +75,7 @@ lib/
   games/<slug>.ts        pure, seeded game rules (no DOM/React)
   games/shared.ts        seed/score share params, createBestStore(), prefersReducedMotion()
   dialects/              types, validate (structure only), content (validated read access)
-scripts/                 content CLIs (validate-content, review-checklist) + register-ts.mjs
+scripts/                 content CLIs (validate-content, review-checklist), build-map.mjs + register-ts.mjs
 tests/                   Vitest unit tests + fake fixtures
 app/games/               Games index + one route per game (e.g. /games/cng-catch)
 components/games/        game cards + client game components
@@ -228,38 +228,49 @@ components/games/        game cards + client game components
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
 
-## Regional language games (Phase 42)
+## Regional language games (Phases 42–43)
 
-- **আঞ্চলিক ভাষার লড়াই** (`/games/ancholik-quiz`, challenge code `aq`, maxScore 10) and
-  **তুমি কোন টাইপের বাঙালি?** (`/games/personality`) are normal entries in the games
-  registry (mechanic `quiz`, tag `language`). Plus `/games/words` + `/games/words/[slug]`.
-- Dialect content: `data/dialects/` (districts, `words/<district>.ts`, `questions.ts`),
-  types `lib/dialects/types.ts`, structural checks `lib/dialects/validate.ts` (run at import
-  by `lib/dialects/content.ts` → bad data fails the build; also `npm run validate:content`).
-  How-to: `data/dialects/README.md`.
-- **Never invent or auto-verify dialect facts** (owner decision). New entries start as
-  `needs_review`; only a person sets `verified`. Scored quizzes use only `published`
-  questions whose word is `verified` (a published question on an unverified word fails the
-  build). `npm run content:checklist` writes a review checklist to `data/dialects/review/`.
-  Pages pass the client only the published pool (`quizPool()`); drafts never ship.
-- Quiz engine `lib/games/ancholik-quiz.ts` (pure): seed = 24-bit shuffle · 6-bit scope
-  (0 = mixed, i = `DISTRICTS[i-1]`, **append-only**) · 2-bit level. Round = seeded pick of
-  ≤ 10 distinct questions (chosen level first, difficulty ≤ level), options shuffled per
-  question. < 5 questions for a scope/level → "প্রশ্ন তৈরি হচ্ছে!" (never blocks other games).
-  While no round is possible at all, `gameIsPlayable()` (`lib/activities.ts`) hides the quiz
-  from activities (roulette, recommendations, related, moods), the sitemap and search
-  (noindex); `/games` shows it with a "Coming soon" sticker. Tier ids (never rename):
-  beginner/practice/boss/legend. Links: `?district=&level=&seed=` and `/c/<token>`;
-  unfinished round in `localStorage["hottogol:ancholik-quiz:progress:v1"]` (24 h).
-- Personality engine `lib/games/personality.ts`: 8 questions × 4 options add fixed points to
-  7 traits (one archetype per trait); level = points ÷ trait max; ties → raw points → fixed
-  `RESULT_IDS` order. Exhaustive 4⁸ check: 12–16 % each (test enforces 8–25 %). Share link
-  `?a=<letters>&r=<id>` (stored id wins). Copy in `data/games/personality.ts`.
-- Dialect words/sentences stay Bangla in English mode (`lang="bn"`); options may carry an
-  English `gloss`, words a `meaningEn`. `/games/words` indexed only with ≥ 10 verified words;
-  a word page only with an `exampleSentence`.
-- `ResultShareKit` has an opt-in `download` prop (⬇️ Download PNG, always a file) — used by
-  these two games; other games unchanged.
+The regional-language content is the main attraction; the personality test is secondary (owner decision).
+
+- **Routes:**
+  - **শব্দের মানচিত্র** `/games/word-map` (`?c=<concept>`) + `/games/word-map/[region]`
+  - **তুমি কোন এলাকার মানুষ?** `/games/which-region` (`?r=<region|mystery>`)
+  - **আঞ্চলিক ভাষার লড়াই** `/games/ancholik-quiz` (challenge code `aq`, maxScore 10)
+  - **তুমি কোন টাইপের বাঙালি?** `/games/personality`
+
+  All four are games-registry entries (tag `language`).
+- **Data model, concept-centric** (`lib/dialects/types.ts`, `data/dialects/`):
+  - `Concept` (বিড়াল, "কোথায় যাচ্ছ?") × `RegionalForm` (exact form, regions, area, script, sources, confidence, status)
+  - `DialectRegion` (13, **append-only**, each lists its *main* districts; a district is in at most one region; the Chittagong Hill Tracts are in none)
+  - `District` (all 64)
+  - `Source`
+
+  Validation is structural only (`lib/dialects/validate.ts`); it runs at import from `lib/dialects/content.ts`, so bad data fails the build. CLI: `npm run validate:content`. How-to: `data/dialects/README.md`.
+- **Visibility (owner decision 2026-10-25):**
+  - Map + detective show **source-backed** forms: verified, or `needs_review` + confidence high/medium + Bangla script from the source. They are labelled "📚 from sources, not yet checked by locals", never "verified". Low confidence, romanized or rendered forms stay hidden.
+  - The scored quiz uses **verified only** (`quizPool()` builds "এই শব্দের মানে কী?" questions from verified forms; distractors are other concepts' standard words).
+  - **Never invent or auto-verify dialect facts.** Only a person sets `verified`. `npm run content:checklist` writes the review list.
+- **Current data:**
+  - 282 forms from `resources/2026-10-25-regional-dialect-research.md` (6 research reports, 79 sources); 239 are public, 0 verified.
+  - Weak areas: Cumilla (romanized sources), Old Dhaka, Bogura.
+  - The viral Jessore image is **not** fully supported: মেহুর is Pabna/Faridpur/Noakhali per Shahidullah; কুহুড়ো is unsourced.
+- **Map:**
+  - `data/dialects/map.ts` is generated by `scripts/build-map.mjs` (geoBoundaries BGD ADM2, **CC BY 3.0 IGO — the credit line must stay visible**: map figcaption + poster footer).
+  - `components/dialects/dialect-map.tsx` is plain SVG (fills per region, ink coastline underlay, HTML label pills in `foreignObject`). It renders without JS on region pages.
+  - Colours and label anchors: `lib/dialects/map-layout.ts`. Faded regions use an opaque `FADED_FILL` (alpha would show the ink underlay).
+  - Posters: `lib/map-poster.ts` (1080×1920 canvas, same paths via Path2D; it reuses the helpers exported from `lib/result-image.ts`). `ResultShareKit` gets a `renderImage` prop.
+- **Detective** (`lib/games/which-region.ts`, pure):
+  - Questions: concepts whose options cover ≥ 4 regions. Same spelling in several regions = one option, ≤ 7 options chosen by greedy region cover, plus "অন্য কিছু". 10 per round (seeded).
+  - Score: a pick votes 1/|regions| for each region using it; value = votes / (chances + 1); ties → hits → REGIONS order. All "other" → mystery.
+  - The share link carries only `?r=`; the result is "a guess from a few words".
+- **Quiz engine** (`lib/games/ancholik-quiz.ts`):
+  - seed = 24-bit shuffle · 6-bit scope (0 = mixed, i = `REGIONS[i-1]`) · 2-bit level.
+  - `?district=` accepts a region id or any district (old spellings too) and maps it to its region.
+  - < 5 questions → "প্রশ্ন তৈরি হচ্ছে!", with links to the map and the detective.
+  - Tier ids (never rename): beginner/practice/boss/legend. The unfinished round is saved in `localStorage["hottogol:ancholik-quiz:progress:v1"]`.
+- **`gameIsPlayable()`** (`lib/activities.ts`) hides a dialect game from activities, moods (moods validate keys!), the sitemap and search while it has no content; `/games` shows a "Coming soon" sticker. Region pages are indexed only with ≥ `REGION_INDEX_MIN` (8) public forms.
+- **Personality** (`lib/games/personality.ts`): 8 questions, 7 traits = archetypes; level = points ÷ trait max; ties → raw points → `RESULT_IDS` order. Share link `?a=<letters>&r=<id>`.
+- **Language:** dialect words and sentences stay Bangla in English mode (`lang="bn"`); English glosses come from `Concept.en`.
 
 ## Testing
 
@@ -556,6 +567,7 @@ components/games/        game cards + client game components
 - [x] Phase 39 — `/viral` social landing page (deep links, OG image, UTM tracking without storage)
 - [x] Phase 40 — Analytics taxonomy (normalised GA events, param allowlist, activity_view)
 - [x] Phase 41 — Client-side UI experiment system + `home-cta` test
-- [x] Phase 42 — Regional language games: আঞ্চলিক ভাষার লড়াই quiz engine, তুমি কোন টাইপের বাঙালি?, dialect content layer + validation, /games/words, Vitest
-- [ ] Owner: provide the Jashore dialect image / word lists → import as `needs_review` → review → publish
+- [x] Phase 42 — Regional language games: আঞ্চলিক ভাষার লড়াই quiz engine, তুমি কোন টাইপের বাঙালি?, dialect content layer + validation, Vitest
+- [x] Phase 43 — Concept × region dialect model, researched content (282 sourced forms), শব্দের মানচিত্র + region pages, তুমি কোন এলাকার মানুষ? detective, map posters
+- [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)
