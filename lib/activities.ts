@@ -6,9 +6,10 @@ import type { Accent } from "@/components/ui/styles";
 import { quizCopy } from "@/data/dhaka-person";
 import { excuseCopy } from "@/data/excuses";
 import { GAME_HREF_OVERRIDES, listGames } from "@/data/games";
-import { quizPool } from "@/lib/dialects/content";
+import { listConcepts, listRegions, publicForms, quizPool } from "@/lib/dialects/content";
 import { listExperiences } from "@/lib/experience/registry";
 import { canPlay, GAME_SLUG as DIALECT_QUIZ, MIXED } from "@/lib/games/ancholik-quiz";
+import { eligibleConcepts, GAME_SLUG as DETECTIVE, MIN_QUESTIONS } from "@/lib/games/which-region";
 import type { ActivityTag, CategorySlug, Mechanic } from "@/lib/experience/types";
 import { moodsOf, type MoodId } from "@/lib/moods";
 import { t, type Lang, type Text } from "@/lib/i18n/core";
@@ -45,12 +46,18 @@ const KIND_LABEL: Record<ActivityKind, Text> = {
 };
 
 /**
- * False while a game has nothing to play yet (the dialect quiz before enough
- * questions are reviewed): its page shows "coming soon", but recommendations,
- * roulette and the sitemap leave it out. Server-only.
+ * False while a game has nothing to play yet (the dialect games before enough
+ * words are sourced/reviewed): its page shows "coming soon", but
+ * recommendations, roulette and the sitemap leave it out. Server-only.
  */
 export function gameIsPlayable(slug: string): boolean {
-  return slug !== DIALECT_QUIZ || canPlay(quizPool(), MIXED, "hard");
+  if (slug === DIALECT_QUIZ) return canPlay(quizPool(), MIXED, "hard");
+  if (slug === DETECTIVE) {
+    const ids = listRegions().map((r) => r.id);
+    return eligibleConcepts(listConcepts().map((c) => c.id), publicForms(), ids).length >= MIN_QUESTIONS;
+  }
+  if (slug === "word-map") return publicForms().length > 0;
+  return true;
 }
 
 export function listActivities(lang: Lang): Activity[] {

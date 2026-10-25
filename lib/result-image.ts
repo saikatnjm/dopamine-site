@@ -8,13 +8,13 @@ import { MAX_CARD_STATS, type ResultCardData } from "@/lib/result-card";
 
 // 9:16 — WhatsApp status / Instagram & Facebook stories, and still reads
 // fine as a tall image in chats.
-const W = 1080;
-const H = 1920;
-const PAD = 64;
+export const W = 1080;
+export const H = 1920;
+export const PAD = 64;
 
-type Palette = Record<"bg" | "surface" | "surface2" | "ink" | "muted" | "accent" | "marigold", string>;
+export type Palette = Record<"bg" | "surface" | "surface2" | "ink" | "muted" | "accent" | "marigold", string>;
 
-function palette(accent: string): Palette {
+export function palette(accent: string): Palette {
   const css = getComputedStyle(document.documentElement);
   const v = (name: string, fallback: string) => css.getPropertyValue(name).trim() || fallback;
   return {
@@ -29,7 +29,7 @@ function palette(accent: string): Palette {
 }
 
 /** The page's font stacks (Bricolage + Noto Sans Bengali), read from rendered elements. */
-function fonts(): { display: string; sans: string } {
+export function fonts(): { display: string; sans: string } {
   const probe = document.createElement("span");
   probe.className = "font-display";
   probe.style.position = "absolute";
@@ -46,7 +46,7 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: numbe
 }
 
 /** Box with thick ink border and the sticker-zine offset shadow. */
-function sticker(ctx: CanvasRenderingContext2D, p: Palette, x: number, y: number, w: number, h: number, r: number, fill: string, shadow = 10) {
+export function sticker(ctx: CanvasRenderingContext2D, p: Palette, x: number, y: number, w: number, h: number, r: number, fill: string, shadow = 10) {
   if (shadow) {
     ctx.fillStyle = p.ink;
     roundRect(ctx, x + shadow, y + shadow, w, h, r);
@@ -61,7 +61,7 @@ function sticker(ctx: CanvasRenderingContext2D, p: Palette, x: number, y: number
 }
 
 /** Wrap text to a width; returns lines (max `max`, last one ellipsised). */
-function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, max: number): string[] {
+export function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, max: number): string[] {
   const words = text.split(/\s+/);
   const lines: string[] = [];
   let line = "";
@@ -85,7 +85,7 @@ function wrap(ctx: CanvasRenderingContext2D, text: string, width: number, max: n
 }
 
 /** Shrink a font until one line fits. */
-function fit(ctx: CanvasRenderingContext2D, text: string, weight: number, family: string, start: number, width: number, min = 28): number {
+export function fit(ctx: CanvasRenderingContext2D, text: string, weight: number, family: string, start: number, width: number, min = 28): number {
   let size = start;
   ctx.font = `${weight} ${size}px ${family}`;
   while (size > min && ctx.measureText(text).width > width) {

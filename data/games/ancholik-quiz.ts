@@ -42,7 +42,7 @@ export const quizCopy = {
   correct: { en: "✅ Correct!", bn: "✅ একদম ঠিক!" },
   wrong: { en: "❌ Not quite.", bn: "❌ হলো না।" },
   answerLabel: { en: "Answer:", bn: "সঠিক উত্তর:" },
-  aboutWord: { en: "About this word →", bn: "শব্দটা সম্পর্কে →" },
+  aboutWord: { en: "See it on the map →", bn: "মানচিত্রে দেখো →" },
   next: { en: "Next question →", bn: "পরের প্রশ্ন →" },
   finish: { en: "See my result →", bn: "রেজাল্ট দেখো →" },
   quit: { en: "✕ Quit round", bn: "✕ রাউন্ড ছেড়ে দাও" },
@@ -55,7 +55,7 @@ export const quizCopy = {
   newRound: { en: "🔁 New questions", bn: "🔁 নতুন প্রশ্নে আবার" },
   changeRegion: { en: "🗺️ Another region", bn: "🗺️ অন্য এলাকা" },
   review: { en: "Your answers", bn: "তোমার উত্তরগুলো" },
-  wordsLink: { en: "📖 Browse the dialect word list", bn: "📖 আঞ্চলিক শব্দভান্ডার দেখো" },
+  wordsLink: { en: "🗺️ Explore the dialect word map", bn: "🗺️ শব্দের মানচিত্র দেখো" },
   // Not enough reviewed questions yet
   buildingTitle: { en: "প্রশ্ন তৈরি হচ্ছে!", bn: "প্রশ্ন তৈরি হচ্ছে!" },
   buildingBody: {
@@ -63,7 +63,8 @@ export const quizCopy = {
     bn: "আমরা আঞ্চলিক শব্দ জোগাড় করছি, আর প্রতিটা শব্দ এলাকার মানুষ যাচাই করার পরেই কুইজে যাবে। আন্দাজে কিছু না, বানানো শব্দও না। একটু পরে আবার এসো!",
   },
   buildingRegion: { en: "{region} questions are still being checked. Try another region or Mixed Bangladesh.", bn: "{region}-এর প্রশ্ন এখনো যাচাই হচ্ছে। অন্য এলাকা বা মিশ্র বাংলাদেশ চেষ্টা করো।" },
-  buildingCta: { en: "Meanwhile: what type of Bangali are you? →", bn: "ততক্ষণে: তুমি কোন টাইপের বাঙালি? →" },
+  buildingMap: { en: "Meanwhile: see how Bangladesh names the same things →", bn: "ততক্ষণে: একই জিনিসের এলাকাভিত্তিক নাম দেখো →" },
+  buildingDetective: { en: "Guess my region from my words →", bn: "আমার শব্দ শুনে বলো আমি কোন এলাকার →" },
   note: {
     en: "Dialects change from village to village — every word here was checked by people, but spellings can vary.",
     bn: "গ্রাম থেকে গ্রামে ভাষা বদলায় — এখানের প্রতিটা শব্দ মানুষ যাচাই করেছে, তবে বানান এলাকাভেদে আলাদা হতে পারে।",

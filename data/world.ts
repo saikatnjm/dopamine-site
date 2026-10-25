@@ -39,6 +39,8 @@ export const worlds: readonly World[] = [
       { kind: "experience", slug: "food-delivery-simulator", zone: { en: "🍛 Food", bn: "🍛 খাবার" } },
       { kind: "game", slug: "chaos-machine", zone: { en: "🔥 Chaos", bn: "🔥 হট্টগোল" } },
       { kind: "page", id: "dhaka-person", zone: { en: "🏙️ You", bn: "🏙️ আপনি" } },
+      { kind: "game", slug: "word-map", zone: { en: "🗺️ Words", bn: "🗺️ শব্দ" } },
+      { kind: "game", slug: "which-region", zone: { en: "🕵️ Dialects", bn: "🕵️ ভাষা" } },
     ],
   },
   {
