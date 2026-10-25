@@ -223,6 +223,21 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     hidden: true,
     unlocks: (e) => isGame(e, "traffic-boss") && e.params.defeated === true && num(e.params.lives) >= 3,
   },
+  {
+    id: "book-legend",
+    emoji: "🏏",
+    title: { en: "Book Cricket Legend", bn: "বই ক্রিকেটের কিংবদন্তি" },
+    description: { en: "Score 40+ runs in one Book Cricket innings.", bn: "এক ইনিংসে বই ক্রিকেটে ৪০+ রান করুন।" },
+    unlocks: (e) => isGame(e, "book-cricket") && num(e.params.score) >= 40,
+  },
+  {
+    id: "golden-duck",
+    emoji: "🦆",
+    title: { en: "Golden Duck", bn: "গোল্ডেন ডাক" },
+    description: { en: "Get out on the very first ball in Book Cricket.", bn: "বই ক্রিকেটে একেবারে প্রথম বলেই আউট হন।" },
+    hidden: true,
+    unlocks: (e) => isGame(e, "book-cricket") && e.params.firstBallOut === true,
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));

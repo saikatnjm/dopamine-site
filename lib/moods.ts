@@ -24,6 +24,7 @@ export const moods: readonly Mood[] = [
 const MOOD_KEYS: Record<MoodId, readonly string[]> = {
   bored: [
     "g:chaos-machine",
+    "g:book-cricket",
     "x:random-life-decision",
     "g:delivery-sim",
     "g:queue-sim",
@@ -42,6 +43,7 @@ const MOOD_KEYS: Record<MoodId, readonly string[]> = {
   ],
   challenge: [
     "g:traffic-boss",
+    "g:book-cricket",
     "g:traffic-dodge",
     "g:cng-catch",
     "g:dont-tap",

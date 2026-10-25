@@ -1,6 +1,8 @@
 # Phase 45: Book Cricket (বই ক্রিকেট)
 
-**Status:** planned · **Written:** 2026-10-25 · **Estimated size:** about 1.5–2 days
+**Status:** built, PR branch `game/book-cricket` (stacked on `feat/my-bangladesh-map`; rebase onto `main` after Phase 44 merges), waiting for the owner to test and merge · **Written:** 2026-10-25
+
+**Decisions (2026-10-25):** stack on Phase 44 · add `"school"` tag · Hot right now replaces Job Resignation · teacher alert in v1 · not in `DAILY_ROTATION` in this PR · **Estimated size:** about 1.5–2 days
 
 **Index:** [ideas backlog](2026-10-25-ideas-backlog.md)
 
@@ -196,16 +198,16 @@ AGENTS.md, as the other games do ("Bot-tuned: …").
 
 ## 10. Acceptance checklist
 
-- [ ] `npm run check` passes in Docker.
-- [ ] Bot sim numbers are within the section 4 ranges and written into AGENTS.md.
-- [ ] Works at 360, 390 and 412 px. Buttons are ≥ 44 px. Keyboard play works.
-- [ ] Reduced motion: no flip animation; the game is still fully playable.
-- [ ] A `/c/<token>` link replays the same pages and target. The banner, accept and outcome all work.
-- [ ] EN + BN copy is complete. No real teams, players, logos or textbook covers.
-- [ ] Listed in `/games`, the World map, the sitemap, related links and moods. Every activity still
+- [x] `npm run check` passes in Docker.
+- [x] Bot sim numbers written into AGENTS.md. Within range: always-slog 44.4 %, always-defend 0 %, last-ball 6.5–7.7 %. **Not reachable:** smart 55–65 % (exact DP: optimal play ≈ 46 %, only 1–3 points above always-slog with this outcome table; needs an owner decision on the table).
+- [x] Works at 360, 390 and 412 px. Buttons are ≥ 44 px. Keyboard play works.
+- [x] Reduced motion: no flip animation; the game is still fully playable.
+- [x] A `/c/<token>` link replays the same pages and target. The banner, accept and outcome all work.
+- [x] EN + BN copy is complete. No real teams, players, logos or textbook covers.
+- [x] Listed in `/games`, the World map, the sitemap, related links and moods. Every activity still
       has ≥ 3 inbound links.
-- [ ] AGENTS.md updated (Book Cricket bullet under Games, Phase 45 ticked). This plan's Status and
-      the backlog updated. PR opened, not merged.
+- [x] AGENTS.md updated (Book Cricket bullet under Games, Phase 45 ticked). This plan's Status and
+      the backlog updated. Branch pushed for a PR, not merged.
 
 ## 11. Open questions for the owner (defaults in bold)
 

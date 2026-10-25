@@ -26,6 +26,8 @@ export const CHALLENGE_GAMES = {
   "traffic-boss": { code: "wb", maxScore: 10_000 },
   // seed = packed quiz config (scope + level + shuffle), score = correct answers
   "ancholik-quiz": { code: "aq", maxScore: 10 },
+  // runs in a 2-over innings (max possible 78; headroom for future tweaks)
+  "book-cricket": { code: "bk", maxScore: 200 },
 } as const;
 
 export type ChallengeGame = keyof typeof CHALLENGE_GAMES;
