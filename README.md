@@ -18,12 +18,13 @@ Live: **https://hottogol.vercel.app** · Made by [@saikatnjm](https://github.com
 5. [Commands](#commands)
 6. [Project structure](#project-structure)
 7. [Adding a new experience](#adding-a-new-experience)
-8. [GitHub setup, CI and GHCR](#github-setup-ci-and-ghcr)
-9. [Deploying to Vercel](#deploying-to-vercel)
-10. [Custom domain (Cloudflare DNS)](#custom-domain-cloudflare-dns)
-11. [Analytics (GA4)](#analytics-ga4)
-12. [Troubleshooting](#troubleshooting)
-13. [Hosting cost](#hosting-cost)
+8. [Regional language games](#regional-language-games)
+9. [GitHub setup, CI and GHCR](#github-setup-ci-and-ghcr)
+10. [Deploying to Vercel](#deploying-to-vercel)
+11. [Custom domain (Cloudflare DNS)](#custom-domain-cloudflare-dns)
+12. [Analytics (GA4)](#analytics-ga4)
+13. [Troubleshooting](#troubleshooting)
+14. [Hosting cost](#hosting-cost)
 
 ---
 
@@ -114,7 +115,10 @@ Copy `.env.example` to `.env` (Docker) or `.env.local` (plain npm). All are publ
 | Task | Docker | npm |
 | --- | --- | --- |
 | Dev server | `docker compose up --build dev` | `npm run dev` |
-| Lint + typecheck | `docker compose run --rm dev sh -c "npm install && npm run check"` | `npm run check` |
+| Lint + typecheck + tests + content | `docker compose run --rm dev sh -c "npm install && npm run check"` | `npm run check` |
+| Unit tests (Vitest) | `docker compose run --rm dev npm test` | `npm test` |
+| Validate dialect content | `docker compose run --rm dev npm run validate:content` | `npm run validate:content` |
+| Dialect review checklist | `docker compose run --rm dev npm run content:checklist` | `npm run content:checklist` |
 | Production build | `docker compose build app` | `npm run build` |
 | Run production | `docker compose up --build` | `npm run build && npm start` |
 | Build image only | `docker build -t dopamine-web:test .` | — |
@@ -160,6 +164,15 @@ lib/
 
 **Never rename or reuse** a slug, option id or outcome id after launch — old share links contain them.
 Retire an outcome with `retired: true` instead of deleting it.
+
+## Regional language games
+
+- `/games/ancholik-quiz`: **আঞ্চলিক ভাষার লড়াই**, a 10-question dialect quiz (district or mixed, 3 levels, `/c/<token>` challenges).
+- `/games/personality`: **তুমি কোন টাইপের বাঙালি?**, a just-for-fun 8-question personality test.
+- `/games/words`: reviewed dialect words, each with its own page.
+
+Dialect content is reviewed by people, never verified by code. To add districts, words or questions and run the
+review checklist, see [`data/dialects/README.md`](data/dialects/README.md).
 
 ## GitHub setup, CI and GHCR
 
