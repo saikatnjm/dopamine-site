@@ -326,6 +326,25 @@ export const games: Game[] = [
       description: "বিড়াল, মুরগি, কোথায় — বাংলাদেশের কোন এলাকায় কী বলে? An interactive map of regional Bangla dialect words for Sylhet, Chattogram, Noakhali, Barishal, Rangpur and more, with sources.",
     },
   },
+  {
+    slug: "my-bangladesh",
+    title: { en: "My Bangladesh Map", bn: "আমার বাংলাদেশ" },
+    tagline: { en: "Tap every district you've been to. Get judged.", bn: "যত জেলায় গেছো, ট্যাপ করো। তারপর রায় শোনো।" },
+    description: {
+      en: "Mark the districts of Bangladesh you've visited on a map of all 64, get a funny title and badges, make a poster, and ask friends how many they've been to.",
+      bn: "৬৪ জেলার ম্যাপে যেসব জেলায় গেছো দাগ দাও, মজার টাইটেল আর ব্যাজ পাও, পোস্টার বানাও, তারপর বন্ধুদের জিজ্ঞেস করো তারা কয়টায় গেছে।",
+    },
+    emoji: "🗺️",
+    accent: "marigold",
+    durationSec: 60,
+    category: "travel",
+    mechanic: "generator",
+    tags: ["geography", "life"],
+    seo: {
+      title: "My Bangladesh Map: How Many of the 64 Districts Have You Visited?",
+      description: "Tap the districts of Bangladesh you've been to and get a funny title, badges and a downloadable poster. Free, no sign-up, saved only on your device.",
+    },
+  },
 ];
 
 /**

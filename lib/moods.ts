@@ -61,6 +61,7 @@ const MOOD_KEYS: Record<MoodId, readonly string[]> = {
     "g:traffic-boss",
   ],
   friend: [
+    "g:my-bangladesh",
     "p:dhaka-person",
     "g:which-region",
     "g:personality",
