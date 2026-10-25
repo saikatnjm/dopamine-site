@@ -57,6 +57,7 @@ components/
 data/
   categories.ts
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
+  divisions.ts           8 divisions → 64 districts (validated at import)
   experiences/index.ts   registry list; one file per experience
   games/index.ts         games registry (slug, title, accent…); games/<slug>.ts = copy
   dialects/              regional dialect content (districts, regions, concepts, forms/, sources, map) + README
@@ -227,6 +228,21 @@ components/games/        game cards + client game components
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
+- **My Bangladesh Map** (`/games/my-bangladesh`, Phase 44, plan `docs/plans/2026-10-25-phase-44-my-bangladesh-map.md`):
+  - **What it is:** tap the districts you've been to. You get a count, a title, badges, a 9:16 poster and a `?v=` friend link. It's self-reported, so it's **not** in `CHALLENGE_GAMES` and there are no achievements.
+  - **Rules** (`lib/games/my-bangladesh.ts`, pure):
+    - `DISTRICT_BIT_ORDER` is **FROZEN**: never reorder, insert or remove (share links depend on it).
+    - `encodeVisited`/`decodeVisited` = 64-bit mask ⇄ BigInt ⇄ base36 (≤ 13 chars); decode never throws.
+    - Title ids and badge ids (`all-divisions`, `division-<id>`, `hill-tracts`, `dhaka-bubble`) are permanent. Copy lives in `data/games/my-bangladesh.ts`.
+    - `mapPercent` is the share of the projected map, so say "of the map", never "of the country".
+  - **Divisions:** `data/divisions.ts` holds the 8 official divisions. It's validated at import (all 64 districts, each exactly once).
+  - **Storage:** `localStorage["hottogol:my-bangladesh:v1"]` = `{ v: 1, visited, at }`, with an in-memory fallback so blocked storage still works for the session. A friend link is never written to it.
+  - **UI:**
+    - `components/games/district-map.tsx`: a per-district SVG (same paths and ink underlay as `DialectMap`, which it doesn't change). Keep the CC BY credit visible.
+    - The division checklist (chips ≥ 44 px) is the accessible input; the map shapes are presentational.
+    - Poster: `lib/district-poster.ts`.
+  - **Events:** `game_start` (first toggle), `game_complete` {score, result} (once per count per session), `game_share`. Never send district ids (location history is personal).
+  - **Hot right now:** in `data/hot.ts` while the district-map trend lasts. Remove it when the trend fades.
 
 ## Regional language games (Phases 42–43)
 
@@ -521,6 +537,11 @@ The regional-language content is the main attraction; the personality test is se
     model for design, architecture and debugging.
 12. The owner always tests locally first. Deliver changes to the local project
     folder and a PR for CI; never merge/push to `main` until the owner confirms.
+13. Ideas and builds happen in separate chats. Idea chats write a detailed,
+    self-contained plan per feature to `docs/plans/YYYY-MM-DD-phase-NN-<name>.md`
+    and list it in `docs/plans/2026-10-25-ideas-backlog.md` (index + idea pool).
+    Build chats implement from that plan, ask its open questions first, and
+    update the plan's Status line + the backlog index when starting and shipping.
 
 ## Phase status
 
@@ -569,5 +590,8 @@ The regional-language content is the main attraction; the personality test is se
 - [x] Phase 41 — Client-side UI experiment system + `home-cta` test
 - [x] Phase 42 — Regional language games: আঞ্চলিক ভাষার লড়াই quiz engine, তুমি কোন টাইপের বাঙালি?, dialect content layer + validation, Vitest
 - [x] Phase 43 — Concept × region dialect model, researched content (282 sourced forms), শব্দের মানচিত্র + region pages, তুমি কোন এলাকার মানুষ? detective, map posters
+- [x] Phase 44 — My Bangladesh Map (`/games/my-bangladesh`): districts-visited map, titles, badges, poster, `?v=` friend compare (`docs/plans/2026-10-25-phase-44-my-bangladesh-map.md`)
+- [ ] Phase 45 — Book Cricket (`/games/book-cricket`) — planned: `docs/plans/2026-10-25-phase-45-book-cricket.md`
+- [ ] Phase 46 — Guess the District (`/games/guess-district`) — planned: `docs/plans/2026-10-25-phase-46-guess-the-district.md`
 - [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

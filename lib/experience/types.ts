@@ -38,7 +38,8 @@ export type ActivityTag =
   | "reaction"
   | "shopping"
   | "life"
-  | "language";
+  | "language"
+  | "geography";
 
 export type Category = {
   slug: CategorySlug;

@@ -8,6 +8,8 @@
 export type HotLabel = "hot" | "try" | "quick" | "friend";
 
 export const HOT_RIGHT_NOW: readonly { key: string; label: HotLabel }[] = [
+  // Riding the district-map trend (Oct 2026) — remove when it fades.
+  { key: "g:my-bangladesh", label: "hot" },
   { key: "x:dhaka-cng-simulator", label: "hot" },
   { key: "g:cng-catch", label: "quick" },
   { key: "p:dhaka-person", label: "friend" },
