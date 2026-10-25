@@ -250,6 +250,44 @@ export const games: Game[] = [
       description: "A new Hottogol boss every week: survive 60 seconds of Dhaka traffic with 3 lives. Same challenge for everyone this week, personal best saved locally. Free, no sign-up.",
     },
   },
+  {
+    slug: "ancholik-quiz",
+    title: { en: "Battle of the Dialects", bn: "আঞ্চলিক ভাষার লড়াই" },
+    tagline: { en: "How well do you understand Bangladesh's regional dialects?", bn: "বাংলার কোন এলাকার ভাষা তুমি কতটা বোঝো?" },
+    description: {
+      en: "A 10-question regional dialect quiz: pick Jashore, Khulna, Barishal, Noakhali, Sylhet, Chattogram or a mixed Bangladesh round, choose a level, and challenge friends to beat your score. Every word is checked by people before it goes live.",
+      bn: "১০ প্রশ্নের আঞ্চলিক ভাষার কুইজ: যশোর, খুলনা, বরিশাল, নোয়াখালী, সিলেট, চট্টগ্রাম বা মিশ্র বাংলাদেশ বেছে নাও, লেভেল ঠিক করো, তারপর বন্ধুদের চ্যালেঞ্জ দাও। প্রতিটা শব্দ মানুষ যাচাই করার পরেই কুইজে আসে।",
+    },
+    emoji: "🗣️",
+    accent: "sky",
+    durationSec: 120,
+    category: "bangladesh",
+    mechanic: "quiz",
+    tags: ["language", "life"],
+    seo: {
+      title: "আঞ্চলিক ভাষার লড়াই — Bangladesh Regional Dialect Quiz",
+      description: "বাংলার কোন এলাকার ভাষা তুমি কতটা বোঝো? A free 10-question quiz on Bangladeshi regional dialects — Jashore, Sylhet, Chattogram, Noakhali and more. Challenge your friends.",
+    },
+  },
+  {
+    slug: "personality",
+    title: { en: "What Type of Bangali Are You?", bn: "তুমি কোন টাইপের বাঙালি?" },
+    tagline: { en: "Adda emperor, meme lord or tea-stall philosopher? 8 questions.", bn: "আড্ডার সম্রাট, মিমের রাজা নাকি চায়ের দোকানের দার্শনিক? ৮টা প্রশ্ন।" },
+    description: {
+      en: "A just-for-fun personality test: 8 questions about adda, guests, rain, tea stalls and Eid holidays, 7 types to discover, and a result card made for the group chat.",
+      bn: "শুধু মজার পার্সোনালিটি টেস্ট: আড্ডা, মেহমান, বৃষ্টি, চায়ের দোকান আর ঈদের ছুটি নিয়ে ৮টা প্রশ্ন, ৭টা টাইপ, আর গ্রুপ চ্যাটে পাঠানোর মতো রেজাল্ট কার্ড।",
+    },
+    emoji: "🎭",
+    accent: "violet",
+    durationSec: 60,
+    category: "bangladesh",
+    mechanic: "quiz",
+    tags: ["life", "food"],
+    seo: {
+      title: "তুমি কোন টাইপের বাঙালি? — Funny Bangali Personality Test",
+      description: "আড্ডার সম্রাট, মিমের রাজা নাকি চায়ের দোকানের দার্শনিক? A free, just-for-fun 8-question Bangali personality test with a shareable result card. No sign-up.",
+    },
+  },
 ];
 
 /**

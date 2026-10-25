@@ -11,7 +11,10 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "check": "npm run lint && npm run typecheck"
+    "test": "vitest run",
+    "validate:content": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/register-ts.mjs scripts/validate-content.ts",
+    "content:checklist": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./scripts/register-ts.mjs scripts/review-checklist.ts",
+    "check": "npm run lint && npm run typecheck && npm test && npm run validate:content"
   },
   "dependencies": {
     "motion": "^12.23.0",
@@ -27,6 +30,7 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.0.0",
     "tailwindcss": "^4.1.0",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "vitest": "^5.0.5"
   }
 }

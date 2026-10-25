@@ -24,6 +24,8 @@ export const CHALLENGE_GAMES = {
   "queue-sim": { code: "qs", maxScore: 6_000 },
   "programmer-rage": { code: "pr", maxScore: 6_000 },
   "traffic-boss": { code: "wb", maxScore: 10_000 },
+  // seed = packed quiz config (scope + level + shuffle), score = correct answers
+  "ancholik-quiz": { code: "aq", maxScore: 10 },
 } as const;
 
 export type ChallengeGame = keyof typeof CHALLENGE_GAMES;

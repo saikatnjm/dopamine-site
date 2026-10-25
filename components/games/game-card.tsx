@@ -6,7 +6,7 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 
 const tilts = ["rotate-1", "-rotate-1", "rotate-0"] as const;
 
-export function GameCard({ game, lang, index = 0 }: { game: Game; lang: Lang; index?: number }) {
+export function GameCard({ game, lang, index = 0, soon = false }: { game: Game; lang: Lang; index?: number; soon?: boolean }) {
   const d = getDictionary(lang);
   return (
     <Link
@@ -18,7 +18,7 @@ export function GameCard({ game, lang, index = 0 }: { game: Game; lang: Lang; in
           {game.emoji}
         </span>
         <span className="absolute right-3 top-3 rotate-3 rounded-pill border-2 border-ink bg-surface px-2.5 py-0.5 text-xs font-extrabold">
-          ⏱️ {fmt(d.gameSeconds, { n: num(game.durationSec, lang) })}
+          {soon ? `🛠️ ${d.gameSoon}` : `⏱️ ${fmt(d.gameSeconds, { n: num(game.durationSec, lang) })}`}
         </span>
       </div>
       <div className="flex flex-1 flex-col p-5">

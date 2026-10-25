@@ -32,6 +32,7 @@ export function ResultShareKit({
   copy: showCopy = true,
   playAnother = true,
   alsoLike = true,
+  download = false,
 }: {
   data: ResultCardData;
   /** Link to include (a challenge/result link, or the game page). */
@@ -48,6 +49,8 @@ export function ResultShareKit({
   playAnother?: boolean;
   /** Show "😂 LIKED THAT?" (3 related activities). */
   alsoLike?: boolean;
+  /** Also show "⬇️ Download PNG" (always a file download, even where the image can be shared). */
+  download?: boolean;
 }) {
   const { d } = useI18n();
   const [toast, setToast] = useState<string | null>(null);
@@ -91,13 +94,24 @@ export function ResultShareKit({
     }
   }
 
-  /** Phones: share the PNG (WhatsApp/Instagram…). Elsewhere: download it. */
-  async function saveImage() {
+  function downloadFile(file: File) {
+    const href = URL.createObjectURL(file);
+    const a = Object.assign(document.createElement("a"), { href, download: file.name });
+    document.body.append(a);
+    a.click();
+    a.remove();
+    window.setTimeout(() => URL.revokeObjectURL(href), 1000);
+    show(`🖼️ ${d.imageSaved}`);
+    onShared("image");
+  }
+
+  /** Phones: share the PNG (WhatsApp/Instagram…). Elsewhere (or `only download`): download it. */
+  async function saveImage(onlyDownload = false) {
     if (busy) return;
     setBusy(true);
     try {
       const file = await makeImage();
-      if (navigator.canShare?.({ files: [file] })) {
+      if (!onlyDownload && navigator.canShare?.({ files: [file] })) {
         try {
           await navigator.share({ files: [file], text });
           onShared("image");
@@ -107,14 +121,7 @@ export function ResultShareKit({
           if (e instanceof DOMException && e.name === "AbortError") return;
         }
       }
-      const href = URL.createObjectURL(file);
-      const a = Object.assign(document.createElement("a"), { href, download: file.name });
-      document.body.append(a);
-      a.click();
-      a.remove();
-      window.setTimeout(() => URL.revokeObjectURL(href), 1000);
-      show(`🖼️ ${d.imageSaved}`);
-      onShared("image");
+      downloadFile(file);
     } catch {
       show(`⚠️ ${d.imageFailed}`);
     } finally {
@@ -135,10 +142,15 @@ export function ResultShareKit({
             📋 {d.copyResult}
           </button>
         )}
-        <button type="button" onClick={saveImage} disabled={busy} aria-busy={busy} className={`${btnPrimary} bg-surface px-3 text-base`}>
+        <button type="button" onClick={() => saveImage()} disabled={busy} aria-busy={busy} className={`${btnPrimary} bg-surface px-3 text-base`}>
           🖼️ {busy ? d.imageMaking : d.saveImage}
         </button>
       </div>
+      {download && (
+        <button type="button" onClick={() => saveImage(true)} disabled={busy} aria-busy={busy} className={`${btnPrimary} bg-surface px-3 text-base`}>
+          ⬇️ {busy ? d.imageMaking : d.downloadPng}
+        </button>
+      )}
       {alsoLike && <YouMightAlsoLike path={data.path} />}
       {playAnother && <PlayAnother />}
       <div className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex justify-center px-4" role="status" aria-live="polite">

@@ -54,6 +54,7 @@ export const worlds: readonly World[] = [
       { kind: "experience", slug: "fake-shopping-spree", zone: { en: "🛍️ Shopping", bn: "🛍️ শপিং" } },
       { kind: "experience", slug: "random-life-decision", zone: { en: "🎲 Decisions", bn: "🎲 সিদ্ধান্ত" } },
       { kind: "page", id: "excuses", zone: { en: "😅 Excuses", bn: "😅 অজুহাত" } },
+      { kind: "game", slug: "personality", zone: { en: "🎭 You", bn: "🎭 তুমি" } },
     ],
   },
   {

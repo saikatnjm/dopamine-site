@@ -28,7 +28,9 @@ TypeScript in `data/`. Business logic runs in the browser.
 ```bash
 cp .env.example .env                                   # once
 docker compose up --build dev                          # dev + hot reload → http://localhost:3000
-docker compose run --rm dev sh -c "npm install && npm run check"   # lint + typecheck
+docker compose run --rm dev sh -c "npm install && npm run check"   # lint + typecheck + tests + content
+docker compose run --rm dev npm test                     # Vitest unit tests (tests/*.test.ts)
+docker compose run --rm dev npm run validate:content     # dialect content structure report
 docker compose up --build                              # production image → http://localhost:3000
 ```
 
@@ -38,7 +40,7 @@ on the host.
 
 ## CI/CD
 
-- `.github/workflows/ci.yml`: npm ci → lint → build → `tsc --noEmit` on PRs and `main`.
+- `.github/workflows/ci.yml`: npm ci → lint → `npm test` → `validate:content` → build → `tsc --noEmit` on PRs and `main`.
 - `.github/workflows/docker.yml`: builds the image on PRs; on `main` pushes
   `ghcr.io/<owner>/<repo>` with `latest`, `main`, `sha-<short>` (GITHUB_TOKEN only).
 - Optional repo variables: `SITE_URL`, `GA_ID`, `CONTACT_EMAIL`.
@@ -57,6 +59,7 @@ data/
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   experiences/index.ts   registry list; one file per experience
   games/index.ts         games registry (slug, title, accent…); games/<slug>.ts = copy
+  dialects/              regional dialect content (districts, words, questions) + README
 lib/
   site.ts                siteConfig, absoluteUrl()
   random.ts              seeded RNG (FNV-1a + Mulberry32), weightedPick
@@ -71,6 +74,9 @@ lib/
     result-token-encode.ts encodeResultToken() — client-safe, no registry import
   games/<slug>.ts        pure, seeded game rules (no DOM/React)
   games/shared.ts        seed/score share params, createBestStore(), prefersReducedMotion()
+  dialects/              types, validate (structure only), content (validated read access)
+scripts/                 content CLIs (validate-content, review-checklist) + register-ts.mjs
+tests/                   Vitest unit tests + fake fixtures
 app/games/               Games index + one route per game (e.g. /games/cng-catch)
 components/games/        game cards + client game components
 ```
@@ -221,6 +227,46 @@ components/games/        game cards + client game components
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
+
+## Regional language games (Phase 42)
+
+- **আঞ্চলিক ভাষার লড়াই** (`/games/ancholik-quiz`, challenge code `aq`, maxScore 10) and
+  **তুমি কোন টাইপের বাঙালি?** (`/games/personality`) are normal entries in the games
+  registry (mechanic `quiz`, tag `language`). Plus `/games/words` + `/games/words/[slug]`.
+- Dialect content: `data/dialects/` (districts, `words/<district>.ts`, `questions.ts`),
+  types `lib/dialects/types.ts`, structural checks `lib/dialects/validate.ts` (run at import
+  by `lib/dialects/content.ts` → bad data fails the build; also `npm run validate:content`).
+  How-to: `data/dialects/README.md`.
+- **Never invent or auto-verify dialect facts** (owner decision). New entries start as
+  `needs_review`; only a person sets `verified`. Scored quizzes use only `published`
+  questions whose word is `verified` (a published question on an unverified word fails the
+  build). `npm run content:checklist` writes a review checklist to `data/dialects/review/`.
+  Pages pass the client only the published pool (`quizPool()`); drafts never ship.
+- Quiz engine `lib/games/ancholik-quiz.ts` (pure): seed = 24-bit shuffle · 6-bit scope
+  (0 = mixed, i = `DISTRICTS[i-1]`, **append-only**) · 2-bit level. Round = seeded pick of
+  ≤ 10 distinct questions (chosen level first, difficulty ≤ level), options shuffled per
+  question. < 5 questions for a scope/level → "প্রশ্ন তৈরি হচ্ছে!" (never blocks other games).
+  While no round is possible at all, `gameIsPlayable()` (`lib/activities.ts`) hides the quiz
+  from activities (roulette, recommendations, related, moods), the sitemap and search
+  (noindex); `/games` shows it with a "Coming soon" sticker. Tier ids (never rename):
+  beginner/practice/boss/legend. Links: `?district=&level=&seed=` and `/c/<token>`;
+  unfinished round in `localStorage["hottogol:ancholik-quiz:progress:v1"]` (24 h).
+- Personality engine `lib/games/personality.ts`: 8 questions × 4 options add fixed points to
+  7 traits (one archetype per trait); level = points ÷ trait max; ties → raw points → fixed
+  `RESULT_IDS` order. Exhaustive 4⁸ check: 12–16 % each (test enforces 8–25 %). Share link
+  `?a=<letters>&r=<id>` (stored id wins). Copy in `data/games/personality.ts`.
+- Dialect words/sentences stay Bangla in English mode (`lang="bn"`); options may carry an
+  English `gloss`, words a `meaningEn`. `/games/words` indexed only with ≥ 10 verified words;
+  a word page only with an `exampleSentence`.
+- `ResultShareKit` has an opt-in `download` prop (⬇️ Download PNG, always a file) — used by
+  these two games; other games unchanged.
+
+## Testing
+
+- Vitest (`vitest.config.mts`, `tests/**/*.test.ts`, node env) for pure logic only.
+  Fixtures in `tests/fixtures/` use obviously fake strings, never dialect claims.
+- `scripts/*.ts` run with plain Node type stripping via `scripts/register-ts.mjs` (resolves
+  `@/` + extensionless imports; no dependency). Only for pure modules (no JSX/enums).
 
 ## Result cards (shared by every game, simulator, quiz and excuse)
 
@@ -510,4 +556,6 @@ components/games/        game cards + client game components
 - [x] Phase 39 — `/viral` social landing page (deep links, OG image, UTM tracking without storage)
 - [x] Phase 40 — Analytics taxonomy (normalised GA events, param allowlist, activity_view)
 - [x] Phase 41 — Client-side UI experiment system + `home-cta` test
+- [x] Phase 42 — Regional language games: আঞ্চলিক ভাষার লড়াই quiz engine, তুমি কোন টাইপের বাঙালি?, dialect content layer + validation, /games/words, Vitest
+- [ ] Owner: provide the Jashore dialect image / word lists → import as `needs_review` → review → publish
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

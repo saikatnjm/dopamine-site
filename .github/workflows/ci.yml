@@ -35,6 +35,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Unit tests
+        run: npm test
+
+      # Structure only (ids, references, 4 options…) — never linguistic accuracy.
+      - name: Validate dialect content
+        run: npm run validate:content
+
       # Build before tsc: `next build` generates next-env.d.ts and route types
       # that the standalone type check needs.
       - name: Build
