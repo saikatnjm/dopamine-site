@@ -3,21 +3,23 @@
 // and the tests.
 //
 // These checks only prove the data is well-formed: unique ids, required
-// fields, valid references, four distinct options. They cannot tell whether a
-// dialect word, spelling or meaning is correct — that is a person's review
-// (verificationStatus), never code.
+// fields, valid references. They cannot tell whether a dialect word, spelling
+// or attribution is correct — that is a person's review (status), never code.
 
-import type { DialectContent, Difficulty, QuestionStatus, VerificationStatus } from "@/lib/dialects/types";
+import type { Confidence, ConceptCategory, DialectContent, Difficulty, Script, SourceType, VerificationStatus } from "@/lib/dialects/types";
 
 export type IssueLevel = "error" | "warning";
 export type ContentIssue = { level: IssueLevel; where: string; message: string };
 
 export const ID_RE = /^[a-z0-9-]{1,40}$/;
-const DIVISIONS = ["barishal", "chattogram", "dhaka", "khulna", "mymensingh", "rajshahi", "rangpur", "sylhet"];
-const WORD_STATUSES: readonly VerificationStatus[] = ["draft", "needs_review", "verified"];
-const QUESTION_STATUSES: readonly QuestionStatus[] = ["draft", "verified", "published"];
+export const FORM_ID_RE = /^[a-z0-9-]{1,60}$/;
+const STATUSES: readonly VerificationStatus[] = ["draft", "needs_review", "verified", "rejected"];
+const CONFIDENCES: readonly Confidence[] = ["high", "medium", "low"];
+const SCRIPTS: readonly Script[] = ["bangla", "romanized", "rendered"];
+const SOURCE_TYPES: readonly SourceType[] = ["encyclopedia", "academic", "dictionary", "government", "newspaper", "dataset", "wiki", "blog", "owner"];
+const CATEGORIES: readonly ConceptCategory[] = ["people", "animals", "home", "food", "nature", "words", "phrases"];
 const DIFFICULTIES: readonly Difficulty[] = ["easy", "medium", "hard"];
-export const OPTIONS_PER_QUESTION = 4;
+const BANGLA = /[ঀ-৿]/;
 
 function filled(v: unknown): boolean {
   return typeof v === "string" && v.trim().length > 0;
@@ -31,7 +33,6 @@ function filledText(v: unknown): boolean {
   return filled(o.en) && filled(o.bn);
 }
 
-/** Same text after trimming/collapsing spaces (catches "পোলা" vs "পোলা "). */
 function norm(s: string): string {
   return s.normalize("NFC").trim().replace(/\s+/g, " ");
 }
@@ -41,11 +42,10 @@ export function validateDialectContent(content: DialectContent): ContentIssue[] 
   const error = (where: string, message: string) => issues.push({ level: "error", where, message });
   const warn = (where: string, message: string) => issues.push({ level: "warning", where, message });
 
-  const unique = (kind: string, ids: readonly unknown[]) => {
+  const unique = (kind: string, ids: readonly unknown[], re = ID_RE) => {
     const seen = new Set<string>();
     ids.forEach((id, i) => {
-      const where = `${kind}[${i}]`;
-      if (typeof id !== "string" || !ID_RE.test(id)) return error(where, `id ${JSON.stringify(id)} must match ${ID_RE}`);
+      if (typeof id !== "string" || !re.test(id)) return error(`${kind}[${i}]`, `id ${JSON.stringify(id)} must match ${re}`);
       if (seen.has(id)) error(`${kind} ${id}`, "duplicate id");
       seen.add(id);
     });
@@ -54,73 +54,73 @@ export function validateDialectContent(content: DialectContent): ContentIssue[] 
 
   // Districts
   const districtIds = unique("district", content.districts.map((d) => d.id));
-  for (const d of content.districts) {
-    const where = `district ${d.id}`;
-    if (!filledText(d.name)) error(where, "name is required");
-    if (!DIVISIONS.includes(d.division)) error(where, `unknown division "${d.division}"`);
-  }
+  for (const d of content.districts) if (!filledText(d.name)) error(`district ${d.id}`, "name is required");
 
-  const checkDistricts = (where: string, ids: readonly string[]) => {
-    if (!Array.isArray(ids) || ids.length === 0) return error(where, "districtIds needs at least one district");
-    for (const id of ids) if (!districtIds.has(id)) error(where, `unknown district "${id}"`);
-  };
-
-  // Words
-  unique("word", content.words.map((w) => w.id));
-  const words = new Map(content.words.map((w) => [w.id, w]));
-  for (const w of content.words) {
-    const where = `word ${w.id}`;
-    for (const field of ["standardWord", "localWord", "meaningBn", "source"] as const) {
-      if (!filled(w[field])) error(where, `${field} is required`);
-    }
-    checkDistricts(where, w.districtIds);
-    if (!DIVISIONS.includes(w.region)) error(where, `unknown region "${w.region}"`);
-    if (!Array.isArray(w.variants)) error(where, "variants must be a list (use [] for none)");
-    if (!WORD_STATUSES.includes(w.verificationStatus)) error(where, `unknown verificationStatus "${w.verificationStatus}"`);
-    if (w.verificationStatus === "verified" && !filled(w.exampleSentence)) {
-      warn(where, "verified but has no exampleSentence — its word page stays noindex");
+  // Regions
+  const regionIds = unique("region", content.regions.map((r) => r.id));
+  const owner = new Map<string, string>();
+  for (const r of content.regions) {
+    const where = `region ${r.id}`;
+    if (!filledText(r.name)) error(where, "name is required");
+    if (!filledText(r.blurb)) error(where, "blurb is required");
+    if (!Array.isArray(r.districts) || r.districts.length === 0) error(where, "needs at least one district");
+    for (const d of r.districts ?? []) {
+      if (!districtIds.has(d)) error(where, `unknown district "${d}"`);
+      else if (owner.has(d)) error(where, `district "${d}" is already in region "${owner.get(d)}"`);
+      else owner.set(d, r.id);
     }
   }
 
-  // Questions
-  unique("question", content.questions.map((q) => q.id));
-  for (const q of content.questions) {
-    const where = `question ${q.id}`;
-    if (!filledText(q.question)) error(where, "question text is required");
-    if (!filledText(q.explanation)) error(where, "explanation is required");
-    if (!DIFFICULTIES.includes(q.difficulty)) error(where, `unknown difficulty "${q.difficulty}"`);
-    if (!QUESTION_STATUSES.includes(q.status)) error(where, `unknown status "${q.status}"`);
-    if (!Array.isArray(q.tags)) error(where, "tags must be a list (use [] for none)");
-    checkDistricts(where, q.districtIds);
+  // Sources
+  const sourceIds = unique("source", content.sources.map((s) => s.id));
+  for (const s of content.sources) {
+    const where = `source ${s.id}`;
+    if (!filled(s.title)) error(where, "title is required");
+    if (!SOURCE_TYPES.includes(s.type)) error(where, `unknown type "${s.type}"`);
+    if (s.url !== undefined && !/^https?:\/\//.test(s.url)) error(where, "url must start with http(s)://");
+  }
 
-    if (!Array.isArray(q.options) || q.options.length !== OPTIONS_PER_QUESTION) {
-      error(where, `needs exactly ${OPTIONS_PER_QUESTION} options (has ${Array.isArray(q.options) ? q.options.length : 0})`);
-    } else {
-      const optionIds = new Set<string>();
-      const texts = new Set<string>();
-      for (const o of q.options) {
-        if (!filled(o.id)) error(where, "an option has no id");
-        else if (optionIds.has(o.id)) error(where, `duplicate option id "${o.id}"`);
-        optionIds.add(o.id);
-        if (!filled(o.text)) error(where, `option "${o.id}" has no text`);
-        else if (texts.has(norm(o.text))) error(where, `duplicate option text "${norm(o.text)}"`);
-        else texts.add(norm(o.text));
-      }
-      if (!optionIds.has(q.correctOptionId)) error(where, `correctOptionId "${q.correctOptionId}" is not one of its options`);
-    }
+  // Concepts
+  const conceptIds = unique("concept", content.concepts.map((c) => c.id));
+  for (const c of content.concepts) {
+    const where = `concept ${c.id}`;
+    if (!filled(c.standard)) error(where, "standard is required");
+    if (!filled(c.en)) error(where, "en is required");
+    if (!filled(c.emoji)) error(where, "emoji is required");
+    if (!CATEGORIES.includes(c.category)) error(where, `unknown category "${c.category}"`);
+    if (!DIFFICULTIES.includes(c.difficulty)) error(where, `unknown difficulty "${c.difficulty}"`);
+    if (c.kind !== "word" && c.kind !== "phrase") error(where, `unknown kind "${c.kind}"`);
+  }
 
-    const word = words.get(q.wordId);
-    if (!word) {
-      error(where, `wordId "${q.wordId}" does not exist`);
-      continue;
+  // Forms
+  unique("form", content.forms.map((f) => f.id), FORM_ID_RE);
+  const seenForm = new Map<string, string>();
+  const used = new Set<string>();
+  for (const f of content.forms) {
+    const where = `form ${f.id}`;
+    if (!conceptIds.has(f.conceptId)) error(where, `unknown concept "${f.conceptId}"`);
+    if (!filled(f.form)) error(where, "form is required");
+    if (!Array.isArray(f.variants)) error(where, "variants must be a list (use [] for none)");
+    if (!Array.isArray(f.regions) || f.regions.length === 0) error(where, "needs at least one region");
+    for (const r of f.regions ?? []) if (!regionIds.has(r)) error(where, `unknown region "${r}"`);
+    if (!Array.isArray(f.sources) || f.sources.length === 0) error(where, "needs at least one source");
+    for (const s of f.sources ?? []) {
+      if (!sourceIds.has(s)) error(where, `unknown source "${s}"`);
+      used.add(s);
     }
-    if (q.status === "published" && word.verificationStatus !== "verified") {
-      error(where, `published, but word "${word.id}" is ${word.verificationStatus} — publish only after the word is verified`);
-    }
-    for (const id of q.districtIds ?? []) {
-      if (districtIds.has(id) && !word.districtIds.includes(id)) warn(where, `district "${id}" is not listed on word "${word.id}"`);
+    if (!STATUSES.includes(f.status)) error(where, `unknown status "${f.status}"`);
+    if (!CONFIDENCES.includes(f.confidence)) error(where, `unknown confidence "${f.confidence}"`);
+    if (!SCRIPTS.includes(f.script)) error(where, `unknown script "${f.script}"`);
+    if (f.script === "bangla" && filled(f.form) && !BANGLA.test(f.form)) error(where, `script is "bangla" but "${f.form}" has no Bangla letters`);
+    if (f.script === "romanized" && f.status === "verified") error(where, "verified forms need a Bangla spelling (script bangla)");
+    // Same word twice for the same concept + region is almost always a copy-paste slip.
+    for (const r of f.regions ?? []) {
+      const key = `${f.conceptId}|${r}|${norm(f.form ?? "")}`;
+      if (seenForm.has(key)) warn(where, `same form as ${seenForm.get(key)} for ${f.conceptId} in ${r}`);
+      else seenForm.set(key, f.id);
     }
   }
+  for (const s of sourceIds) if (!used.has(s)) warn(`source ${s}`, "not used by any form");
 
   return issues;
 }

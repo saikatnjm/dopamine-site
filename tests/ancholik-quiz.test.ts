@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { DISTRICTS } from "@/data/dialects/districts";
+import { REGIONS } from "@/data/dialects/regions";
+import { DIALECT_CONTENT } from "@/data/dialects";
 import { buildQuizPool } from "@/lib/dialects/content";
 import {
   buildRound,
@@ -20,14 +21,14 @@ import {
   unpackSeed,
   type QuizConfig,
 } from "@/lib/games/ancholik-quiz";
-import { fixture, question, word } from "./fixtures/dialects";
+import { fixture, form } from "./fixtures/dialects";
 
 const pool = buildQuizPool(fixture());
-const config: QuizConfig = { scope: "jashore", level: "hard", shuffle: 123_456 };
+const config: QuizConfig = { scope: "jashore-khulna", level: "hard", shuffle: 123_456 };
 
 describe("seed packing", () => {
   it("round-trips every scope and level", () => {
-    for (const scope of [MIXED, ...DISTRICTS.map((d) => d.id)]) {
+    for (const scope of [MIXED, ...REGIONS.map((r) => r.id)]) {
       for (const level of LEVELS) {
         const c = { scope, level, shuffle: 0xabcdef };
         const seed = packSeed(c);
@@ -42,7 +43,7 @@ describe("seed packing", () => {
     expect(packSeed({ scope: "atlantis", level: "easy", shuffle: 1 })).toBeNull();
     expect(packSeed({ scope: MIXED, level: "expert" as never, shuffle: 1 })).toBeNull();
     expect(unpackSeed(3)).toBeNull(); // level bits = 3
-    expect(unpackSeed(63 << 2)).toBeNull(); // scope index with no district
+    expect(unpackSeed(63 << 2)).toBeNull(); // scope index with no region
     expect(unpackSeed(-1)).toBeNull();
     expect(unpackSeed(2 ** 32)).toBeNull();
     expect(unpackSeed(1.5)).toBeNull();
@@ -54,12 +55,13 @@ describe("seed packing", () => {
 });
 
 describe("question selection", () => {
-  it("filters by district and by difficulty ≤ level", () => {
-    const easy = poolFor(pool, "jashore", "easy");
-    expect(easy.every((q) => q.districtIds.includes("jashore") && q.difficulty === "easy")).toBe(true);
-    expect(poolFor(pool, "jashore", "medium").every((q) => q.difficulty !== "hard")).toBe(true);
+  it("filters by region and by difficulty ≤ level", () => {
+    const easy = poolFor(pool, "jashore-khulna", "easy");
+    expect(easy.length).toBeGreaterThan(0);
+    expect(easy.every((q) => q.regionIds.includes("jashore-khulna") && q.difficulty === "easy")).toBe(true);
+    expect(poolFor(pool, "jashore-khulna", "medium").every((q) => q.difficulty !== "hard")).toBe(true);
     expect(poolFor(pool, MIXED, "hard")).toHaveLength(pool.length);
-    expect(poolFor(pool, "khulna", "hard")).toHaveLength(0);
+    expect(poolFor(pool, "barishal", "hard")).toHaveLength(0);
   });
 
   it("builds a deterministic round with no duplicate questions", () => {
@@ -145,10 +147,13 @@ describe("answers and score", () => {
 });
 
 describe("URL params", () => {
-  it("accepts districts, aliases and mixed; rejects junk", () => {
-    expect(parseQuizParams({ district: "jashore" }).scope).toBe("jashore");
-    expect(parseQuizParams({ district: "Jessore" }).scope).toBe("jashore");
+  it("accepts regions, districts (any common spelling) and mixed; rejects junk", () => {
+    expect(parseQuizParams({ district: "jashore-khulna" }).scope).toBe("jashore-khulna");
+    expect(parseQuizParams({ district: "jashore" }).scope).toBe("jashore-khulna");
+    expect(parseQuizParams({ district: "Jessore" }).scope).toBe("jashore-khulna");
     expect(parseQuizParams({ district: ["chittagong", "x"] }).scope).toBe("chattogram");
+    expect(parseQuizParams({ district: "feni" }).scope).toBe("noakhali");
+    expect(parseQuizParams({ district: "bandarban" }).scope).toBeNull(); // in no dialect region
     expect(parseQuizParams({ district: "mixed" }).scope).toBe(MIXED);
     expect(parseQuizParams({ district: "<script>" }).scope).toBeNull();
     expect(parseQuizParams({ district: "x".repeat(500) }).scope).toBeNull();
@@ -162,27 +167,39 @@ describe("URL params", () => {
   it("lets a valid seed win over district/level and round-trips roundPath", () => {
     const url = new URL(roundPath(config), "https://example.test");
     const params = { district: "sylhet", level: "easy", seed: url.searchParams.get("seed") ?? "" };
-    expect(parseQuizParams(params)).toEqual({ scope: "jashore", level: "hard", config });
+    expect(parseQuizParams(params)).toEqual({ scope: "jashore-khulna", level: "hard", config });
   });
 });
 
 describe("unverified content is never scored", () => {
-  it("drops drafts, unreviewed words and unpublished questions", () => {
-    const content = fixture(6, ["jashore"]);
+  it("builds questions only from verified Bangla-script forms", () => {
+    const content = fixture(6, ["jashore-khulna"]);
     const extra = {
       ...content,
-      words: [...content.words, word("w-draft", "jashore", "draft"), word("w-review", "jashore", "needs_review")],
-      questions: [
-        ...content.questions,
-        question("q-draft-word", "w-draft", "jashore", "easy", "draft"),
-        question("q-review-word", "w-review", "jashore", "easy", "verified"),
-        question("q-unpublished", "w-jashore-0", "jashore", "easy", "verified"),
+      forms: [
+        ...content.forms,
+        form("draft", "c0", ["barishal"], { status: "draft" }),
+        form("review", "c1", ["barishal"], { status: "needs_review", confidence: "high" }),
+        form("rejected", "c2", ["barishal"], { status: "rejected" }),
+        form("roman", "c3", ["barishal"], { status: "needs_review", script: "romanized", text: "bilai" }),
       ],
     };
     const ids = buildQuizPool(extra).map((q) => q.id);
     expect(ids).toHaveLength(6);
-    expect(ids).not.toContain("q-draft-word");
-    expect(ids).not.toContain("q-review-word");
-    expect(ids).not.toContain("q-unpublished");
+    expect(ids.some((id) => /draft|review|rejected|roman/.test(id))).toBe(false);
+  });
+
+  it("makes four distinct options with the concept as the right answer", () => {
+    for (const q of buildQuizPool(fixture(6, ["jashore-khulna"]))) {
+      expect(q.options).toHaveLength(4);
+      expect(new Set(q.options.map((o) => o.id)).size).toBe(4);
+      expect(new Set(q.options.map((o) => o.text)).size).toBe(4);
+      expect(q.options.some((o) => o.id === q.correctOptionId)).toBe(true);
+    }
+  });
+
+  it("every scored question in the shipped content comes from a verified form", () => {
+    const status = new Map(DIALECT_CONTENT.forms.map((f) => [`q-${f.id}`, f.status]));
+    for (const q of buildQuizPool(DIALECT_CONTENT)) expect(status.get(q.id)).toBe("verified");
   });
 });

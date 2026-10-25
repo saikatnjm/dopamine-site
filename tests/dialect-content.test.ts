@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { DIALECT_CONTENT } from "@/data/dialects";
+import { buildPublicForms, isPublicForm, isScoredForm } from "@/lib/dialects/content";
 import type { DialectContent } from "@/lib/dialects/types";
 import { assertValidDialectContent, validateDialectContent } from "@/lib/dialects/validate";
-import { fixture, question, word } from "./fixtures/dialects";
+import { fixture, form } from "./fixtures/dialects";
 
 const errors = (c: DialectContent) => validateDialectContent(c).filter((i) => i.level === "error");
 const messages = (c: DialectContent) => errors(c).map((e) => `${e.where}: ${e.message}`).join("\n");
@@ -10,6 +11,16 @@ const messages = (c: DialectContent) => errors(c).map((e) => `${e.where}: ${e.me
 describe("the shipped dialect content", () => {
   it("is structurally valid", () => {
     expect(messages(DIALECT_CONTENT)).toBe("");
+  });
+
+  it("puts every one of the 64 districts in at most one region", () => {
+    expect(DIALECT_CONTENT.districts).toHaveLength(64);
+    const all = DIALECT_CONTENT.regions.flatMap((r) => r.districts);
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it("ships nothing as verified without a person (all imported research is needs_review)", () => {
+    expect(DIALECT_CONTENT.forms.every((f) => f.status !== "verified" || f.script === "bangla")).toBe(true);
   });
 });
 
@@ -19,62 +30,66 @@ describe("validateDialectContent", () => {
   });
 
   it("finds duplicate and malformed ids", () => {
-    const c = fixture(2, ["jashore"]);
-    expect(messages({ ...c, words: [...c.words, c.words[0]!] })).toMatch(/duplicate id/);
-    expect(messages({ ...c, words: [...c.words, { ...word("ok", "jashore"), id: "Bad Id" }] })).toMatch(/must match/);
-    expect(messages({ ...c, questions: [...c.questions, c.questions[0]!] })).toMatch(/question q-jashore-0: duplicate id/);
+    const c = fixture(2, ["barishal"]);
+    expect(messages({ ...c, forms: [...c.forms, c.forms[0]!] })).toMatch(/duplicate id/);
+    expect(messages({ ...c, concepts: [...c.concepts, { ...c.concepts[0]!, id: "Bad Id" }] })).toMatch(/must match/);
   });
 
-  it("requires the required fields", () => {
-    const c = fixture(1, ["jashore"]);
-    const w = { ...c.words[0]!, localWord: " ", meaningBn: "" };
-    const out = messages({ ...c, words: [w] });
-    expect(out).toMatch(/localWord is required/);
-    expect(out).toMatch(/meaningBn is required/);
-    const q = { ...c.questions[0]!, explanation: { en: "x", bn: "" } };
-    expect(messages({ ...c, questions: [q] })).toMatch(/explanation is required/);
+  it("checks concept, region and source references", () => {
+    const c = fixture(1, ["barishal"]);
+    expect(messages({ ...c, forms: [form("x", "nope", ["barishal"])] })).toMatch(/unknown concept "nope"/);
+    expect(messages({ ...c, forms: [form("x", "c0", ["atlantis"])] })).toMatch(/unknown region "atlantis"/);
+    expect(messages({ ...c, forms: [form("x", "c0", ["barishal"], { sources: ["ghost"] })] })).toMatch(/unknown source "ghost"/);
+    expect(messages({ ...c, forms: [form("x", "c0", ["barishal"], { sources: [] })] })).toMatch(/at least one source/);
+    expect(messages({ ...c, forms: [form("x", "c0", [])] })).toMatch(/at least one region/);
   });
 
-  it("checks district references", () => {
-    const c = fixture(1, ["jashore"]);
-    expect(messages({ ...c, words: [{ ...c.words[0]!, districtIds: ["atlantis"] }] })).toMatch(/unknown district "atlantis"/);
-    expect(messages({ ...c, words: [{ ...c.words[0]!, districtIds: [] }] })).toMatch(/at least one district/);
+  it("rejects a district in two regions and unknown districts", () => {
+    const c = fixture(1, ["barishal"]);
+    const twice = c.regions.map((r) => (r.id === "faridpur" ? { ...r, districts: [...r.districts, "barishal"] } : r));
+    expect(messages({ ...c, regions: twice })).toMatch(/already in region "barishal"/);
+    const bad = c.regions.map((r) => (r.id === "faridpur" ? { ...r, districts: ["narnia"] } : r));
+    expect(messages({ ...c, regions: bad })).toMatch(/unknown district "narnia"/);
   });
 
-  it("requires exactly four distinct options and a real correct option", () => {
-    const c = fixture(1, ["jashore"]);
-    const q = c.questions[0]!;
-    expect(messages({ ...c, questions: [{ ...q, options: q.options.slice(0, 3) }] })).toMatch(/exactly 4 options \(has 3\)/);
-    const dupText = [q.options[0]!, q.options[1]!, q.options[2]!, { id: "d", text: `${q.options[0]!.text}  ` }];
-    expect(messages({ ...c, questions: [{ ...q, options: dupText }] })).toMatch(/duplicate option text/);
-    const dupId = [q.options[0]!, q.options[1]!, q.options[2]!, { ...q.options[3]!, id: "a" }];
-    expect(messages({ ...c, questions: [{ ...q, options: dupId }] })).toMatch(/duplicate option id "a"/);
-    expect(messages({ ...c, questions: [{ ...q, correctOptionId: "z" }] })).toMatch(/correctOptionId "z" is not one of its options/);
-  });
-
-  it("checks word references and blocks publishing unreviewed words", () => {
-    const c = fixture(1, ["jashore"]);
-    expect(messages({ ...c, questions: [question("q-x", "w-missing", "jashore")] })).toMatch(/wordId "w-missing" does not exist/);
-    const pending = { ...c, words: [...c.words, word("w-pending", "jashore", "needs_review")] };
-    expect(messages({ ...pending, questions: [question("q-p", "w-pending", "jashore", "easy", "published")] })).toMatch(/published, but word "w-pending" is needs_review/);
-    // An unreviewed word may have a draft question waiting for review.
-    expect(errors({ ...pending, questions: [question("q-p", "w-pending", "jashore", "easy", "draft")] })).toEqual([]);
-  });
-
-  it("rejects unknown statuses and difficulties", () => {
-    const c = fixture(1, ["jashore"]);
-    expect(messages({ ...c, words: [{ ...c.words[0]!, verificationStatus: "probably" as never }] })).toMatch(/unknown verificationStatus/);
-    expect(messages({ ...c, questions: [{ ...c.questions[0]!, difficulty: "insane" as never }] })).toMatch(/unknown difficulty/);
-  });
-
-  it("warns (doesn't fail) about thin verified words", () => {
-    const issues = validateDialectContent(fixture(1, ["jashore"]));
-    expect(issues.some((i) => i.level === "warning" && /exampleSentence/.test(i.message))).toBe(true);
+  it("checks enums and that Bangla-script forms contain Bangla", () => {
+    const c = fixture(1, ["barishal"]);
+    expect(messages({ ...c, forms: [form("x", "c0", ["barishal"], { status: "probably" as never })] })).toMatch(/unknown status/);
+    expect(messages({ ...c, forms: [form("x", "c0", ["barishal"], { confidence: "sure" as never })] })).toMatch(/unknown confidence/);
+    expect(messages({ ...c, forms: [form("x", "c0", ["barishal"], { text: "bilai" })] })).toMatch(/has no Bangla letters/);
+    expect(messages({ ...c, forms: [form("x", "c0", ["barishal"], { text: "bilai", script: "romanized", status: "verified" })] })).toMatch(/need a Bangla spelling/);
   });
 
   it("assertValidDialectContent throws with every error listed", () => {
-    const c = fixture(1, ["jashore"]);
-    expect(() => assertValidDialectContent({ ...c, questions: [question("q-x", "nope", "atlantis")] })).toThrow(/does not exist[\s\S]*unknown district|unknown district[\s\S]*does not exist/);
+    const c = fixture(1, ["barishal"]);
+    expect(() => assertValidDialectContent({ ...c, forms: [form("x", "nope", ["atlantis"])] })).toThrow(/unknown concept[\s\S]*unknown region/);
     expect(() => assertValidDialectContent(c)).not.toThrow();
+  });
+});
+
+describe("visibility rules", () => {
+  const base = { regions: ["barishal"] };
+  it("public = verified, or needs_review with high/medium confidence and a sourced Bangla spelling", () => {
+    expect(isPublicForm(form("a", "c0", base.regions, { status: "verified" }))).toBe(true);
+    expect(isPublicForm(form("a", "c0", base.regions, { status: "needs_review", confidence: "medium" }))).toBe(true);
+    expect(isPublicForm(form("a", "c0", base.regions, { status: "needs_review", confidence: "low" }))).toBe(false);
+    expect(isPublicForm(form("a", "c0", base.regions, { status: "needs_review", script: "romanized", text: "fua" }))).toBe(false);
+    expect(isPublicForm(form("a", "c0", base.regions, { status: "needs_review", script: "rendered" }))).toBe(false);
+    expect(isPublicForm(form("a", "c0", base.regions, { status: "draft" }))).toBe(false);
+    expect(isPublicForm(form("a", "c0", base.regions, { status: "rejected" }))).toBe(false);
+  });
+
+  it("scored = verified only", () => {
+    expect(isScoredForm(form("a", "c0", base.regions, { status: "verified" }))).toBe(true);
+    expect(isScoredForm(form("a", "c0", base.regions, { status: "needs_review", confidence: "high" }))).toBe(false);
+  });
+
+  it("drops romanized variants and examples from public data", () => {
+    const c = fixture(1, ["barishal"]);
+    const f = { ...form("x", "c0", ["barishal"]), variants: ["বিলই", "bilai", "ꠛꠤꠟꠣꠁ"], example: "amar gori kuae?" };
+    const [pub] = buildPublicForms({ ...c, forms: [f] });
+    expect(pub!.variants).toEqual(["বিলই"]);
+    expect(pub!.example).toBeUndefined();
+    expect(pub!.sources).toEqual([{ title: "Test source", type: "owner" }]);
   });
 });

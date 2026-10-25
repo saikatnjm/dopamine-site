@@ -25,7 +25,7 @@ export default async function GamesPage() {
         <Link href="/achievements" className={chip}>
           {d.achLink}
         </Link>
-        <Link href="/games/words" className={chip}>
+        <Link href="/games/word-map" className={chip}>
           {d.wordsChip}
         </Link>
       </div>

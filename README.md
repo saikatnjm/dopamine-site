@@ -167,9 +167,12 @@ Retire an outcome with `retired: true` instead of deleting it.
 
 ## Regional language games
 
-- `/games/ancholik-quiz`: **আঞ্চলিক ভাষার লড়াই**, a 10-question dialect quiz (district or mixed, 3 levels, `/c/<token>` challenges).
+- `/games/word-map`: **শব্দের মানচিত্র**, pick a word and see what each dialect region calls it on a map, with sources. Every region has its own page.
+- `/games/which-region`: **তুমি কোন এলাকার মানুষ?**, a dialect detective that guesses your region from 10 words.
+- `/games/ancholik-quiz`: **আঞ্চলিক ভাষার লড়াই**, a scored 10-question dialect quiz (only person-verified words; `/c/<token>` challenges).
 - `/games/personality`: **তুমি কোন টাইপের বাঙালি?**, a just-for-fun 8-question personality test.
-- `/games/words`: reviewed dialect words, each with its own page.
+
+The district map comes from geoBoundaries (CC BY 3.0 IGO) and is regenerated with `node scripts/build-map.mjs` (run it in Docker).
 
 Dialect content is reviewed by people, never verified by code. To add districts, words or questions and run the
 review checklist, see [`data/dialects/README.md`](data/dialects/README.md).

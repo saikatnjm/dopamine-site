@@ -1,0 +1,16 @@
+import type { RegionalForm } from "@/lib/dialects/types";
+
+// Imported from resources/2026-10-25-regional-dialect-research.md (Rajshahi and Rangpur report; Khulna report for মেহুর).
+// Every entry needs review.
+export const rajshahiForms: RegionalForm[] = [
+  { id: "rajshahi-cat", conceptId: "cat", form: "মেহুর", variants: [], regions: ["rajshahi", "faridpur", "noakhali"], area: "Pabna, Faridpur, Noakhali (Shahidullah dictionary)", script: "bangla", sources: ["shahidullah-dictionary"], confidence: "medium", status: "needs_review", example: "মেহুরে মাছ খাইসে", notes: "Dictionary read from OCR scan only. Not attested for Jashore (the viral image's claim)." },
+  { id: "rajshahi-big", conceptId: "big", form: "ডাঙ্গর", variants: [], regions: ["rajshahi"], area: "Pabna", script: "bangla", sources: ["pabna-portal"], confidence: "medium", status: "needs_review" },
+  { id: "rajshahi-where", conceptId: "where", form: "কতি", variants: [], regions: ["rajshahi"], area: "some people of Rajshahi", script: "bangla", sources: ["jnu-journal-bangla-sounds"], confidence: "medium", status: "needs_review", example: "কতি জাইবা?", notes: "The journal's Bangla is in the old SutonnyMJ font; the researcher converted it (ÔKwZÕ to কতি)." },
+  { id: "rajshahi-where-2", conceptId: "where", form: "কনে", variants: [], regions: ["rajshahi"], area: "Pabna", script: "bangla", sources: ["pabna-portal"], confidence: "medium", status: "needs_review" },
+  { id: "rajshahi-i", conceptId: "i", form: "হামি", variants: [], regions: ["rajshahi"], area: "Naogaon", script: "bangla", sources: ["naogaon-portal"], confidence: "medium", status: "needs_review", example: "হামি যামো" },
+  { id: "rajshahi-i-2", conceptId: "i", form: "মুই", variants: [], regions: ["rajshahi"], area: "Naogaon", script: "bangla", sources: ["naogaon-portal"], confidence: "medium", status: "needs_review" },
+  { id: "rajshahi-where-going", conceptId: "where-going", form: "কতি জাইবা?", variants: [], regions: ["rajshahi"], area: "Rajshahi", script: "bangla", sources: ["jnu-journal-bangla-sounds"], confidence: "medium", status: "needs_review", notes: "Researcher-converted from the old SutonnyMJ font (KwZRvBev)." },
+  { id: "rajshahi-two-sons", conceptId: "two-sons", form: "একঝন মানুসের দুটা ব্যাটা/ছাওয়াল আছিল।", variants: [], regions: ["rajshahi"], area: "Chapainawabganj", script: "bangla", sources: ["bn-wiki-barendri"], confidence: "medium", status: "needs_review", notes: "The Bangla Wikipedia article is rated medium-low overall; the research's phrase table rates the per-district sentences medium." },
+  { id: "rajshahi-two-sons-2", conceptId: "two-sons", form: "একজন মানুসের দুটা বেটা/ছোওয়াল ছিল।", variants: [], regions: ["rajshahi"], area: "Natore", script: "bangla", sources: ["bn-wiki-barendri"], confidence: "medium", status: "needs_review", notes: "The Bangla Wikipedia article is rated medium-low overall; the research's phrase table rates the per-district sentences medium." },
+  { id: "rajshahi-two-sons-3", conceptId: "two-sons", form: "একজ়ন মাইনশের দুইদো ব্যাটা/সল সিলো।", variants: [], regions: ["rajshahi"], area: "Sirajganj", script: "bangla", sources: ["bn-wiki-barendri"], confidence: "medium", status: "needs_review", notes: "The Bangla Wikipedia article is rated medium-low overall; the research's phrase table rates the per-district sentences medium." },
+];

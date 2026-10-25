@@ -7,7 +7,7 @@ import { accentText, chip } from "@/components/ui/styles";
 import { quizCopy } from "@/data/games/ancholik-quiz";
 import { getGame } from "@/data/games";
 import { gameIsPlayable } from "@/lib/activities";
-import { listDistricts, quizPool } from "@/lib/dialects/content";
+import { listRegions, quizPool } from "@/lib/dialects/content";
 import { GAME_SLUG, parseQuizParams } from "@/lib/games/ancholik-quiz";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
@@ -37,7 +37,7 @@ export default async function AncholikQuizPage({ searchParams }: Props) {
 
   // ?district=jashore&level=easy&seed=<base36> — validated, never trusted.
   const initial = parseQuizParams(params);
-  const districts = listDistricts().map(({ id, name, emoji }) => ({ id, name, emoji }));
+  const districts = listRegions().map(({ id, name, emoji }) => ({ id, name, emoji }));
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -70,7 +70,7 @@ export default async function AncholikQuizPage({ searchParams }: Props) {
       </header>
       <AncholikQuizGame pool={quizPool()} districts={districts} initial={initial} challenge={null} />
       <nav className="mt-8 flex flex-wrap gap-3">
-        <Link href="/games/words" className={chip}>
+        <Link href="/games/word-map" className={chip}>
           {d.wordsChip}
         </Link>
         <Link href="/games/personality" className={chip}>

@@ -4,7 +4,7 @@ import { absoluteUrl } from "@/lib/site";
 import { GAME_HREF_OVERRIDES, listGames } from "@/data/games";
 import { GUIDE_SLUGS } from "@/data/guides";
 import { gameIsPlayable } from "@/lib/activities";
-import { verifiedWords, wordIsIndexable, WORDS_INDEX_MIN } from "@/lib/dialects/content";
+import { formsForRegion, listRegions, REGION_INDEX_MIN } from "@/lib/dialects/content";
 
 // Only real, useful, indexable pages. Result (/result), challenge (/c) and
 // achievements pages are personal and noindex; redirecting routes are left out
@@ -36,11 +36,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.9,
     })),
-    // Dialect words: the list once it's useful, and only words with a real example.
-    ...(verifiedWords().length >= WORDS_INDEX_MIN ? [{ url: absoluteUrl("/games/words"), changeFrequency: "weekly" as const, priority: 0.7 }] : []),
-    ...verifiedWords()
-      .filter(wordIsIndexable)
-      .map((w) => ({ url: absoluteUrl(`/games/words/${w.id}`), changeFrequency: "monthly" as const, priority: 0.5 })),
+    // Dialect region pages, once they hold enough sourced words to be useful.
+    ...listRegions()
+      .filter((r) => formsForRegion(r.id).length >= REGION_INDEX_MIN)
+      .map((r) => ({ url: absoluteUrl(`/games/word-map/${r.id}`), changeFrequency: "monthly" as const, priority: 0.6 })),
     { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.3 },
     { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.2 },
     { url: absoluteUrl("/terms"), changeFrequency: "yearly", priority: 0.2 },
