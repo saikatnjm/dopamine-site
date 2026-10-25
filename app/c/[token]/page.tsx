@@ -32,6 +32,7 @@ const GAMES: Record<ChallengeGame, ComponentType<GameProps>> = {
   "traffic-boss": dynamic(() => import("@/components/boss/boss-challenge").then((m) => m.TrafficBossChallenge)),
   // Server wrapper (loads the reviewed question pool); its client game is its own chunk.
   "ancholik-quiz": AncholikQuizChallenge,
+  "book-cricket": dynamic(() => import("@/components/games/book-cricket-game").then((m) => m.BookCricketGame)),
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

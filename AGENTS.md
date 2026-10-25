@@ -228,6 +228,24 @@ components/games/        game cards + client game components
 - Traffic Dodge: fixed-step sim (`STEP_MS`, 60 Hz) so traffic is identical per
   seed; each row keeps a safe lane within one lane of the previous row's; traffic
   sprites are a fixed DOM pool (24 nodes) reused by the loop — no canvas/engine.
+- **Book Cricket** (`/games/book-cricket`, code `bk`, maxScore 200, Phase 45, plan `docs/plans/2026-10-25-phase-45-book-cricket.md`):
+  - **Format:** turn-based (no rAF loop). 12 legal balls, 3 wickets; it never ends early on passing the target.
+  - **Rules** (`lib/games/book-cricket.ts`):
+    - Pages are seeded per delivery index (`pageFor(seed, i)`, even 2–400) and never depend on choices, so a challenge replays the same pages and target.
+    - The outcome table is in the module header (0 = slog out / defend dot except x00, 2/4/6 = runs, 8 = no ball + free hit; after 6 no-balls an 8 is a dot).
+    - **Teacher alert:** once per match at a seeded legal ball 4–10. HIDE within 1.2 s (Space/Enter) or the ball is a legal dot that still uses up its page index. Pressing DEFEND/SLOG on Sir's ball triggers the alert immediately, so it can't be skipped by tapping fast.
+    - Ending and rank ids are permanent. Achievements: `book-legend` (40+) and hidden `golden-duck` (`game_complete.firstBallOut`).
+  - **Bot-tuned (10k seeds, target 24–50):**
+
+    | Bot | Win | Last-ball win |
+    |---|---|---|
+    | always-slog | 44.4 % | 6.5 % |
+    | always-defend | 0 % | 0 % |
+    | smart | 45.6 % | 7.7 % |
+    | optimal (exact DP) | ≈ 46 % | |
+
+    With this outcome table even perfect play beats always-slog by only 1–3 points, so the plan's "smart 55–65 %" can't be reached by tuning the target. Changing that needs an outcome-table change (owner decision). Re-run a bot sim if you change numbers.
+  - Not in `DAILY_ROTATION` yet (separate, owner-approved change). In Hot right now for the SA tour.
 - **My Bangladesh Map** (`/games/my-bangladesh`, Phase 44, plan `docs/plans/2026-10-25-phase-44-my-bangladesh-map.md`):
   - **What it is:** tap the districts you've been to. You get a count, a title, badges, a 9:16 poster and a `?v=` friend link. It's self-reported, so it's **not** in `CHALLENGE_GAMES` and there are no achievements.
   - **Rules** (`lib/games/my-bangladesh.ts`, pure):
@@ -591,7 +609,7 @@ The regional-language content is the main attraction; the personality test is se
 - [x] Phase 42 — Regional language games: আঞ্চলিক ভাষার লড়াই quiz engine, তুমি কোন টাইপের বাঙালি?, dialect content layer + validation, Vitest
 - [x] Phase 43 — Concept × region dialect model, researched content (282 sourced forms), শব্দের মানচিত্র + region pages, তুমি কোন এলাকার মানুষ? detective, map posters
 - [x] Phase 44 — My Bangladesh Map (`/games/my-bangladesh`): districts-visited map, titles, badges, poster, `?v=` friend compare (`docs/plans/2026-10-25-phase-44-my-bangladesh-map.md`)
-- [ ] Phase 45 — Book Cricket (`/games/book-cricket`) — planned: `docs/plans/2026-10-25-phase-45-book-cricket.md`
+- [x] Phase 45 — Book Cricket (`/games/book-cricket`): page-flip cricket, defend/slog, teacher alert, `bk` challenges (`docs/plans/2026-10-25-phase-45-book-cricket.md`)
 - [ ] Phase 46 — Guess the District (`/games/guess-district`) — planned: `docs/plans/2026-10-25-phase-46-guess-the-district.md`
 - [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

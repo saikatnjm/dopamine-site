@@ -13,7 +13,8 @@ export const HOT_RIGHT_NOW: readonly { key: string; label: HotLabel }[] = [
   { key: "x:dhaka-cng-simulator", label: "hot" },
   { key: "g:cng-catch", label: "quick" },
   { key: "p:dhaka-person", label: "friend" },
-  { key: "x:job-resignation-simulator", label: "try" },
+  // During Bangladesh's South Africa tour (Nov 15 – Dec 13, 2026); swap back afterwards.
+  { key: "g:book-cricket", label: "hot" },
 ];
 
 export const HOT_MIN = 3;

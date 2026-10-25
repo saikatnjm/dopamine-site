@@ -17,12 +17,12 @@ Status values: `idea` → `planned` (plan file written) → `building` → `ship
 | # | Plan | Why now | Status |
 |---|---|---|---|
 | Phase 44 | [My Bangladesh Map](2026-10-25-phase-44-my-bangladesh-map.md): tap the districts you've visited, get a title and a poster | Rides the "Unseen Bangladesh" district-map trend (Facebook, since ~Oct 6–7, 2026). The trend is fading, so ship fast | building (PR open, awaiting merge) |
-| Phase 45 | [Book Cricket](2026-10-25-phase-45-book-cricket.md): the classroom page-flip cricket game | School nostalgia (pen fight went viral). Bangladesh plays West Indies at home (Oct 28 to Nov 9) and tours South Africa (Nov 15 to Dec 13, 2026) | planned |
+| Phase 45 | [Book Cricket](2026-10-25-phase-45-book-cricket.md): the classroom page-flip cricket game | School nostalgia (pen fight went viral). Bangladesh plays West Indies at home (Oct 28 to Nov 9) and tours South Africa (Nov 15 to Dec 13, 2026) | building (PR open, awaiting merge) |
 | Phase 46 | [Guess the District](2026-10-25-phase-46-guess-the-district.md): daily 10-question district quiz with a Wordle-style share grid | Same trend as Phase 44. Shape questions need no fact-checking. Food and landmark clues need researched content first | planned |
 
-Phases 44 and 46 reuse the 64-district SVG map from Phase 43 (`data/dialects/map.ts`). At the time
-of writing that lives on branch `feat/regional-language-games` and is **not on `main` yet**.
-Branch from it, or wait until it's merged, and check with the owner which.
+Phases 44 and 46 reuse the 64-district SVG map from Phase 43 (`data/dialects/map.ts`), which is on
+`main` since #35. Phase 46 should also reuse Phase 44's district map component, divisions data and
+bit order. Branch Phase 46 from `main` after the Phase 44 PR is merged.
 
 ## Why things go viral here (use this to judge new ideas)
 

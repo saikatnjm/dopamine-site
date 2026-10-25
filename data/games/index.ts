@@ -345,6 +345,25 @@ export const games: Game[] = [
       description: "Tap the districts of Bangladesh you've been to and get a funny title, badges and a downloadable poster. Free, no sign-up, saved only on your device.",
     },
   },
+  {
+    slug: "book-cricket",
+    title: { en: "Book Cricket", bn: "বই ক্রিকেট" },
+    tagline: { en: "Open the book. Pray for a 6.", bn: "বই খোলো। ছক্কার দোয়া করো।" },
+    description: {
+      en: "The back-bench classic: flip the textbook, the page number decides the ball. Defend or slog, chase the Back Bench XI in 2 overs with 3 wickets — and hide the book when Sir walks in.",
+      bn: "লাস্ট বেঞ্চের সেই খেলা: বই উল্টাও, পাতার নম্বরই বল। ডিফেন্ড না স্লগ? ২ ওভার আর ৩ উইকেটে লাস্ট বেঞ্চ একাদশের রান তাড়া করো — আর স্যার এলে বই লুকাও।",
+    },
+    emoji: "🏏",
+    accent: "lime",
+    durationSec: 50,
+    category: "random",
+    mechanic: "reflex",
+    tags: ["reaction", "school"],
+    seo: {
+      title: "Book Cricket — The Classroom Page-Flip Cricket Game, Online",
+      description: "Play book cricket online: flip the page, the last digit is the ball. Defend or slog through 2 overs, chase the target, challenge friends to beat your score. Free, no sign-up.",
+    },
+  },
 ];
 
 /**
