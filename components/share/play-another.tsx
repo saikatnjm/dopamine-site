@@ -6,6 +6,7 @@ import { btnPrimary } from "@/components/ui/styles";
 import { track } from "@/lib/analytics";
 import { useI18n } from "@/components/providers/lang-provider";
 import { pickRandom } from "@/lib/random";
+import { localePath, stripLang } from "@/lib/i18n/paths";
 
 /** Path part of an activity href ("/excuses?go=1" → "/excuses"). */
 const pathOf = (href: string) => href.split(/[?#]/)[0] ?? href;
@@ -16,9 +17,10 @@ const pathOf = (href: string) => href.split(/[?#]/)[0] ?? href;
  * and client render the same markup.
  */
 export function PlayAnother({ exclude, className = "" }: { /** Extra path to skip, e.g. the simulator behind a /result page. */ exclude?: string; className?: string }) {
-  const { d } = useI18n();
+  const { lang, d } = useI18n();
   const router = useRouter();
-  const pathname = usePathname();
+  // Without the /bn or /en prefix, so it matches activity hrefs.
+  const pathname = stripLang(usePathname());
   const activities = useActivities();
   if (activities.length === 0) return null;
 
@@ -28,7 +30,7 @@ export function PlayAnother({ exclude, className = "" }: { /** Extra path to ski
     const next = pickRandom(pool.length ? pool : activities);
     if (!next) return;
     track("recommendation_click", { source: "play_another", activity: next.key, from: pathname });
-    router.push(next.href);
+    router.push(localePath(next.href, lang));
   }
 
   return (

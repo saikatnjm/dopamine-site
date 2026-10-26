@@ -1,42 +1,43 @@
 import { describe, expect, it } from "vitest";
 import { GAME_HREF_OVERRIDES, listGames } from "@/data/games";
-import { GUIDE_SLUGS, guides } from "@/data/guides";
+import { GUIDE_SLUGS } from "@/data/guides";
 import { NOINDEX_PAGES, PAGE_SEO, type PageSeoId } from "@/data/seo";
+import { SEO_BN } from "@/data/seo-bn";
 import { gameIsPlayable } from "@/lib/activities";
 import { listRegions, REGION_INDEX_MIN } from "@/lib/dialects/content";
 import { listCategories, listExperiences } from "@/lib/experience/registry";
+import { LANGS, type Lang } from "@/lib/i18n/core";
+import { localePath, stripLang } from "@/lib/i18n/paths";
 import { breadcrumbLd, DESC_MAX, DESC_MIN, fullTitle, ldJson, TITLE_MAX } from "@/lib/seo";
-import { categorySeo, regionSeo } from "@/lib/seo-pages";
+import { categorySeo, experienceSeo, gameSeo, guideSeo, pageSeo, regionSeo } from "@/lib/seo-text";
 
-type Entry = { page: string; title: string; description: string };
+type Entry = { page: string; key?: string; title: string; description: string };
 
-/** Every indexable page's search title (as Google shows it) and description. */
-function indexable(): Entry[] {
+/** Every indexable page's search title (as Google shows it) and description, in one language. */
+function indexable(lang: Lang): Entry[] {
   const out: Entry[] = [];
-  for (const id of Object.keys(PAGE_SEO) as PageSeoId[]) {
-    if (NOINDEX_PAGES.includes(id)) continue;
-    const s = PAGE_SEO[id];
-    out.push({ page: id, title: fullTitle(s.title), description: s.description });
-  }
+  const add = (page: string, s: { title: string; description: string }, key?: string) =>
+    out.push({ page, key, title: fullTitle(s.title), description: s.description });
+  for (const id of Object.keys(PAGE_SEO) as PageSeoId[]) if (!NOINDEX_PAGES.includes(id)) add(id, pageSeo(id, lang), `page:${id}`);
   for (const g of listGames()) {
     if (g.slug in GAME_HREF_OVERRIDES || !gameIsPlayable(g.slug)) continue;
-    out.push({ page: `game:${g.slug}`, title: fullTitle(g.seo.title), description: g.seo.description });
+    add(`game:${g.slug}`, gameSeo(g.slug, lang)!, `game:${g.slug}`);
   }
-  for (const e of listExperiences()) out.push({ page: `exp:${e.slug}`, title: fullTitle(e.seo.title), description: e.seo.description });
-  for (const s of GUIDE_SLUGS) out.push({ page: `guide:${s}`, title: fullTitle(guides[s].seo.title), description: guides[s].seo.description });
+  for (const e of listExperiences()) add(`exp:${e.slug}`, experienceSeo(e.slug, lang)!, `exp:${e.slug}`);
+  for (const s of GUIDE_SLUGS) add(`guide:${s}`, guideSeo(s, lang), `guide:${s}`);
   for (const c of listCategories()) {
-    const seo = categorySeo(c.slug)!;
-    if (seo.live > 0) out.push({ page: `cat:${c.slug}`, title: fullTitle(seo.title), description: seo.description });
+    const seo = categorySeo(c.slug, lang)!;
+    if (seo.live > 0) add(`cat:${c.slug}`, seo);
   }
   for (const r of listRegions()) {
-    const seo = regionSeo(r.id)!;
-    if (seo.forms >= REGION_INDEX_MIN) out.push({ page: `region:${r.id}`, title: fullTitle(seo.title), description: seo.description });
+    const seo = regionSeo(r.id, lang)!;
+    if (seo.forms >= REGION_INDEX_MIN) add(`region:${r.id}`, seo);
   }
   return out;
 }
 
-describe("search titles + descriptions", () => {
-  const all = indexable();
+describe.each(LANGS)("search titles + descriptions (%s)", (lang) => {
+  const all = indexable(lang);
 
   it("covers every page type", () => {
     expect(all.length).toBeGreaterThan(40);
@@ -71,6 +72,33 @@ describe("search titles + descriptions", () => {
 
   it("titles don't repeat the brand suffix", () => {
     expect(all.filter((e) => /Hottogol.*Hottogol/.test(e.title)).map((e) => e.page)).toEqual([]);
+  });
+});
+
+describe("Bangla SEO coverage", () => {
+  it("every registry page has a Bangla entry, and no entry is orphaned", () => {
+    const keys = indexable("en").flatMap((e) => (e.key ? [e.key] : []));
+    expect(keys.filter((k) => !SEO_BN[k])).toEqual([]);
+    // Hidden-for-now games (no content yet) keep their entry for when they become playable.
+    const known = new Set([...keys, ...NOINDEX_PAGES.map((id) => `page:${id}`), ...listGames().map((g) => `game:${g.slug}`)]);
+    expect(Object.keys(SEO_BN).filter((k) => !known.has(k))).toEqual([]);
+  });
+});
+
+describe("language paths", () => {
+  it("localePath / stripLang", () => {
+    expect(localePath("/", "bn")).toBe("/bn");
+    expect(localePath("/games/x?s=1#a", "bn")).toBe("/bn/games/x?s=1#a");
+    expect(localePath("/?go=1", "bn")).toBe("/bn?go=1");
+    expect(localePath("/bn/games", "bn")).toBe("/bn/games");
+    expect(localePath("/bn/games", "en")).toBe("/games");
+    expect(localePath("/bn", "en")).toBe("/");
+    expect(localePath("https://x.com/a", "bn")).toBe("https://x.com/a");
+    expect(localePath("//cdn.x/a", "bn")).toBe("//cdn.x/a");
+    expect(localePath("/bnx", "bn")).toBe("/bn/bnx");
+    expect(stripLang("/en/games")).toBe("/games");
+    expect(stripLang("/en")).toBe("/");
+    expect(stripLang("/bn?x=1")).toBe("/?x=1");
   });
 });
 

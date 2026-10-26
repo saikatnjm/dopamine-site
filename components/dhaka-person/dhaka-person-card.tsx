@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { btnPrimary } from "@/components/ui/styles";
 import { getI18n } from "@/lib/i18n/server";
 

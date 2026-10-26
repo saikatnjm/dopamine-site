@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { SurpriseButton } from "@/components/experience/surprise-button";
 import { listExperiences } from "@/lib/experience/registry";
 import { getI18n } from "@/lib/i18n/server";

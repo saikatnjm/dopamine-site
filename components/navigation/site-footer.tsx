@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { GUIDE_SLUGS, guides } from "@/data/guides";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";

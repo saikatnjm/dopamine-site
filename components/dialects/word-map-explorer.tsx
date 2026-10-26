@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { useMemo, useState } from "react";
 import { DialectMap, type MapLabel } from "@/components/dialects/dialect-map";
 import { useI18n } from "@/components/providers/lang-provider";

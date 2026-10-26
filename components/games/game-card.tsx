@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { accentBg, card, cardHover } from "@/components/ui/styles";
 import { GAME_HREF_OVERRIDES, type Game } from "@/data/games";
 import { fmt, num, t, type Lang } from "@/lib/i18n/core";

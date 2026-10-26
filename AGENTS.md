@@ -49,8 +49,12 @@ on the host.
 ## Layout
 
 ```
-app/                     routes (App Router), globals.css = design tokens
+proxy.ts                 language routing: /x → app/[lang=en]/x (rewrite), /bn/x as is, /en/x → 308 /x, lang=bn cookie → /bn
+app/                     globals.css (design tokens), sitemap.ts, robots.ts, icons
+  [lang]/                EVERY route + the root layout (lang = "en" | "bn", read anywhere via getLang())
 components/
+  i18n/link.tsx          THE Link: next/link that adds /bn on Bangla pages (never import next/link directly)
+  seo/                   JsonLd, Breadcrumbs
   providers/             MotionProvider (LazyMotion strict + reducedMotion="user"),
                          wrapped only around the experience player (not the root layout)
   analytics/             GoogleAnalytics (GA4 + Consent Mode defaults)
@@ -59,6 +63,7 @@ data/
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   divisions.ts           8 divisions → 64 districts (validated at import)
   seo.ts                 search titles + descriptions for the site's own pages (PAGE_SEO, NOINDEX_PAGES)
+  seo-bn.ts              Bangla search titles + descriptions for every page, game, simulator, guide (owner polishes)
   district-clues.ts      Guess the District clues (sourced; owner verifies; validated at import)
   experiences/index.ts   registry list; one file per experience
   games/index.ts         games registry (slug, title, accent…); games/<slug>.ts = copy
@@ -71,7 +76,9 @@ lib/
   og.tsx                 renderOgCard() for link previews (English only; Satori can't shape Bangla)
   og-cards.tsx           registry-driven share cards (gameOgImage, pageOgImage, guideOgImage, categoryOgImage)
   seo.ts                 pageMetadata(), JSON-LD builders (breadcrumbs, item lists, organization, activityLd), length limits
-  seo-pages.ts           metadata per page type (static, game, experience, category, region)
+  seo-pages.ts           async metadata per page type (static, game, experience, guide, category, region)
+  seo-text.ts            pure title/description lookup per language (pageSeo, gameSeo, …, categorySeo, regionSeo)
+  i18n/paths.ts          localePath(path, lang), stripLang(), langOfPath() (client-safe)
   experience/
     types.ts             Experience schema (single source of types)
     engine.ts            runExperience(), pickBeat(), validateExperience()
@@ -434,13 +441,14 @@ The regional-language content is the main attraction; the personality test is se
 
 ## SEO (Phase 49, plan `docs/plans/2026-10-26-phase-49-seo.md`)
 
-- **Every page builds its `<head>` through `lib/seo.ts`**: `pageMetadata()` or a builder in `lib/seo-pages.ts` (`staticPageMetadata`, `gameMetadata`, `experienceMetadata`, `categoryMetadata`, `regionMetadata`). Never hand-write a `metadata` object: Next *replaces* a parent's `openGraph`/`twitter` instead of merging, so a partial object leaks the homepage's `og:url`/title. The root layout has no canonical (pages set their own).
-- **Titles/descriptions:** registries (`Game.seo`, `Experience.seo`, guides) or `data/seo.ts` (`PAGE_SEO`) for the site's own pages. Full title (with " · Hottogol") ≤ 70 chars; a title containing "Hottogol" skips the suffix. Description 70–160. Unique across indexable pages. `tests/seo.test.ts` enforces all of it (add a new page type there).
+- **Every page builds its `<head>` through `lib/seo.ts`**: `export const generateMetadata = () => xMetadata(…)` with a builder from `lib/seo-pages.ts` (`staticPageMetadata`, `gameMetadata`, `experienceMetadata`, `guideMetadata`, `categoryMetadata`, `regionMetadata`; they read the language from the route). Never hand-write a `metadata` object: Next *replaces* a parent's `openGraph`/`twitter` instead of merging, so a partial object leaks the homepage's `og:url`/title. The root layout has no canonical (pages set their own).
+- **Titles/descriptions:** English in the registries (`Game.seo`, `Experience.seo`, guides) or `data/seo.ts` (`PAGE_SEO`); Bangla in `data/seo-bn.ts` (a new page/game/simulator/guide must add its `"<kind>:<slug>"` entry — the test fails otherwise). Full title (with " · Hottogol") ≤ 70 chars; a title containing "Hottogol" skips the suffix. Description 70–160. Unique across indexable pages, per language. `tests/seo.test.ts` enforces all of it for both languages (add a new page type there).
 - **Share images:** every indexable route has an `opengraph-image.tsx` (hand-written or `lib/og-cards.tsx`). Explicit `openGraph.images` beats the file convention, so `pageMetadata` adds the site-wide card only with `defaultImage: true` (routes without a file: privacy, terms, achievements, region pages). English only.
 - **JSON-LD:** render with `<JsonLd ld={…} />` (`components/seo/json-ld.tsx`; escapes `<`, one `@context`, several nodes → `@graph`). Activities wrap their own node with `activityLd(path, ld)` (url, image, publisher/author → `#organization`, free, languages, platform). Homepage = `WebSite` + `Organization`. `/games`, `/experiences`, categories = `ItemList`. Never add ratings, reviews or player counts.
 - **Breadcrumbs:** `<Breadcrumbs items={…} />` (`components/seo/breadcrumbs.tsx`) renders the visible "Hottogol › Games › …" trail *and* its `BreadcrumbList` — on every game, experience, category, region, hub and text page (`PageShell` includes it).
 - **Verification:** `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` env vars → `metadata.verification` (empty = no tag).
-- **Audit before shipping SEO changes:** production build (`npm run build && npx next start`; the dev server can run out of memory compiling every route at once) + crawl all sitemap URLs: one `<title>`/canonical/`<h1>`, `og:url` = canonical, `og:image` loads as PNG, JSON-LD parses, breadcrumbs present. Lighthouse SEO = 100 on sampled pages (2026-10-26).
+- **Audit before shipping SEO changes:** production build (`npm run build && npx next start`; the dev server can run out of memory compiling every route at once) + crawl all sitemap URLs (both languages): one `<title>`/canonical/`<h1>`, `og:url` = canonical, `og:image` loads as PNG, JSON-LD parses, breadcrumbs present, `<html lang>` matches the URL, hreflang en/bn/x-default correct, internal links stay in the page's language. Lighthouse SEO = 100 on sampled pages in both languages (2026-10-26).
+- JSON-LD helpers take the language (`activityLd(path, ld, lang)`, `itemListLd(name, items, lang)`, `breadcrumbLd(items, lang)`; `<Breadcrumbs>` reads it itself) so every URL points at the page's own language.
 
 ## Internal links (`<RelatedLinks>`, every activity + content page)
 
@@ -519,15 +527,14 @@ The regional-language content is the main attraction; the personality test is se
 
 ## Languages (English + Bangla)
 
-- Same URLs for both languages. Choice lives in the `lang` cookie (1 year);
-  English is the default. `getI18n()` (server, `lib/i18n/server.ts`) and
-  `useI18n()` (client, `LangProvider`) give `{ lang, d }`. Reading the cookie
-  makes pages dynamic (server-rendered per request) — accepted trade-off.
+- **Each language has its own URL** (Phase 49 step B): English at clean URLs (`/games/x`), Bangla under `/bn` (`/bn/games/x`). All routes live in `app/[lang]/` (root layout included, `generateStaticParams` = en + bn, `dynamicParams = false`); `proxy.ts` rewrites unprefixed URLs to `/en/…`, passes `/bn/…`, 308s `/en/…` page URLs to the clean URL (metadata images keep `/en/…`, Next builds their URLs from the route), and sends a full page load with the `lang=bn` cookie to `/bn/…` (crawlers send no cookie). Root-level `sitemap.ts`, `robots.ts` and icons are outside `[lang]` and skipped by the proxy matcher.
+- `getI18n()` / `getLang()` (server, `lib/i18n/server.ts`) read the route via `next/root-params` — no cookies, so pages without searchParams are **static** per language. `useI18n()` (client, `LangProvider`) gives `{ lang, d }`.
+- **Links:** always `import Link from "@/components/i18n/link"` (localizes hrefs); programmatic navigation uses `localePath(path, lang)`; code comparing `usePathname()` with activity hrefs uses `stripLang()`. The language toggle sets the cookie and does a full page load to the other language's URL (each language has its own root layout).
+- Share/challenge/result links stay unprefixed (the recipient's cookie or toggle decides). Analytics page paths include `/bn`.
 - UI strings: `lib/i18n/dictionary.ts` (`bn` must match every `en` key).
 - Content: bilingual `Text` fields (`string | { en, bn }`) rendered with
   `t(text, lang)`. Driver quotes stay Bangla in both languages.
-- SEO metadata, sitemap and OG images are English (crawlers have no cookie;
-  Satori can't shape Bangla) — Phase 49 step B adds `/bn` URLs + hreflang. Numbers: `num(n, lang)` for Bangla digits.
+- SEO: `/bn` pages get Bangla titles/descriptions (`data/seo-bn.ts`), self-canonical, `hreflang` en/bn/x-default (= English), `og:locale` bn_BD; the sitemap lists both URLs with alternates. OG images stay English (Satori can't shape Bangla). Numbers: `num(n, lang)` for Bangla digits.
 - Every new experience must ship with both `en` and `bn` copy.
 
 ## Conventions
@@ -652,7 +659,8 @@ The regional-language content is the main attraction; the personality test is se
 - [x] Phase 46 — Guess the District (`/games/guess-district`): daily + practice district quiz (map, shape, clue), spoiler-free grid, `gd` challenges, homepage card (`docs/plans/2026-10-25-phase-46-guess-the-district.md`)
 - [x] Phase 47 — Kacher Guti (`/games/kacher-guti`): marble game vs the computer, shared `lib/flick` physics engine, opt-in sounds, `kg` challenges (`docs/plans/2026-10-26-phase-47-kacher-guti.md`)
 - [x] Phase 48 — Latim Fight (`/games/latim-fight`): spinning-top battle vs the computer on the `lib/flick` spin model, ঘর কোপ finisher, `lt` challenges (`docs/plans/2026-10-26-phase-48-latim-fight.md`)
-- [ ] Phase 49 — Pro-level SEO: [x] A technical (shared metadata, share images for every page, breadcrumbs, structured data, verification, SEO tests) · [ ] B `/bn` URLs + hreflang · [ ] C how-to/FAQ content — `docs/plans/2026-10-26-phase-49-seo.md`
+- [ ] Phase 49 — Pro-level SEO: [x] A technical (shared metadata, share images for every page, breadcrumbs, structured data, verification, SEO tests) · [x] B `/bn` URLs (`app/[lang]`, `proxy.ts`, hreflang, Bangla SEO text, static pages) · [ ] C how-to/FAQ content — `docs/plans/2026-10-26-phase-49-seo.md`
+- [ ] Phase 50 — Blog (`/blog`, header + footer menu; researched, owner-published articles linking into games; after Phase 49 step B) — planned: `docs/plans/2026-10-26-phase-50-blog.md`
 - [ ] Owner: review district clues (`npm run content:checklist` → `data/district-clues-review/`) → verify/reject → verified clues join rounds
 - [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

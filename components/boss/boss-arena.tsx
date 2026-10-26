@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { BOSS_GAMES } from "@/components/boss/boss-games";
 import type { BossRunResult } from "@/components/boss/types";

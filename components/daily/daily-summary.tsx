@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
 import { accentBg, btnPrimary } from "@/components/ui/styles";

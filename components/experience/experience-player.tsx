@@ -11,6 +11,7 @@ import { encodeResultToken } from "@/lib/experience/result-token-encode";
 import type { BeatStep, ChoiceStep, Experience } from "@/lib/experience/types";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { newSeed } from "@/lib/random";
+import { localePath } from "@/lib/i18n/paths";
 
 type Run = { seed: number; index: number; choices: Record<string, string> };
 
@@ -56,7 +57,7 @@ export function ExperiencePlayer({ experience }: { experience: Experience }) {
     setFinishing(true);
     track("experience_complete", { experience: slug, outcome: outcome.id });
     router.prefetch(url);
-    window.setTimeout(() => router.push(url), 1100);
+    window.setTimeout(() => router.push(localePath(url, lang)), 1100);
   }
 
   if (!run) {

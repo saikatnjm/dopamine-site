@@ -6,6 +6,7 @@ import { useI18n } from "@/components/providers/lang-provider";
 import { btnPrimary } from "@/components/ui/styles";
 import { track } from "@/lib/analytics";
 import { pickRandom } from "@/lib/random";
+import { localePath } from "@/lib/i18n/paths";
 
 type Props = {
   /** Slugs to choose from (passed from the server so the registry stays server-side here). */
@@ -26,7 +27,7 @@ const smallButton =
 
 export function SurpriseButton({ slugs, size = "lg", className = "", label, icon = "🎲", labelHidden = false, onRoll }: Props) {
   const router = useRouter();
-  const { d } = useI18n();
+  const { lang, d } = useI18n();
   const [rolling, setRolling] = useState(false);
 
   function roll() {
@@ -36,7 +37,7 @@ export function SurpriseButton({ slugs, size = "lg", className = "", label, icon
     onRoll?.();
     track("surprise_me_click", { experience: slug });
     window.setTimeout(() => {
-      router.push(`/experiences/${slug}`);
+      router.push(localePath(`/experiences/${slug}`, lang));
       setRolling(false);
     }, 450);
   }

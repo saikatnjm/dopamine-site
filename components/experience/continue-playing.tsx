@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { useState, useSyncExternalStore } from "react";
 import { ActivityCard } from "@/components/experience/activity-card";
 import { useActivities } from "@/components/providers/activities-provider";

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { DistrictMap } from "@/components/games/district-map";
 import { useI18n } from "@/components/providers/lang-provider";
