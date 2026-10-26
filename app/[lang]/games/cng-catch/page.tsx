@@ -12,6 +12,7 @@ import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
 import { activityLd } from "@/lib/seo";
 import { gameMetadata } from "@/lib/seo-pages";
+import { HowToPlay } from "@/components/seo/how-to";
 
 type Props = { searchParams: Promise<{ seed?: string | string[]; s?: string | string[] }> };
 
@@ -56,6 +57,7 @@ export default async function CngCatchPage({ searchParams }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(game.description, lang)}</p>
       </header>
       <CngCatchGame challenge={challenge} />
+      <HowToPlay activity={`g:${GAME_SLUG}`} name={t(game.title, lang)} />
       <RelatedLinks current={`g:${GAME_SLUG}`} />
     </main>
   );

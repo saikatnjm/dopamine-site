@@ -10,6 +10,7 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { activityLd } from "@/lib/seo";
 import { experienceMetadata } from "@/lib/seo-pages";
+import { HowToPlay } from "@/components/seo/how-to";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -55,6 +56,7 @@ export default async function ExperiencePage({ params }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(experience.description, lang)}</p>
       </header>
       <ExperiencePlayerBySlug slug={experience.slug} />
+      <HowToPlay activity={`x:${experience.slug}`} name={t(experience.title, lang)} />
       <RelatedLinks current={`x:${experience.slug}`} />
     </main>
   );

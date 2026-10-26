@@ -54,7 +54,7 @@ app/                     globals.css (design tokens), sitemap.ts, robots.ts, ico
   [lang]/                EVERY route + the root layout (lang = "en" | "bn", read anywhere via getLang())
 components/
   i18n/link.tsx          THE Link: next/link that adds /bn on Bangla pages (never import next/link directly)
-  seo/                   JsonLd, Breadcrumbs
+  seo/                   JsonLd, Breadcrumbs, HowToPlay
   providers/             MotionProvider (LazyMotion strict + reducedMotion="user"),
                          wrapped only around the experience player (not the root layout)
   analytics/             GoogleAnalytics (GA4 + Consent Mode defaults)
@@ -63,6 +63,7 @@ data/
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   divisions.ts           8 divisions → 64 districts (validated at import)
   seo.ts                 search titles + descriptions for the site's own pages (PAGE_SEO, NOINDEX_PAGES)
+  how-to/                "How to play" + tips + FAQ per activity (EN + BN; lib/how-to.ts rules)
   seo-bn.ts              Bangla search titles + descriptions for every page, game, simulator, guide (owner polishes)
   district-clues.ts      Guess the District clues (sourced; owner verifies; validated at import)
   experiences/index.ts   registry list; one file per experience
@@ -448,6 +449,7 @@ The regional-language content is the main attraction; the personality test is se
 - **Breadcrumbs:** `<Breadcrumbs items={…} />` (`components/seo/breadcrumbs.tsx`) renders the visible "Hottogol › Games › …" trail *and* its `BreadcrumbList` — on every game, experience, category, region, hub and text page (`PageShell` includes it).
 - **Verification:** `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` env vars → `metadata.verification` (empty = no tag).
 - **Audit before shipping SEO changes:** production build (`npm run build && npx next start`; the dev server can run out of memory compiling every route at once) + crawl all sitemap URLs (both languages): one `<title>`/canonical/`<h1>`, `og:url` = canonical, `og:image` loads as PNG, JSON-LD parses, breadcrumbs present, `<html lang>` matches the URL, hreflang en/bn/x-default correct, internal links stay in the page's language. Lighthouse SEO = 100 on sampled pages in both languages (2026-10-26).
+- **How to play + FAQ** (step C): every activity page renders `<HowToPlay activity="g:<slug>" name=… />` (`components/seo/how-to.tsx`) under the game: 3–5 steps, 2–3 tips, exactly 3 FAQs + matching `FAQPage` JSON-LD. Content in `data/how-to/*.ts` (arcade, turn-based, bangladesh, stories), keyed by activity key, EN + BN. Rules in `lib/how-to.ts` + `tests/how-to.test.ts`: every playable activity has one; no step/tip/answer repeats across activities or guides; only describe what the code really does (no invented numbers or odds); Bangla ending/rank names must match the game's own copy. A new activity needs its entry (the test fails otherwise).
 - JSON-LD helpers take the language (`activityLd(path, ld, lang)`, `itemListLd(name, items, lang)`, `breadcrumbLd(items, lang)`; `<Breadcrumbs>` reads it itself) so every URL points at the page's own language.
 
 ## Internal links (`<RelatedLinks>`, every activity + content page)
@@ -659,7 +661,7 @@ The regional-language content is the main attraction; the personality test is se
 - [x] Phase 46 — Guess the District (`/games/guess-district`): daily + practice district quiz (map, shape, clue), spoiler-free grid, `gd` challenges, homepage card (`docs/plans/2026-10-25-phase-46-guess-the-district.md`)
 - [x] Phase 47 — Kacher Guti (`/games/kacher-guti`): marble game vs the computer, shared `lib/flick` physics engine, opt-in sounds, `kg` challenges (`docs/plans/2026-10-26-phase-47-kacher-guti.md`)
 - [x] Phase 48 — Latim Fight (`/games/latim-fight`): spinning-top battle vs the computer on the `lib/flick` spin model, ঘর কোপ finisher, `lt` challenges (`docs/plans/2026-10-26-phase-48-latim-fight.md`)
-- [ ] Phase 49 — Pro-level SEO: [x] A technical (shared metadata, share images for every page, breadcrumbs, structured data, verification, SEO tests) · [x] B `/bn` URLs (`app/[lang]`, `proxy.ts`, hreflang, Bangla SEO text, static pages) · [ ] C how-to/FAQ content — `docs/plans/2026-10-26-phase-49-seo.md`
+- [ ] Phase 49 — Pro-level SEO: [x] A technical (shared metadata, share images for every page, breadcrumbs, structured data, verification, SEO tests) · [x] B `/bn` URLs (`app/[lang]`, `proxy.ts`, hreflang, Bangla SEO text, static pages) · [x] C how-to + FAQ for all 30 activities — `docs/plans/2026-10-26-phase-49-seo.md`
 - [ ] Phase 50 — Blog (`/blog`, header + footer menu; researched, owner-published articles linking into games; after Phase 49 step B) — planned: `docs/plans/2026-10-26-phase-50-blog.md`
 - [ ] Owner: review district clues (`npm run content:checklist` → `data/district-clues-review/`) → verify/reject → verified clues join rounds
 - [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz

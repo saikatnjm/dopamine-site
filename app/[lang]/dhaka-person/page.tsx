@@ -9,6 +9,7 @@ import { pageSeo } from "@/lib/seo-text";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { activityLd } from "@/lib/seo";
+import { HowToPlay } from "@/components/seo/how-to";
 
 type Props = { searchParams: Promise<{ a?: string | string[]; r?: string | string[] }> };
 
@@ -42,6 +43,7 @@ export default async function DhakaPersonPage({ searchParams }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(copy.lead, lang)}</p>
       </header>
       <DhakaPersonQuiz friend={friend} />
+      <HowToPlay activity="p:dhaka-person" name={t(copy.title, lang)} />
       <RelatedLinks current="p:dhaka-person" />
     </main>
   );

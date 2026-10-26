@@ -12,6 +12,7 @@ import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
 import { activityLd } from "@/lib/seo";
 import { gameMetadata } from "@/lib/seo-pages";
+import { HowToPlay } from "@/components/seo/how-to";
 
 type Props = { searchParams: Promise<{ v?: string | string[] }> };
 
@@ -49,6 +50,7 @@ export default async function MyBangladeshPage({ searchParams }: Props) {
         <h1 className="mt-1 font-display text-4xl font-extrabold leading-tight tracking-tight">{t(copy.question, lang)}</h1>
       </header>
       <MyBangladeshGame friend={friend} />
+      <HowToPlay activity={`g:${GAME_SLUG}`} name={t(game.title, lang)} />
       <RelatedLinks current={`g:${GAME_SLUG}`} />
     </main>
   );
