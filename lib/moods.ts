@@ -44,6 +44,7 @@ const MOOD_KEYS: Record<MoodId, readonly string[]> = {
   challenge: [
     "g:traffic-boss",
     "g:book-cricket",
+    "g:kacher-guti",
     "g:traffic-dodge",
     "g:cng-catch",
     "g:dont-tap",

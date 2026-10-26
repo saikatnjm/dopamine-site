@@ -11,7 +11,8 @@ export const HOT_RIGHT_NOW: readonly { key: string; label: HotLabel }[] = [
   // Riding the district-map trend (Oct 2026) — remove when it fades.
   { key: "g:my-bangladesh", label: "hot" },
   { key: "x:dhaka-cng-simulator", label: "hot" },
-  { key: "g:cng-catch", label: "quick" },
+  // New flick game, two weeks after launch (from 2026-10-26); then swap CNG Catch back.
+  { key: "g:kacher-guti", label: "try" },
   { key: "p:dhaka-person", label: "friend" },
   // During Bangladesh's South Africa tour (Nov 15 – Dec 13, 2026); swap back afterwards.
   { key: "g:book-cricket", label: "hot" },

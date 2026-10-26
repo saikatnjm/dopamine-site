@@ -383,6 +383,25 @@ export const games: Game[] = [
       description: "Can you name Bangladesh's 64 districts from the map and their shapes? A free daily 10-question quiz, same puzzle for everyone, plus unlimited practice and friend challenges.",
     },
   },
+  {
+    slug: "kacher-guti",
+    title: { en: "Kacher Guti (Marbles)", bn: "কাচের গুটি" },
+    tagline: { en: "Hit the marble they pick. Miss and pay up.", bn: "যেটা বলবে, সেটাই মারো। মিস করলে গুটি দাও।" },
+    description: {
+      en: "The para marble game: throw at the hole to see who plays first, then flick your shooter at the marble your opponent names. Hit it and it's yours; miss and pay one. 3 rounds against Little Brother, Para Boro Bhai or the Mohollar Champion.",
+      bn: "পাড়ার মার্বেল খেলা: কে আগে খেলবে, তা ঠিক করতে গর্তের দিকে ছোড়ো, তারপর প্রতিপক্ষ যেটা দেখাবে সেই গুটিতে নিজের গুটি দিয়ে মারো। লাগলে গুটি তোমার, মিস করলে একটা দাও। ছোট ভাই, পাড়ার বড় ভাই বা মহল্লার চ্যাম্পিয়নের সাথে ৩ দান।",
+    },
+    emoji: "🔮",
+    accent: "sky",
+    durationSec: 150,
+    category: "random",
+    mechanic: "physics",
+    tags: ["school"],
+    seo: {
+      title: "Kacher Guti — Bangladeshi Marble Game Online (vs Computer)",
+      description: "Play kacher guti (marbles) online: throw at the hole, then hit the marble your opponent names. Drag-and-flick physics, 3 opponents, challenge friends. Free, no sign-up.",
+    },
+  },
 ];
 
 /**
