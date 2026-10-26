@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { WhichRegionGame } from "@/components/games/which-region-game";
@@ -6,29 +5,21 @@ import { RelatedLinks } from "@/components/related/related-links";
 import { accentBg, accentText, btnPrimary, card } from "@/components/ui/styles";
 import { getGame } from "@/data/games";
 import { detectiveCopy as copy } from "@/data/games/which-region";
-import { gameIsPlayable } from "@/lib/activities";
 import { conceptLite, listConcepts, listRegions, publicForms, regionLite } from "@/lib/dialects/content";
 import { eligibleConcepts, GAME_SLUG, MIN_QUESTIONS, parseSharedRegion } from "@/lib/games/which-region";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { JsonLd } from "@/components/seo/json-ld";
+import { activityLd } from "@/lib/seo";
+import { gameMetadata } from "@/lib/seo-pages";
 
 type Props = { searchParams: Promise<{ r?: string | string[] }> };
 
 const game = getGame(GAME_SLUG);
 
-export async function generateMetadata(): Promise<Metadata> {
-  if (!game) return {};
-  const { title, description } = game.seo;
-  return {
-    title,
-    description,
-    alternates: { canonical: `/games/${GAME_SLUG}` },
-    robots: gameIsPlayable(GAME_SLUG) ? undefined : { index: false, follow: true },
-    openGraph: { type: "website", url: `/games/${GAME_SLUG}`, title, description },
-    twitter: { card: "summary_large_image", title, description },
-  };
-}
+export const metadata = gameMetadata(GAME_SLUG);
 
 export default async function WhichRegionPage({ searchParams }: Props) {
   if (!game) notFound();
@@ -59,12 +50,8 @@ export default async function WhichRegionPage({ searchParams }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav className="text-sm text-ink-muted">
-        <Link href="/games" className="hover:text-ink">
-          {d.backGames}
-        </Link>
-      </nav>
+      <JsonLd ld={activityLd(`/games/${GAME_SLUG}`, jsonLd)} />
+      <Breadcrumbs items={[{ name: d.navGames, path: "/games" }, { name: t(game.title, lang) }]} />
       <header className="mb-6 mt-4">
         <p className={`text-sm font-bold uppercase tracking-wide ${accentText[game.accent]}`}>
           🎮 {d.navGames} · ⏱️ {fmt(d.gameSeconds, { n: num(game.durationSec, lang) })}

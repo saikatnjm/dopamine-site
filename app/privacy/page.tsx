@@ -1,14 +1,10 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/ui/page-shell";
 import { getGaId } from "@/lib/analytics";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
+import { staticPageMetadata } from "@/lib/seo-pages";
 
-export const metadata: Metadata = {
-  title: "Privacy",
-  description: `What ${siteConfig.name} collects (very little) and why.`,
-  alternates: { canonical: "/privacy" },
-};
+export const metadata = staticPageMetadata("privacy", "/privacy");
 
 export default async function PrivacyPage() {
   const { lang, d } = await getI18n();

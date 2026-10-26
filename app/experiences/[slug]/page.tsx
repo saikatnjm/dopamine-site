@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExperiencePlayerBySlug } from "@/components/experience/experience-players";
 import { accentText } from "@/components/ui/styles";
@@ -8,6 +6,10 @@ import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
 import { RelatedLinks } from "@/components/related/related-links";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { activityLd } from "@/lib/seo";
+import { experienceMetadata } from "@/lib/seo-pages";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -17,18 +19,8 @@ export function generateStaticParams() {
   return listExperiences().map((e) => ({ slug: e.slug }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const experience = getExperience(slug);
-  if (!experience) return {};
-  const url = `/experiences/${experience.slug}`;
-  return {
-    title: experience.seo.title,
-    description: experience.seo.description,
-    alternates: { canonical: url },
-    openGraph: { type: "website", url, title: experience.seo.title, description: experience.seo.description },
-    twitter: { card: "summary_large_image", title: experience.seo.title, description: experience.seo.description },
-  };
+export async function generateMetadata({ params }: Props) {
+  return experienceMetadata((await params).slug);
 }
 
 export default async function ExperiencePage({ params }: Props) {
@@ -49,10 +41,8 @@ export default async function ExperiencePage({ params }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav className="text-sm text-ink-muted">
-        <Link href="/experiences" className="hover:text-ink">{d.backAll}</Link>
-      </nav>
+      <JsonLd ld={activityLd(`/experiences/${experience.slug}`, jsonLd)} />
+      <Breadcrumbs items={[{ name: d.navExperiences, path: "/experiences" }, { name: t(experience.title, lang) }]} />
       <header className="mb-6 mt-4">
         {category && (
           <p className={`text-sm font-bold uppercase tracking-wide ${accentText[experience.accent]}`}>

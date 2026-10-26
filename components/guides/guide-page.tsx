@@ -9,20 +9,14 @@ import { fmt, num, t, type Lang } from "@/lib/i18n/core";
 import type { Dict } from "@/lib/i18n/dictionary";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { JsonLd } from "@/components/seo/json-ld";
+import { pageMetadata } from "@/lib/seo";
 
 // One template for every SEO guide page (content in data/guides.ts).
 // Server-rendered, no client JS beyond the site shell.
 
 export function guideMetadata(slug: GuideSlug): Metadata {
-  const { title, description } = guides[slug].seo;
-  const url = `/${slug}`;
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: { type: "website", url, title, description },
-    twitter: { card: "summary_large_image", title, description },
-  };
+  return pageMetadata({ ...guides[slug].seo, path: `/${slug}` });
 }
 
 function duration(a: Activity, d: Dict, lang: Lang): string | null {
@@ -40,7 +34,6 @@ export async function GuidePage({ slug }: { slug: GuideSlug }) {
 
   const jsonLd = [
     {
-      "@context": "https://schema.org",
       "@type": "CollectionPage",
       name: guide.seo.title,
       description: guide.seo.description,
@@ -51,7 +44,6 @@ export async function GuidePage({ slug }: { slug: GuideSlug }) {
       },
     },
     {
-      "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: siteConfig.name, item: absoluteUrl("/") },
@@ -61,8 +53,7 @@ export async function GuidePage({ slug }: { slug: GuideSlug }) {
     ...(guide.faq?.length
       ? [
           {
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
+                  "@type": "FAQPage",
             mainEntity: guide.faq.map((f) => ({ "@type": "Question", name: t(f.q, lang), acceptedAnswer: { "@type": "Answer", text: t(f.a, lang) } })),
           },
         ]
@@ -71,7 +62,7 @@ export async function GuidePage({ slug }: { slug: GuideSlug }) {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd ld={jsonLd} />
 
       <nav aria-label="Breadcrumb" className="text-sm text-ink-muted">
         <ol className="flex flex-wrap items-center gap-1.5">

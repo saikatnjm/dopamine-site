@@ -1,14 +1,10 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageShell } from "@/components/ui/page-shell";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
+import { staticPageMetadata } from "@/lib/seo-pages";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: `What ${siteConfig.name} is, who makes it, and how to get in touch.`,
-  alternates: { canonical: "/about" },
-};
+export const metadata = staticPageMetadata("about", "/about");
 
 export default async function AboutPage() {
   const { lang, d } = await getI18n();

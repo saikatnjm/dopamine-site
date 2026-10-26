@@ -1,15 +1,9 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { AchievementList } from "@/components/achievements/achievement-list";
 import { getI18n } from "@/lib/i18n/server";
+import { staticPageMetadata } from "@/lib/seo-pages";
 
-export const metadata: Metadata = {
-  title: "Achievements",
-  description: "Your Hottogol achievements, saved on this device only. No accounts, no leaderboards.",
-  alternates: { canonical: "/achievements" },
-  // Personal, device-specific page.
-  robots: { index: false, follow: true },
-};
+export const metadata = staticPageMetadata("achievements", "/achievements");
 
 export default async function AchievementsPage() {
   const { d } = await getI18n();

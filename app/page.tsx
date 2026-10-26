@@ -19,6 +19,12 @@ import { unknownMoodKeys } from "@/lib/moods";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl, siteConfig } from "@/lib/site";
+import { JsonLd } from "@/components/seo/json-ld";
+import { PAGE_SEO } from "@/data/seo";
+import { organizationLd } from "@/lib/seo";
+import { staticPageMetadata } from "@/lib/seo-pages";
+
+export const metadata = staticPageMetadata("home", "/");
 
 const stickers = [
   { emoji: "🛺", pos: "left-[4%] top-[6%]", r: "-12deg", delay: "0s" },
@@ -45,17 +51,14 @@ export default async function HomePage() {
     const missing = [...unknownMoodKeys(activities), ...unknownHotKeys(activities)];
     if (missing.length) throw new Error(`lib/moods.ts or data/hot.ts references unknown activities: ${missing.join(", ")}`);
   }
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: siteConfig.name,
-    url: absoluteUrl("/"),
-    description: siteConfig.description,
-  };
+  const jsonLd = [
+    { "@type": "WebSite", "@id": absoluteUrl("/#website"), name: siteConfig.name, alternateName: "হট্টগোল", url: absoluteUrl("/"), description: PAGE_SEO.home.description, inLanguage: ["en", "bn"], publisher: { "@id": absoluteUrl("/#organization") } },
+    organizationLd(),
+  ];
 
   return (
     <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd ld={jsonLd} />
 
       {/* Hero */}
       <section className="relative mx-auto max-w-5xl px-4 pb-14 pt-8 text-center sm:pt-14">

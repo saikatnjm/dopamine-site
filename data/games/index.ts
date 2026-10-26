@@ -57,7 +57,7 @@ export const games: Game[] = [
     tags: ["traffic", "bike"],
     seo: {
       title: "Dhaka Traffic Dodge — Free Arcade Dodging Game",
-      description: "Weave a motorbike through buses, CNGs, rickshaws and goats in this free 30–60 second Dhaka traffic arcade game. Near-miss combos, funny titles, shareable challenges.",
+      description: "Weave a motorbike through buses, CNGs, rickshaws and goats in this free 60-second Dhaka traffic arcade game. Near-miss combos, funny titles, friend challenges.",
     },
   },
   {
@@ -76,7 +76,7 @@ export const games: Game[] = [
     tags: ["haggling", "money", "food"],
     seo: {
       title: "Bazar Bargain — Bangladesh Market Haggling Game",
-      description: "Haggle with stubborn, dramatic and sleepy vendors in this free Bangladesh bazar negotiation game. Save money, avoid getting refused, unlock legendary endings. No sign-up.",
+      description: "Haggle with stubborn, dramatic and sleepy vendors in this free Bangladesh bazar bargaining game. Save money, don't get refused, unlock legendary endings.",
     },
   },
   {
@@ -133,7 +133,7 @@ export const games: Game[] = [
     tags: ["traffic", "cng", "money"],
     seo: {
       title: "Chaos Machine — Random Dhaka Trip Generator Game",
-      description: "Press one button to roll a random Dhaka trip — vehicle, weather, traffic, mission and chaos — then survive it in five choices. Free, funny, shareable challenges.",
+      description: "Press one button to roll a random Dhaka trip — vehicle, weather, traffic, mission and chaos — then survive it in five choices. Free, with friend challenges.",
     },
   },
   {
@@ -152,7 +152,7 @@ export const games: Game[] = [
     tags: ["delivery", "food", "traffic"],
     seo: {
       title: "Delivery Simulator — Funny Dhaka Delivery Rider Game",
-      description: "Be a Dhaka delivery rider for 90 seconds: late kitchens, wrong pins, rain, traffic, broken lifts and vanishing customers. 8 endings, star ratings, shareable challenges. Free.",
+      description: "Be a Dhaka delivery rider for 90 seconds: late kitchens, wrong map pins, rain, traffic, broken lifts and vanishing customers. 8 endings and star ratings. Free.",
     },
   },
   {
@@ -171,7 +171,7 @@ export const games: Game[] = [
     tags: ["traffic", "reaction"],
     seo: {
       title: "Chicken Crossing Dhaka — Free Road-Crossing Arcade Game",
-      description: "Hop a chicken across chaotic Dhaka traffic: buses, CNGs, rickshaws, dogs, rain and Dhaka Mode. Near-miss combos, funny levels, personal best and friend challenges. Free.",
+      description: "Hop a chicken across chaotic Dhaka traffic: buses, CNGs, rickshaws, dogs, rain and Dhaka Mode. Near-miss combos, funny levels and friend challenges. Free.",
     },
   },
   {
@@ -190,7 +190,7 @@ export const games: Game[] = [
     tags: ["traffic"],
     seo: {
       title: "Dhaka Traffic Controller — Free Traffic Light Game",
-      description: "Control the traffic lights at a chaotic Dhaka intersection for 60 seconds. Avoid crashes and gridlock, build flow combos, survive VIP cars and U-turns. Free, no sign-up.",
+      description: "Run the traffic lights at a chaotic Dhaka intersection for 60 seconds. Avoid crashes and gridlock, build flow combos, survive VIP cars and U-turns. Free.",
     },
   },
   {
@@ -209,7 +209,7 @@ export const games: Game[] = [
     tags: ["queue", "office"],
     seo: {
       title: "Queue Simulator — Funny Dhaka Line-Waiting Game",
-      description: "Survive a Dhaka queue: line-cutters, “just one thing” with 17 items, closing counters and “2 more minutes”. 6 endings, funny ranks, shareable challenges. Free, no sign-up.",
+      description: "Survive a Dhaka queue: line-cutters, “just one thing” with 17 items, closing counters and “2 more minutes”. 6 endings, funny ranks, friend challenges. Free.",
     },
   },
   {
@@ -228,7 +228,7 @@ export const games: Game[] = [
     tags: ["office", "tech"],
     seo: {
       title: "Programmer Rage Simulator — Funny Deploy Debugging Game",
-      description: "A fictional comedy for developers: your production deploy fails. Check logs, blame frontend, ask AI, deploy again. 6 endings incl. the Legendary 3 AM Fix. Free, no sign-up.",
+      description: "A comedy game for developers: your production deploy fails. Check logs, blame frontend, ask AI, deploy again. 6 endings incl. the Legendary 3 AM Fix. Free.",
     },
   },
   {
@@ -247,7 +247,7 @@ export const games: Game[] = [
     tags: ["traffic", "bike"],
     seo: {
       title: "Weekly Boss — Dhaka Traffic Boss Fight (Free 60-Second Game)",
-      description: "A new Hottogol boss every week: survive 60 seconds of Dhaka traffic with 3 lives. Same challenge for everyone this week, personal best saved locally. Free, no sign-up.",
+      description: "A new Hottogol boss every week: survive 60 seconds of Dhaka traffic with 3 lives. Same challenge for everyone this week, best score saved locally. Free.",
     },
   },
   {
@@ -266,7 +266,7 @@ export const games: Game[] = [
     tags: ["language", "life"],
     seo: {
       title: "আঞ্চলিক ভাষার লড়াই — Bangladesh Regional Dialect Quiz",
-      description: "বাংলার কোন এলাকার ভাষা তুমি কতটা বোঝো? A free 10-question quiz on Bangladeshi regional dialects — Jashore, Sylhet, Chattogram, Noakhali and more. Challenge your friends.",
+      description: "বাংলার কোন এলাকার ভাষা তুমি কতটা বোঝো? A free 10-question quiz on Bangladeshi regional dialects: Jashore, Sylhet, Chattogram, Noakhali and more.",
     },
   },
   {
@@ -303,8 +303,8 @@ export const games: Game[] = [
     mechanic: "quiz",
     tags: ["language", "life"],
     seo: {
-      title: "তুমি কোন এলাকার মানুষ? — Which Region of Bangladesh Are You From? (Dialect Quiz)",
-      description: "বিড়ালকে কী বলো — মেকুর, বিলাই নাকি বিলোই? Answer 10 dialect questions and Hottogol guesses your region of Bangladesh. Free, just for fun, words from cited sources.",
+      title: "তুমি কোন এলাকার মানুষ? Which Region Are You From?",
+      description: "বিড়ালকে কী বলো — মেকুর, বিলাই নাকি বিলোই? Answer 10 dialect questions and Hottogol guesses your region of Bangladesh. Free, words from cited sources.",
     },
   },
   {
@@ -322,8 +322,8 @@ export const games: Game[] = [
     mechanic: "generator",
     tags: ["language"],
     seo: {
-      title: "শব্দের মানচিত্র — Bangladesh Dialect Word Map (আঞ্চলিক শব্দ)",
-      description: "বিড়াল, মুরগি, কোথায় — বাংলাদেশের কোন এলাকায় কী বলে? An interactive map of regional Bangla dialect words for Sylhet, Chattogram, Noakhali, Barishal, Rangpur and more, with sources.",
+      title: "শব্দের মানচিত্র — Bangladesh Dialect Word Map",
+      description: "বিড়াল, মুরগি, কোথায় — কোন এলাকায় কী বলে? An interactive map of Bangla dialect words for Sylhet, Chattogram, Noakhali, Barishal, Rangpur and more.",
     },
   },
   {
@@ -341,7 +341,7 @@ export const games: Game[] = [
     mechanic: "generator",
     tags: ["geography", "life"],
     seo: {
-      title: "My Bangladesh Map: How Many of the 64 Districts Have You Visited?",
+      title: "My Bangladesh Map — How Many Districts Have You Visited?",
       description: "Tap the districts of Bangladesh you've been to and get a funny title, badges and a downloadable poster. Free, no sign-up, saved only on your device.",
     },
   },
@@ -360,8 +360,8 @@ export const games: Game[] = [
     mechanic: "reflex",
     tags: ["reaction", "school"],
     seo: {
-      title: "Book Cricket — The Classroom Page-Flip Cricket Game, Online",
-      description: "Play book cricket online: flip the page, the last digit is the ball. Defend or slog through 2 overs, chase the target, challenge friends to beat your score. Free, no sign-up.",
+      title: "Book Cricket Online — The Classroom Page-Flip Cricket Game",
+      description: "Play book cricket online: flip the page, the last digit is the ball. Defend or slog through 2 overs, chase the target and challenge friends. Free, no sign-up.",
     },
   },
   {
@@ -380,7 +380,7 @@ export const games: Game[] = [
     tags: ["geography"],
     seo: {
       title: "Guess the District — Daily Bangladesh Map Quiz",
-      description: "Can you name Bangladesh's 64 districts from the map and their shapes? A free daily 10-question quiz, same puzzle for everyone, plus unlimited practice and friend challenges.",
+      description: "Can you name Bangladesh's 64 districts from the map and their shapes? A free daily 10-question quiz, same for everyone, plus unlimited practice.",
     },
   },
   {
@@ -398,8 +398,8 @@ export const games: Game[] = [
     mechanic: "physics",
     tags: ["school"],
     seo: {
-      title: "Kacher Guti — Bangladeshi Marble Game Online (vs Computer)",
-      description: "Play kacher guti (marbles) online: throw at the hole, then hit the marble your opponent names. Drag-and-flick physics, 3 opponents, challenge friends. Free, no sign-up.",
+      title: "Kacher Guti — Marble Game Online (Bangladesh, vs Computer)",
+      description: "Play kacher guti (marbles) online: throw at the hole, then hit the marble your opponent names. Drag-and-flick physics, 3 opponents, friend challenges. Free.",
     },
   },  {
     slug: "latim-fight",
@@ -417,7 +417,7 @@ export const games: Game[] = [
     tags: ["school"],
     seo: {
       title: "Latim Fight — Spinning Top Battle Game (Bangladesh)",
-      description: "Play latim (spinning top) fight online: wind, throw and knock the other latim out of the circle. 3 opponents, ghor kop finisher, challenge friends. Free, no sign-up.",
+      description: "Play latim (spinning top) fight online: wind, throw and knock the other latim out of the circle. 3 opponents, a ghor kop finisher and friend challenges.",
     },
   },
 

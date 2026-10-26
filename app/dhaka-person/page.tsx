@@ -1,26 +1,18 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import { DhakaPersonQuiz, type Shared } from "@/components/dhaka-person/dhaka-person-quiz";
 import { quizCopy as copy } from "@/data/dhaka-person";
 import { decodeAnswers, isResultId, resultFor } from "@/lib/dhaka-person";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
-import { absoluteUrl } from "@/lib/site";
 import { RelatedLinks } from "@/components/related/related-links";
+import { staticPageMetadata } from "@/lib/seo-pages";
+import { PAGE_SEO } from "@/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { activityLd } from "@/lib/seo";
 
 type Props = { searchParams: Promise<{ a?: string | string[]; r?: string | string[] }> };
 
-const title = "What Kind of Dhaka Person Are You? — Funny Quiz";
-const description =
-  "10 quick questions about CNG fares, traffic, biryani, rain and salary day. Find out your Dhaka personality and share it with friends. Free, no sign-up.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/dhaka-person" },
-  openGraph: { type: "website", url: "/dhaka-person", title, description },
-  twitter: { card: "summary_large_image", title, description },
-};
+export const metadata = staticPageMetadata("dhaka-person", "/dhaka-person");
 
 export default async function DhakaPersonPage({ searchParams }: Props) {
   const [params, { lang }] = await Promise.all([searchParams, getI18n()]);
@@ -35,7 +27,7 @@ export default async function DhakaPersonPage({ searchParams }: Props) {
     "@context": "https://schema.org",
     "@type": "Quiz",
     name: "What Kind of Dhaka Person Are You?",
-    url: absoluteUrl("/dhaka-person"),
+    description: PAGE_SEO["dhaka-person"].description,
     about: "A just-for-fun personality quiz about everyday life in Dhaka",
     isAccessibleForFree: true,
     inLanguage: ["en", "bn"],
@@ -43,12 +35,8 @@ export default async function DhakaPersonPage({ searchParams }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav className="text-sm text-ink-muted">
-        <Link href="/" className="hover:text-ink">
-          {t(copy.home, lang)}
-        </Link>
-      </nav>
+      <JsonLd ld={activityLd("/dhaka-person", jsonLd)} />
+      <Breadcrumbs items={[{ name: t(copy.title, lang) }]} />
       <header className="mb-6 mt-4">
         <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight">🏙️ {t(copy.title, lang)}</h1>
         <p className="mt-2 text-lg text-ink-muted">{t(copy.lead, lang)}</p>

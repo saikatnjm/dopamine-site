@@ -41,7 +41,7 @@ export function LangToggle() {
           type="button"
           lang={o.lang}
           aria-pressed={lang === o.lang}
-          aria-label={o.full}
+          aria-label={`${o.label} (${o.full})`}
           onClick={() => choose(o.lang)}
           className={`min-h-9 min-w-10 rounded-pill px-2.5 text-sm font-extrabold transition-colors duration-200 ${
             lang === o.lang ? "bg-ink text-bg" : "text-ink hover:bg-surface-2"

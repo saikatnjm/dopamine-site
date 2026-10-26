@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ActivityCard } from "@/components/experience/activity-card";
@@ -10,22 +9,12 @@ import { listActivities } from "@/lib/activities";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { viralView } from "@/lib/viral";
+import { staticPageMetadata } from "@/lib/seo-pages";
 
 // Landing page for social-video traffic. Data: data/viral.ts.
 // Deep link: /viral?play=<slug> features that activity. Canonical stays /viral.
 
-const title = "You saw the video. Now try it yourself.";
-const description = "Play the Dhaka chaos from the video — traffic dodging, chicken crossing, CNG catching. Free, in your browser, no sign-up.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/viral" },
-  // Social landing page, deliberately minimal: keep it out of search results.
-  robots: { index: false, follow: true },
-  openGraph: { type: "website", url: "/viral", title, description },
-  twitter: { card: "summary_large_image", title, description },
-};
+export const metadata = staticPageMetadata("viral", "/viral");
 
 type Props = { searchParams: Promise<{ play?: string | string[] }> };
 

@@ -229,7 +229,7 @@ export const guides: Record<GuideSlug, Guide> = {
     seo: {
       title: "One-Minute Games — Quick Free Games You Can Finish Now",
       description:
-        "Quick games that finish in 30–60 seconds: catch a CNG, test your reaction time, dodge traffic, carry a cup of tea. Free in your browser, perfect for short breaks.",
+        "Quick games that finish in 30–60 seconds: catch a CNG, test your reaction time, dodge traffic, carry a cup of tea. Free in your browser, made for short breaks.",
     },
     picks: [
       {
@@ -388,7 +388,7 @@ export const guides: Record<GuideSlug, Guide> = {
     seo: {
       title: "Funny Online Games with Ridiculous Endings",
       description:
-        "Funny online games where losing is the best part: deliver food as a rider, fix a deploy at 3 AM, survive a Dhaka queue, haggle at the bazar. Free in your browser.",
+        "Funny online games where losing is the best part: deliver food as a rider, fix a deploy at 3 AM, survive a Dhaka queue, haggle at the bazar. Free to play.",
     },
     picks: [
       {

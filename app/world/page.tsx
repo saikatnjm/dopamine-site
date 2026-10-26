@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import { WorldMap, type WorldView } from "@/components/world/world-map";
 import { quizCopy } from "@/data/dhaka-person";
 import { excuseCopy } from "@/data/excuses";
@@ -9,18 +7,12 @@ import { getExperience } from "@/lib/experience/registry";
 import { fmt, num, t, type Lang } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { staticPageMetadata } from "@/lib/seo-pages";
+import { PAGE_SEO } from "@/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 
-const title = "Hottogol World — Every Funny Dhaka Game & Simulator on One Map";
-const description =
-  "Explore Hottogol by world: Bangladesh (CNG, bus, bazar, queues), Life (work, rent, decisions) and Arcade (reaction and traffic games). Free, no sign-up.";
-
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/world" },
-  openGraph: { type: "website", url: "/world", title, description },
-  twitter: { card: "summary_large_image", title, description },
-};
+export const metadata = staticPageMetadata("world", "/world");
 
 function duration(sec: number, lang: Lang): string {
   return sec >= 90 ? fmt(t(copy.minutes, lang), { n: num(Math.round(sec / 60), lang) }) : fmt(t(copy.seconds, lang), { n: num(sec, lang) });
@@ -64,6 +56,7 @@ export default async function WorldPage() {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Hottogol World",
+    description: PAGE_SEO.world.description,
     url: absoluteUrl("/world"),
     inLanguage: ["en", "bn"],
     hasPart: view.flatMap((w) => w.nodes.map((n) => ({ "@type": "WebPage", name: n.title, url: absoluteUrl(n.href.split("?")[0]!) }))),
@@ -71,12 +64,8 @@ export default async function WorldPage() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav className="text-sm text-ink-muted">
-        <Link href="/" className="hover:text-ink">
-          ← {d.goHome}
-        </Link>
-      </nav>
+      <JsonLd ld={jsonLd} />
+      <Breadcrumbs items={[{ name: t(copy.title, lang) }]} />
       <header className="mb-6 mt-4">
         <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">🗺️ {t(copy.title, lang)}</h1>
         <p className="mt-2 max-w-2xl text-lg text-ink-muted">{t(copy.lead, lang)}</p>

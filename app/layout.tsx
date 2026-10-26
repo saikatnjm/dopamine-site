@@ -37,7 +37,11 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
-  alternates: { canonical: "/" },
+  // Search Console / Bing Webmaster ownership (set in the deploy env; empty = no tag).
+  verification: {
+    ...(process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : {}),
+    ...(process.env.BING_SITE_VERIFICATION ? { other: { "msvalidate.01": process.env.BING_SITE_VERIFICATION } } : {}),
+  },
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
