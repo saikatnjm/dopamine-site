@@ -1,6 +1,6 @@
 # Hottogol ideas backlog + plan index
 
-**Last updated:** 2026-10-25
+**Last updated:** 2026-10-26
 
 Ideas are generated in "idea" chats and built in separate "build" chats. Each idea that is ready
 to build gets its own detailed plan file in this folder. A build chat should:
@@ -18,7 +18,9 @@ Status values: `idea` → `planned` (plan file written) → `building` → `ship
 |---|---|---|---|
 | Phase 44 | [My Bangladesh Map](2026-10-25-phase-44-my-bangladesh-map.md): tap the districts you've visited, get a title and a poster | Rides the "Unseen Bangladesh" district-map trend (Facebook, since ~Oct 6–7, 2026). The trend is fading, so ship fast | shipped (#36) |
 | Phase 45 | [Book Cricket](2026-10-25-phase-45-book-cricket.md): the classroom page-flip cricket game | School nostalgia (pen fight went viral). Bangladesh plays West Indies at home (Oct 28 to Nov 9) and tours South Africa (Nov 15 to Dec 13, 2026) | shipped (#37) |
-| Phase 46 | [Guess the District](2026-10-25-phase-46-guess-the-district.md): daily 10-question district quiz with a Wordle-style share grid | Same trend as Phase 44. Shape questions need no fact-checking. Food and landmark clues need researched content first | building (PR open, awaiting merge) |
+| Phase 46 | [Guess the District](2026-10-25-phase-46-guess-the-district.md): daily 10-question district quiz with a Wordle-style share grid | Same trend as Phase 44. Shape questions need no fact-checking. Food and landmark clues need researched content first | shipped (#38) |
+| Phase 47 | [Kacher Guti](2026-10-26-phase-47-kacher-guti.md): village marble game vs the computer, plus the shared `lib/flick` physics engine | Owner's pick (school and para nostalgia). Rules researched from Banglapedia, bn Wikipedia and newspapers | building (PR open, awaiting merge) |
+| Phase 48 | [Latim Fight](2026-10-26-phase-48-latim-fight.md): লাটিম battle vs the computer (বেল্লা পার + ঘর কোপ) | Owner's pick. Reuses the Phase 47 engine, so build after 47 is merged | planned |
 
 Phases 44 and 46 reuse the 64-district SVG map from Phase 43 (`data/dialects/map.ts`), which is on
 `main` since #35. Phase 46 should also reuse Phase 44's district map component, divisions data and
@@ -78,10 +80,57 @@ bit order. Branch Phase 46 from `main` after the Phase 44 PR is merged.
 | District Food Fight 🍛 | Head-to-head district food votes (local only, no global counts) |
 | Take Me to Bangladesh ✈️ | Trip-chaos story, only if the "You Never Take Me to Bangladesh" song meme is still hot |
 
+### Generators, calculators and new picks (added 2026-10-26)
+
+| Idea | One line | Notes |
+|---|---|---|
+| Relatives' Questions Survival 👵 | At a wedding or Eid dawat, dodge "Biye kobe?", "Result kemon?", "Beton koto?" with quick comebacks before the next aunty arrives | Relatives are a generic role (like vendors), never real people. Peaks in wedding season (Dec–Feb) and every Eid |
+| Traffic Life Calculator ⏳ | Enter your daily commute → "You'll spend 3.1 years of your life in Dhaka traffic" + what you could have done instead | Honest math from the user's own inputs, no outside facts. Cheapest idea here |
+| Rickshaw-Art Name Plate 🎨 | Type a name → it's painted in rickshaw-art style with flowers and birds → profile-picture image | Name stays in the browser. Needs good art and Bangla lettering on canvas |
+| Fuchka Challenge 🥟 | Eat fuchka as fast as you can while the tok (spice) meter climbs; drink water at the right time | |
+| Wrong Number Send Money 📱 | You sent money to the wrong number; convince the stranger to return it (choice story) | No real mobile-banking brands |
+| Exam Hall: Last 10 Minutes 📝 | Finish the paper while the invigilator patrols; could share an engine with Teacher Turns Around | |
+
 ### Idea: a trend template
 
 A quiz or choice-story template that can be filled with new copy and published within a day while
 a topic is hot. Keep the AGENTS.md tone rules.
+
+## Popularity ranking (2026-10-26, judgement, not data)
+
+Each idea is scored 1–5 on six things. **Friend trigger counts double**, because share rate is the
+primary metric. Max = 35.
+
+- **Rec:** everyone in Bangladesh already knows it.
+- **3s:** you understand it in 3 seconds.
+- **Brag:** a result worth posting (number, title, picture).
+- **Friend:** a reason to send it to one specific person.
+- **Return:** a reason to play again.
+- **Cheap:** 5 = about 1 day of work, 1 = a week or more.
+
+| Idea | Rec | 3s | Brag | Friend ×2 | Return | Cheap | **Total** | Timing |
+|---|---|---|---|---|---|---|---|---|
+| Relatives' Questions Survival | 5 | 5 | 4 | 5 | 3 | 4 | **31** | Wedding season Dec–Feb, then Eid |
+| FLAMES | 5 | 5 | 3 | 5 | 3 | 5 | **31** | Any time |
+| Flag War | 5 | 5 | 4 | 5 | 2 | 3 | **29** | Only during big football tournaments; wait |
+| Traffic Life Calculator | 5 | 5 | 4 | 4 | 1 | 5 | **28** | Any time |
+| Rickshaw-Art Name Plate | 5 | 5 | 5 | 4 | 2 | 3 | **28** | Any time; Pohela Boishakh (Apr 14) boost |
+| Eid Salami Collector | 5 | 4 | 5 | 4 | 2 | 3 | **27** | Only at Eid (next ~Mar 2027) |
+| Scam or Not? | 5 | 5 | 3 | 4 | 2 | 4 | **27** | Any time; spreads in family groups |
+| Teacher Turns Around | 5 | 5 | 3 | 3 | 4 | 3 | **26** | Any time |
+| Biye Bari Buffet | 5 | 5 | 5 | 3 | 3 | 2 | **26** | Wedding season |
+| Ammu Is Coming | 5 | 5 | 3 | 3 | 3 | 4 | **26** | Any time |
+| Fuchka Challenge | 5 | 5 | 3 | 3 | 3 | 3 | **25** | Any time |
+| Wrong Number Send Money | 4 | 4 | 3 | 3 | 2 | 4 | **23** | Any time |
+| Shakrain Kite Fight | 3 | 4 | 3 | 3 | 2 | 2 | **20** | Mid-January only |
+
+**Pattern:** the top scorers make the result *about the player or a friend* (their name, their
+relatives, their commute). The arcade games score lower on Friend trigger, because "beat my score"
+works but "this is so you" spreads further.
+
+**Check against real data before trusting this.** In GA4, compare `result_share ÷ activity_complete`
+per activity (share rate per finish). Whichever existing formats (quiz, generator, reflex, story)
+share best should break ties here.
 
 ## Never build (owner rules + judgement)
 

@@ -30,6 +30,8 @@ export const CHALLENGE_GAMES = {
   "book-cricket": { code: "bk", maxScore: 200 },
   // seed = the round (daily or practice), score = correct answers
   "guess-district": { code: "gd", maxScore: 10 },
+  // seed = shuffle · opponent (lib/games/kacher-guti.ts), score = your marbles at the end
+  "kacher-guti": { code: "kg", maxScore: 20 },
 } as const;
 
 export type ChallengeGame = keyof typeof CHALLENGE_GAMES;

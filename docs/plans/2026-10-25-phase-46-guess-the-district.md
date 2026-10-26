@@ -1,6 +1,6 @@
 # Phase 46: Guess the District (কোন জেলা?)
 
-**Status:** built, PR branch `game/guess-district` (from `main` after #37), waiting for the owner to test and merge · **Written:** 2026-10-25
+**Status:** shipped (#38) · **Written:** 2026-10-25
 
 **Decisions (2026-10-26):** owner verifies clues (checklist) · clue research now, in parallel (imported as `needs_review`) · homepage card under the Daily card · not in `DAILY_ROTATION` · `mode` goes to GA · **Estimated size:** about 2 days for code, plus a
 separate content research and review step

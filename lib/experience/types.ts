@@ -20,7 +20,7 @@ export type CategorySlug =
   | "random";
 
 /** How an activity plays (for "You might also like"). */
-export type Mechanic = "reflex" | "choices" | "quiz" | "generator";
+export type Mechanic = "reflex" | "choices" | "quiz" | "generator" | "physics";
 
 /** Topic tags shared by games, simulators and tools (keep the list short). */
 export type ActivityTag =

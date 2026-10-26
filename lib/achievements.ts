@@ -245,6 +245,21 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     description: { en: "Get 10/10 in a Guess the District round.", bn: "কোন জেলা? রাউন্ডে ১০/১০ পান।" },
     unlocks: (e) => isGame(e, "guess-district") && num(e.params.score) === 10,
   },
+  {
+    id: "para-champion",
+    emoji: "🔮",
+    title: { en: "Para Champion", bn: "পাড়ার চ্যাম্পিয়ন" },
+    description: { en: "Beat the Mohollar Champion at Kacher Guti.", bn: "কাচের গুটিতে মহল্লার চ্যাম্পিয়নকে হারান।" },
+    unlocks: (e) => isGame(e, "kacher-guti") && e.params.opponent === "champion" && (e.params.outcome === "won" || e.params.outcome === "clean-sweep"),
+  },
+  {
+    id: "clean-sweeper",
+    emoji: "🧹",
+    title: { en: "Clean Sweeper", bn: "সব গুটি পকেটে" },
+    description: { en: "Win every single marble in a Kacher Guti match.", bn: "এক ম্যাচে কাচের গুটির সব গুটি জিতে নিন।" },
+    hidden: true,
+    unlocks: (e) => isGame(e, "kacher-guti") && e.params.outcome === "clean-sweep",
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));
