@@ -1,6 +1,6 @@
 # Phase 47: Kacher Guti (কাচের গুটি), plus the shared flick-physics engine
 
-**Status:** built, PR branch `game/kacher-guti` (from `main` after #38), waiting for the owner to test and merge · **Written:** 2026-10-26 · **Estimated size:** about 2–3 days (the engine is
+**Status:** shipped (#39) · **Written:** 2026-10-26 · **Estimated size:** about 2–3 days (the engine is
 about 1 day of that)
 
 **Index:** [ideas backlog](2026-10-25-ideas-backlog.md) · **Next:** [Phase 48 Latim Fight](2026-10-26-phase-48-latim-fight.md)

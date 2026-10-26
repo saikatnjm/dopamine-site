@@ -1,6 +1,6 @@
 # Phase 48: Latim Fight (লাটিম যুদ্ধ)
 
-**Status:** built, PR branch `game/latim-fight` (stacked on `game/kacher-guti`; merge Phase 47 first), waiting for the owner to test and merge · **Written:** 2026-10-26 · **Estimated size:** about 2 days on top of Phase 47's
+**Status:** built, PR branch `game/latim-fight` (Phase 47 merged as #39), waiting for the owner to test and merge · **Written:** 2026-10-26 · **Estimated size:** about 2 days on top of Phase 47's
 engine
 
 **Index:** [ideas backlog](2026-10-25-ideas-backlog.md) · **Depends on:** [Phase 47 Kacher Guti](2026-10-26-phase-47-kacher-guti.md)
