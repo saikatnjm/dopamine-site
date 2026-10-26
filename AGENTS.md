@@ -606,7 +606,7 @@ The regional-language content is the main attraction; the personality test is se
 9. No creator credit or GitHub/ownership link anywhere on the site: no badge,
    no "Made by" footer line, no author/founder links in structured data
    (owner, 2026-10-26; replaces the earlier "always credit the creator" rule).
-   The README credit on the GitHub repo stays.
+   The README has no creator credit either (owner, 2026-10-26).
 10. Site URL: `NEXT_PUBLIC_SITE_URL` in Vercel; falls back to Vercel's production
     domain, never localhost, on Vercel (`lib/site.ts`).
 11. Follow the core instructions in this file. Match model to task: hand

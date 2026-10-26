@@ -5,7 +5,7 @@ unexpected endings, made to be shared. Seven experiences: 🛺 Dhaka CNG, 🍔 F
 🚌 Dhaka Bus, 💼 Job Resignation, 🛍️ Fake Shopping, 🏠 House Rent and 🎲 Random Life Decision.
 English and Bangla. No accounts, no database, no backend server.
 
-Live: **https://hottogol.vercel.app** · Made by [@saikatnjm](https://github.com/saikatnjm)
+Live: **https://hottogol.vercel.app**
 
 ---
 
