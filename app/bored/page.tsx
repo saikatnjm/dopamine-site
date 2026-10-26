@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { ActivityCard } from "@/components/experience/activity-card";
 import { ChaosRoulette } from "@/components/experience/chaos-roulette";
@@ -8,18 +7,14 @@ import { listActivities, type Activity } from "@/lib/activities";
 import { t, type Lang } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { staticPageMetadata } from "@/lib/seo-pages";
+import { PAGE_SEO } from "@/data/seo";
+import { JsonLd } from "@/components/seo/json-ld";
+import { breadcrumbLd } from "@/lib/seo";
 
-const title = "Bored? Free Fun Things to Do Online in 30 Seconds to 5 Minutes";
-const description =
-  "Bored right now? Play free 30-second reaction games, 1-minute funny simulators and quick quizzes about Dhaka chaos. No sign-up, no downloads, nothing productive.";
+const { title, description } = PAGE_SEO.bored;
 
-export const metadata: Metadata = {
-  title,
-  description,
-  alternates: { canonical: "/bored" },
-  openGraph: { type: "website", url: "/bored", title, description },
-  twitter: { card: "summary_large_image", title, description },
-};
+export const metadata = staticPageMetadata("bored", "/bored");
 
 const QUICK_MAX_SEC = 45;
 
@@ -104,7 +99,7 @@ export default async function BoredPage() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <JsonLd ld={[jsonLd, breadcrumbLd([{ name: "Hottogol", path: "/" }, { name: title }])]} />
 
       {/* Hero */}
       <section className="relative pb-4 pt-8 text-center sm:pt-14">

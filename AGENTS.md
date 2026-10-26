@@ -58,6 +58,7 @@ data/
   categories.ts
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   divisions.ts           8 divisions → 64 districts (validated at import)
+  seo.ts                 search titles + descriptions for the site's own pages (PAGE_SEO, NOINDEX_PAGES)
   district-clues.ts      Guess the District clues (sourced; owner verifies; validated at import)
   experiences/index.ts   registry list; one file per experience
   games/index.ts         games registry (slug, title, accent…); games/<slug>.ts = copy
@@ -68,6 +69,9 @@ lib/
   analytics.ts           track() — the ONLY analytics entry point
   sharing.ts             share-target URLs, copyText() with fallback
   og.tsx                 renderOgCard() for link previews (English only; Satori can't shape Bangla)
+  og-cards.tsx           registry-driven share cards (gameOgImage, pageOgImage, guideOgImage, categoryOgImage)
+  seo.ts                 pageMetadata(), JSON-LD builders (breadcrumbs, item lists, organization, activityLd), length limits
+  seo-pages.ts           metadata per page type (static, game, experience, category, region)
   experience/
     types.ts             Experience schema (single source of types)
     engine.ts            runExperience(), pickBeat(), validateExperience()
@@ -428,6 +432,16 @@ The regional-language content is the main attraction; the personality test is se
 - SEO: canonical, OG/Twitter, CollectionPage + ItemList, BreadcrumbList (+ visible breadcrumb), FAQPage only when the guide has an FAQ; in sitemap; footer group "Lists"; linked from `/bored`.
 - Rules: no thin/spun pages — a new guide needs genuinely different picks and hand-written copy. Only claim what the activity actually does.
 
+## SEO (Phase 49, plan `docs/plans/2026-10-26-phase-49-seo.md`)
+
+- **Every page builds its `<head>` through `lib/seo.ts`**: `pageMetadata()` or a builder in `lib/seo-pages.ts` (`staticPageMetadata`, `gameMetadata`, `experienceMetadata`, `categoryMetadata`, `regionMetadata`). Never hand-write a `metadata` object: Next *replaces* a parent's `openGraph`/`twitter` instead of merging, so a partial object leaks the homepage's `og:url`/title. The root layout has no canonical (pages set their own).
+- **Titles/descriptions:** registries (`Game.seo`, `Experience.seo`, guides) or `data/seo.ts` (`PAGE_SEO`) for the site's own pages. Full title (with " · Hottogol") ≤ 70 chars; a title containing "Hottogol" skips the suffix. Description 70–160. Unique across indexable pages. `tests/seo.test.ts` enforces all of it (add a new page type there).
+- **Share images:** every indexable route has an `opengraph-image.tsx` (hand-written or `lib/og-cards.tsx`). Explicit `openGraph.images` beats the file convention, so `pageMetadata` adds the site-wide card only with `defaultImage: true` (routes without a file: privacy, terms, achievements, region pages). English only.
+- **JSON-LD:** render with `<JsonLd ld={…} />` (`components/seo/json-ld.tsx`; escapes `<`, one `@context`, several nodes → `@graph`). Activities wrap their own node with `activityLd(path, ld)` (url, image, publisher/author → `#organization`, free, languages, platform). Homepage = `WebSite` + `Organization`. `/games`, `/experiences`, categories = `ItemList`. Never add ratings, reviews or player counts.
+- **Breadcrumbs:** `<Breadcrumbs items={…} />` (`components/seo/breadcrumbs.tsx`) renders the visible "Hottogol › Games › …" trail *and* its `BreadcrumbList` — on every game, experience, category, region, hub and text page (`PageShell` includes it).
+- **Verification:** `GOOGLE_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` env vars → `metadata.verification` (empty = no tag).
+- **Audit before shipping SEO changes:** production build (`npm run build && npx next start`; the dev server can run out of memory compiling every route at once) + crawl all sitemap URLs: one `<title>`/canonical/`<h1>`, `og:url` = canonical, `og:image` loads as PNG, JSON-LD parses, breadcrumbs present. Lighthouse SEO = 100 on sampled pages (2026-10-26).
+
 ## Internal links (`<RelatedLinks>`, every activity + content page)
 
 - Server-rendered, deterministic (crawlable) "keep playing" sections under each activity page: `components/related/related-links.tsx`; logic `lib/related.ts`. Client-side, personalised "LIKED THAT?" on result screens is separate.
@@ -513,7 +527,7 @@ The regional-language content is the main attraction; the personality test is se
 - Content: bilingual `Text` fields (`string | { en, bn }`) rendered with
   `t(text, lang)`. Driver quotes stay Bangla in both languages.
 - SEO metadata, sitemap and OG images are English (crawlers have no cookie;
-  Satori can't shape Bangla). Numbers: `num(n, lang)` for Bangla digits.
+  Satori can't shape Bangla) — Phase 49 step B adds `/bn` URLs + hreflang. Numbers: `num(n, lang)` for Bangla digits.
 - Every new experience must ship with both `en` and `bn` copy.
 
 ## Conventions
@@ -637,6 +651,7 @@ The regional-language content is the main attraction; the personality test is se
 - [x] Phase 46 — Guess the District (`/games/guess-district`): daily + practice district quiz (map, shape, clue), spoiler-free grid, `gd` challenges, homepage card (`docs/plans/2026-10-25-phase-46-guess-the-district.md`)
 - [x] Phase 47 — Kacher Guti (`/games/kacher-guti`): marble game vs the computer, shared `lib/flick` physics engine, opt-in sounds, `kg` challenges (`docs/plans/2026-10-26-phase-47-kacher-guti.md`)
 - [x] Phase 48 — Latim Fight (`/games/latim-fight`): spinning-top battle vs the computer on the `lib/flick` spin model, ঘর কোপ finisher, `lt` challenges (`docs/plans/2026-10-26-phase-48-latim-fight.md`)
+- [ ] Phase 49 — Pro-level SEO: [x] A technical (shared metadata, share images for every page, breadcrumbs, structured data, verification, SEO tests) · [ ] B `/bn` URLs + hreflang · [ ] C how-to/FAQ content — `docs/plans/2026-10-26-phase-49-seo.md`
 - [ ] Owner: review district clues (`npm run content:checklist` → `data/district-clues-review/`) → verify/reject → verified clues join rounds
 - [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

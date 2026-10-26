@@ -1,13 +1,9 @@
-import type { Metadata } from "next";
 import { PageShell } from "@/components/ui/page-shell";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
+import { staticPageMetadata } from "@/lib/seo-pages";
 
-export const metadata: Metadata = {
-  title: "Terms",
-  description: `The simple rules for using ${siteConfig.name}.`,
-  alternates: { canonical: "/terms" },
-};
+export const metadata = staticPageMetadata("terms", "/terms");
 
 export default async function TermsPage() {
   const { lang, d } = await getI18n();

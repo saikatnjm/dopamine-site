@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { WordMapExplorer } from "@/components/dialects/word-map-explorer";
@@ -10,21 +9,17 @@ import { conceptLite, conceptsByCoverage, formsForRegion, listRegions, publicFor
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { JsonLd } from "@/components/seo/json-ld";
+import { activityLd } from "@/lib/seo";
+import { gameMetadata } from "@/lib/seo-pages";
 
 const SLUG = "word-map";
 const game = getGame(SLUG);
 
 type Props = { searchParams: Promise<{ c?: string | string[] }> };
 
-export const metadata: Metadata = game
-  ? {
-      title: game.seo.title,
-      description: game.seo.description,
-      alternates: { canonical: `/games/${SLUG}` },
-      openGraph: { type: "website", url: `/games/${SLUG}`, title: game.seo.title, description: game.seo.description },
-      twitter: { card: "summary_large_image", title: game.seo.title, description: game.seo.description },
-    }
-  : {};
+export const metadata = gameMetadata(SLUG);
 
 export default async function WordMapPage({ searchParams }: Props) {
   if (!game) notFound();
@@ -48,12 +43,8 @@ export default async function WordMapPage({ searchParams }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav className="text-sm text-ink-muted">
-        <Link href="/games" className="hover:text-ink">
-          {d.backGames}
-        </Link>
-      </nav>
+      <JsonLd ld={activityLd(`/games/${SLUG}`, jsonLd)} />
+      <Breadcrumbs items={[{ name: d.navGames, path: "/games" }, { name: t(game.title, lang) }]} />
       <header className="mb-5 mt-4">
         <p className={`text-sm font-bold uppercase tracking-wide ${accentText[game.accent]}`}>🗺️ {d.navGames}</p>
         <h1 className="mt-1 font-display text-4xl font-extrabold leading-tight tracking-tight" lang="bn">

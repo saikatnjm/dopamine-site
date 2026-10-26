@@ -1,21 +1,22 @@
-import type { Metadata } from "next";
 import { ComingSoonCard, ExperienceCard } from "@/components/experience/experience-card";
 import { upcoming } from "@/data/upcoming";
 import { listExperiences } from "@/lib/experience/registry";
-import { fmt, num } from "@/lib/i18n/core";
+import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
+import { staticPageMetadata } from "@/lib/seo-pages";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { itemListLd } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "All Experiences — Free One-Minute Simulators",
-  description: "Every playable simulator in one place: Dhaka CNG, food delivery, Dhaka bus, job resignation, shopping, house rent and more. Free, no sign-up, about a minute each.",
-  alternates: { canonical: "/experiences" },
-};
+export const metadata = staticPageMetadata("experiences", "/experiences");
 
 export default async function ExperiencesPage() {
   const { lang, d } = await getI18n();
   const experiences = listExperiences();
   return (
     <main className="mx-auto w-full max-w-5xl px-4 pt-6">
+      <JsonLd ld={itemListLd("Hottogol simulators", experiences.map((e) => ({ name: t(e.title, "en"), path: `/experiences/${e.slug}` })))} />
+      <Breadcrumbs items={[{ name: d.navExperiences }]} />
       <h1 className="font-display text-4xl font-extrabold sm:text-5xl">
         {d.allTitle} <span aria-hidden>🕹️</span>
       </h1>

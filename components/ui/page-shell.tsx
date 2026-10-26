@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 
 // Simple text page (About, Privacy, Terms). Styles plain HTML children
 // without pulling in a typography plugin.
@@ -15,7 +16,8 @@ export function PageShell({
 }) {
   return (
     <main className="mx-auto w-full max-w-2xl px-4 pb-8 pt-6">
-      <h1 className="font-display text-4xl font-extrabold leading-tight sm:text-5xl">
+      <Breadcrumbs items={[{ name: title }]} />
+      <h1 className="mt-4 font-display text-4xl font-extrabold leading-tight sm:text-5xl">
         <span aria-hidden>{emoji}</span> {title}
       </h1>
       {intro && <p className="mt-3 text-lg text-ink-muted">{intro}</p>}

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ComingSoonCard, ExperienceCard } from "@/components/experience/experience-card";
@@ -9,6 +8,10 @@ import type { CategorySlug } from "@/lib/experience/types";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { RelatedLinks } from "@/components/related/related-links";
+import { categoryMetadata } from "@/lib/seo-pages";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { itemListLd } from "@/lib/seo";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -18,19 +21,8 @@ export function generateStaticParams() {
   return listCategories().map((c) => ({ slug: c.slug }));
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const category = getCategory(slug);
-  if (!category) return {};
-  const live = experiencesInCategory(category.slug).length;
-  const title = t(category.title, "en");
-  return {
-    title: `${title} Simulators`,
-    description: `${t(category.description, "en")} Free one-minute ${title.toLowerCase()} simulators — no sign-up.`,
-    alternates: { canonical: `/categories/${category.slug}` },
-    // Categories with nothing playable yet are thin pages: keep them out of search.
-    robots: live > 0 ? undefined : { index: false, follow: true },
-  };
+export async function generateMetadata({ params }: Props) {
+  return categoryMetadata((await params).slug);
 }
 
 export default async function CategoryPage({ params }: Props) {
@@ -42,6 +34,10 @@ export default async function CategoryPage({ params }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 pt-6">
+      {experiences.length > 0 && (
+        <JsonLd ld={itemListLd(`${t(category.title, "en")} simulators`, experiences.map((e) => ({ name: t(e.title, "en"), path: `/experiences/${e.slug}` })))} />
+      )}
+      <Breadcrumbs items={[{ name: d.navExperiences, path: "/experiences" }, { name: t(category.title, lang) }]} />
       <h1 className="font-display text-4xl font-extrabold sm:text-5xl">
         <span aria-hidden>{category.emoji}</span> {t(category.title, lang)}
       </h1>

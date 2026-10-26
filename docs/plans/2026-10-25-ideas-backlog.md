@@ -20,7 +20,8 @@ Status values: `idea` → `planned` (plan file written) → `building` → `ship
 | Phase 45 | [Book Cricket](2026-10-25-phase-45-book-cricket.md): the classroom page-flip cricket game | School nostalgia (pen fight went viral). Bangladesh plays West Indies at home (Oct 28 to Nov 9) and tours South Africa (Nov 15 to Dec 13, 2026) | shipped (#37) |
 | Phase 46 | [Guess the District](2026-10-25-phase-46-guess-the-district.md): daily 10-question district quiz with a Wordle-style share grid | Same trend as Phase 44. Shape questions need no fact-checking. Food and landmark clues need researched content first | shipped (#38) |
 | Phase 47 | [Kacher Guti](2026-10-26-phase-47-kacher-guti.md): village marble game vs the computer, plus the shared `lib/flick` physics engine | Owner's pick (school and para nostalgia). Rules researched from Banglapedia, bn Wikipedia and newspapers | shipped (#39) |
-| Phase 48 | [Latim Fight](2026-10-26-phase-48-latim-fight.md): লাটিম battle vs the computer (বেল্লা পার + ঘর কোপ) | Owner's pick. Reuses the Phase 47 engine, so build after 47 is merged | building (PR open, awaiting merge) |
+| Phase 48 | [Latim Fight](2026-10-26-phase-48-latim-fight.md): লাটিম battle vs the computer (বেল্লা পার + ঘর কোপ) | Owner's pick. Reuses the Phase 47 engine, so build after 47 is merged | shipped (#40) |
+| Phase 49 | [Pro-level SEO](2026-10-26-phase-49-seo.md): metadata helper, OG images, structured data, Bangla `/bn` URLs + hreflang, how-to/FAQ content for every game | Owner request. Google only sees English today (Bangla is a cookie) | building (step A PR open; B, C next) |
 
 Phases 44 and 46 reuse the 64-district SVG map from Phase 43 (`data/dialects/map.ts`), which is on
 `main` since #35. Phase 46 should also reuse Phase 44's district map component, divisions data and

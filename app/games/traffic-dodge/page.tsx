@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { TrafficDodgeGame } from "@/components/games/traffic-dodge-game";
 import { accentText } from "@/components/ui/styles";
@@ -11,20 +9,16 @@ import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
 import { RelatedLinks } from "@/components/related/related-links";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { JsonLd } from "@/components/seo/json-ld";
+import { activityLd } from "@/lib/seo";
+import { gameMetadata } from "@/lib/seo-pages";
 
 type Props = { searchParams: Promise<{ seed?: string | string[]; s?: string | string[] }> };
 
 const game = getGame(GAME_SLUG);
 
-export const metadata: Metadata = game
-  ? {
-      title: game.seo.title,
-      description: game.seo.description,
-      alternates: { canonical: `/games/${GAME_SLUG}` },
-      openGraph: { type: "website", url: `/games/${GAME_SLUG}`, title: game.seo.title, description: game.seo.description },
-      twitter: { card: "summary_large_image", title: game.seo.title, description: game.seo.description },
-    }
-  : {};
+export const metadata = gameMetadata(GAME_SLUG);
 
 export default async function TrafficDodgePage({ searchParams }: Props) {
   if (!game) notFound();
@@ -51,10 +45,8 @@ export default async function TrafficDodgePage({ searchParams }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav className="text-sm text-ink-muted">
-        <Link href="/games" className="hover:text-ink">{d.backGames}</Link>
-      </nav>
+      <JsonLd ld={activityLd(`/games/${GAME_SLUG}`, jsonLd)} />
+      <Breadcrumbs items={[{ name: d.navGames, path: "/games" }, { name: t(game.title, lang) }]} />
       <header className="mb-6 mt-4">
         <p className={`text-sm font-bold uppercase tracking-wide ${accentText[game.accent]}`}>
           🎮 {d.navGames} · ⏱️ {fmt(d.gameSeconds, { n: num(game.durationSec, lang) })}

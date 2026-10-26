@@ -1,36 +1,24 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DialectMap } from "@/components/dialects/dialect-map";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
 import { DISTRICTS } from "@/data/dialects/districts";
 import { mapCopy as copy } from "@/data/games/word-map";
-import { formsForRegion, getRegion, listConcepts, listRegions, REGION_INDEX_MIN } from "@/lib/dialects/content";
+import { formsForRegion, getRegion, listConcepts, listRegions } from "@/lib/dialects/content";
 import { fmt, num, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl } from "@/lib/site";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { regionMetadata } from "@/lib/seo-pages";
 
 // One dialect region: every sourced word, grouped by concept, with sources.
 // Server-rendered (no JS). Indexed only once it has enough words to be useful.
 
 type Props = { params: Promise<{ region: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { region: id } = await params;
-  const r = getRegion(id);
-  if (!r) return { title: "Region not found", robots: { index: false } };
-  const n = formsForRegion(r.id).length;
-  const bn = t(r.name, "bn");
-  const en = t(r.name, "en");
-  const title = `${bn}-এর আঞ্চলিক ভাষা: শব্দ ও অর্থ — ${en} dialect words`;
-  const description = `${bn}-এর আঞ্চলিক শব্দ, প্রমিত বাংলা অর্থসহ, সূত্র উল্লেখ করে। ${en} dialect words with standard Bangla meanings and sources — compare them with the rest of Bangladesh.`;
-  return {
-    title,
-    description,
-    alternates: { canonical: `/games/word-map/${r.id}` },
-    robots: n >= REGION_INDEX_MIN ? undefined : { index: false, follow: true },
-    openGraph: { type: "article", url: `/games/word-map/${r.id}`, title, description },
-  };
+export async function generateMetadata({ params }: Props) {
+  return regionMetadata((await params).region);
 }
 
 export default async function RegionPage({ params }: Props) {
@@ -55,12 +43,8 @@ export default async function RegionPage({ params }: Props) {
 
   return (
     <main className="mx-auto w-full max-w-xl px-4 pb-16 pt-6">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <nav className="text-sm text-ink-muted">
-        <Link href="/games/word-map" className="hover:text-ink">
-          {t(copy.backToMap, lang)}
-        </Link>
-      </nav>
+      <JsonLd ld={jsonLd} />
+      <Breadcrumbs items={[{ name: t(copy.title, lang), path: "/games/word-map" }, { name }]} />
       <header className="mb-4 mt-4">
         <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight">
           {region.emoji} {fmt(t(copy.regionTitle, lang), { region: name })}

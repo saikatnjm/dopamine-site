@@ -1,22 +1,25 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { GameCard } from "@/components/games/game-card";
 import { chip } from "@/components/ui/styles";
-import { listGames } from "@/data/games";
+import { GAME_HREF_OVERRIDES, listGames } from "@/data/games";
 import { gameIsPlayable } from "@/lib/activities";
 import { getI18n } from "@/lib/i18n/server";
+import { staticPageMetadata } from "@/lib/seo-pages";
+import { JsonLd } from "@/components/seo/json-ld";
+import { Breadcrumbs } from "@/components/seo/breadcrumbs";
+import { itemListLd } from "@/lib/seo";
+import { t } from "@/lib/i18n/core";
 
-export const metadata: Metadata = {
-  title: "Games — Free 30-Second Reflex Games",
-  description: "Quick, funny reflex games about everyday Dhaka chaos. About 30 seconds each, free, no sign-up.",
-  alternates: { canonical: "/games" },
-};
+export const metadata = staticPageMetadata("games", "/games");
 
 export default async function GamesPage() {
   const { lang, d } = await getI18n();
   const games = listGames();
+  const listed = games.filter((g) => !(g.slug in GAME_HREF_OVERRIDES) && gameIsPlayable(g.slug));
   return (
     <main className="mx-auto w-full max-w-5xl px-4 pt-6">
+      <JsonLd ld={itemListLd("Hottogol games", listed.map((g) => ({ name: t(g.title, "en"), path: `/games/${g.slug}` })))} />
+      <Breadcrumbs items={[{ name: d.navGames }]} />
       <h1 className="font-display text-4xl font-extrabold sm:text-5xl">
         {d.gamesTitle} <span aria-hidden>🎮</span>
       </h1>
