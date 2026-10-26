@@ -58,6 +58,7 @@ data/
   categories.ts
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   divisions.ts           8 divisions → 64 districts (validated at import)
+  district-clues.ts      Guess the District clues (sourced; owner verifies; validated at import)
   experiences/index.ts   registry list; one file per experience
   games/index.ts         games registry (slug, title, accent…); games/<slug>.ts = copy
   dialects/              regional dialect content (districts, regions, concepts, forms/, sources, map) + README
@@ -246,6 +247,12 @@ components/games/        game cards + client game components
 
     With this outcome table even perfect play beats always-slog by only 1–3 points, so the plan's "smart 55–65 %" can't be reached by tuning the target. Changing that needs an outcome-table change (owner decision). Re-run a bot sim if you change numbers.
   - Not in `DAILY_ROTATION` yet (separate, owner-approved change). In Hot right now for the SA tour.
+- **Guess the District** (`/games/guess-district`, code `gd`, maxScore 10, Phase 46, plan `docs/plans/2026-10-25-phase-46-guess-the-district.md`):
+  - **Round** (`lib/games/guess-district.ts`, pure): 10 questions from (verified clue pool, seed) — 4 `locate` (map with one district filled), then `shape` (outline alone, viewBox = `bboxOf(path)`), then ≤ 2 `clue`; fewer verified clues → more shapes. No answer twice; the 6 smallest districts are never shape answers. Distractors: locate = other divisions, shape = 1 of the 4 nearest + 2 random, clue = 1 same-division + 2 random. Clue pool sorted by id before picking (adding clues may change old seeds' clue picks, like `ancholik-quiz`).
+  - **Daily:** seed = `hashString("hottogol:guess-district:" + bdDateKey)`, number from `EPOCH_KEY` 2026-10-26 = #1 (`lib/games/guess-district-daily.ts`, map-free so the homepage card stays light). Date pinned via `getPinnedKey` (shared with `/daily`); after midnight a "🌙 new puzzle" banner offers `repinDaily()` instead of swapping. Record `localStorage["hottogol:guess-district:v1:<date>"]` = `{ first, best, attempts, grid }` (`first` = official). Practice = `newSeed()`, never touches the record. Not in `DAILY_ROTATION` (own daily number; owner decision).
+  - **No answer leaks:** question visuals use neutral `aria-label`s and `DistrictMap anonymous` (no `data-district`). `DistrictMap` gained opt-in `fills` (colour overrides) and `anonymous` props.
+  - **Clues** (`data/district-clues.ts`, rules + validation `lib/district-clues.ts`): facts about places — same rule as dialects: sourced, `needs_review` on import, **only the owner sets `verified`**, scored rounds use verified only. Validation fails the build on unknown districts/sources, missing sources, duplicate ids, or a clue containing the district's EN/BN name or an old spelling (`OLD_SPELLINGS`). Review list: `npm run content:checklist` also writes `data/district-clues-review/<date>-district-clue-checklist.md`; `validate:content` checks clues too.
+  - Ranks (ids permanent): lost-tourist / bus-window-expert / local-guide / human-gps / district-legend. Result shares a spoiler-free 🟩🟥 grid; `ShareActions` challenge link replays the same seed. Achievement `district-detective` (10/10). Events add `mode` (daily|practice|challenge), now in the GA allowlist (`lib/analytics-taxonomy.ts`; other games' `mode` params reach GA too). Homepage card `components/games/guess-district-card.tsx` under the Daily card.
 - **My Bangladesh Map** (`/games/my-bangladesh`, Phase 44, plan `docs/plans/2026-10-25-phase-44-my-bangladesh-map.md`):
   - **What it is:** tap the districts you've been to. You get a count, a title, badges, a 9:16 poster and a `?v=` friend link. It's self-reported, so it's **not** in `CHALLENGE_GAMES` and there are no achievements.
   - **Rules** (`lib/games/my-bangladesh.ts`, pure):
@@ -610,6 +617,7 @@ The regional-language content is the main attraction; the personality test is se
 - [x] Phase 43 — Concept × region dialect model, researched content (282 sourced forms), শব্দের মানচিত্র + region pages, তুমি কোন এলাকার মানুষ? detective, map posters
 - [x] Phase 44 — My Bangladesh Map (`/games/my-bangladesh`): districts-visited map, titles, badges, poster, `?v=` friend compare (`docs/plans/2026-10-25-phase-44-my-bangladesh-map.md`)
 - [x] Phase 45 — Book Cricket (`/games/book-cricket`): page-flip cricket, defend/slog, teacher alert, `bk` challenges (`docs/plans/2026-10-25-phase-45-book-cricket.md`)
-- [ ] Phase 46 — Guess the District (`/games/guess-district`) — planned: `docs/plans/2026-10-25-phase-46-guess-the-district.md`
+- [x] Phase 46 — Guess the District (`/games/guess-district`): daily + practice district quiz (map, shape, clue), spoiler-free grid, `gd` challenges, homepage card (`docs/plans/2026-10-25-phase-46-guess-the-district.md`)
+- [ ] Owner: review district clues (`npm run content:checklist` → `data/district-clues-review/`) → verify/reject → verified clues join rounds
 - [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

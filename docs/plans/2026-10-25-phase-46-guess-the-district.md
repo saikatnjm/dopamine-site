@@ -1,6 +1,8 @@
 # Phase 46: Guess the District (কোন জেলা?)
 
-**Status:** planned · **Written:** 2026-10-25 · **Estimated size:** about 2 days for code, plus a
+**Status:** built, PR branch `game/guess-district` (from `main` after #37), waiting for the owner to test and merge · **Written:** 2026-10-25
+
+**Decisions (2026-10-26):** owner verifies clues (checklist) · clue research now, in parallel (imported as `needs_review`) · homepage card under the Daily card · not in `DAILY_ROTATION` · `mode` goes to GA · **Estimated size:** about 2 days for code, plus a
 separate content research and review step
 
 **Index:** [ideas backlog](2026-10-25-ideas-backlog.md)
@@ -232,16 +234,16 @@ another.
 
 ## 11. Acceptance checklist
 
-- [ ] `npm run check` passes in Docker. The content validator rejects bad clues.
-- [ ] Daily: the same puzzle for two browsers on the same BD date. Midnight shows the "new puzzle"
+- [x] `npm run check` passes in Docker. The content validator rejects bad clues.
+- [x] Daily: the same puzzle for two browsers on the same BD date. Midnight shows the "new puzzle"
       banner instead of swapping a running round. The countdown is correct.
-- [ ] Practice and challenge links work. A challenge replays the same questions.
-- [ ] No answer leaks in the DOM or ARIA before answering. Keyboard play works.
-- [ ] 360 / 390 / 412 px: no horizontal scroll, the silhouette is readable, options are ≥ 44 px.
-- [ ] Only `verified` clues appear. The owner has the review checklist.
-- [ ] EN + BN complete. The map credit line is visible wherever the map shows.
-- [ ] AGENTS.md updated (a Guess the District section: daily seed, clue content rules, ids), Phase 46
-      ticked. This plan and the backlog updated. PR opened, not merged.
+- [x] Practice and challenge links work. A challenge replays the same questions.
+- [x] No answer leaks in the DOM or ARIA before answering. Keyboard play works.
+- [x] 360 / 390 / 412 px: no horizontal scroll, the silhouette is readable, options are ≥ 44 px.
+- [x] Only `verified` clues appear. The owner has the review checklist (122 researched clues, all `needs_review`, `data/district-clues-review/`).
+- [x] EN + BN complete. The map credit line is visible wherever the map shows.
+- [x] AGENTS.md updated (a Guess the District section: daily seed, clue content rules, ids), Phase 46
+      ticked. This plan and the backlog updated. Branch pushed for a PR, not merged.
 
 ## 12. Open questions for the owner (defaults in bold)
 

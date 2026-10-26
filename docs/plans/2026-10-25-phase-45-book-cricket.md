@@ -1,6 +1,6 @@
 # Phase 45: Book Cricket (বই ক্রিকেট)
 
-**Status:** built, PR branch `game/book-cricket` (stacked on `feat/my-bangladesh-map`; rebase onto `main` after Phase 44 merges), waiting for the owner to test and merge · **Written:** 2026-10-25
+**Status:** shipped (#37, merged to `main`) · **Written:** 2026-10-25
 
 **Decisions (2026-10-25):** stack on Phase 44 · add `"school"` tag · Hot right now replaces Job Resignation · teacher alert in v1 · not in `DAILY_ROTATION` in this PR · **Estimated size:** about 1.5–2 days
 

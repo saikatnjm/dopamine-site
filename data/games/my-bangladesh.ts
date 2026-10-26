@@ -74,6 +74,7 @@ export const myBdCopy = {
   seeTitle: { en: "🏆 See my title", bn: "🏆 আমার টাইটেল দেখাও" },
   seeTitleEmpty: { en: "Tap at least one district first", bn: "আগে অন্তত একটা জেলা বাছো" },
   editMap: { en: "✏️ Edit my map", bn: "✏️ ম্যাপ এডিট করো" },
+  guessLink: { en: "📍 Think you know the map? Guess the District →", bn: "📍 ম্যাপ চেনো ভাবছো? কোন জেলা? খেলো →" },
   clear: { en: "Clear map", bn: "ম্যাপ মুছে দাও" },
   clearConfirm: { en: "Clear every district you've marked?", bn: "সব জেলার দাগ মুছে দেবে?" },
   resultKicker: { en: "You've been to", bn: "তুমি ঘুরেছো" },

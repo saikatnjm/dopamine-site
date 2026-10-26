@@ -117,7 +117,7 @@ function gaName(event: AnalyticsEvent, p: AnalyticsParams): GaEvent | null {
 }
 
 /** Params that may reach GA, and how to read each one. */
-const STRING_PARAMS = ["method", "source", "mood", "surface", "day", "viewer", "utm_source", "referrer", "from", "experiment", "variant"] as const;
+const STRING_PARAMS = ["method", "source", "mood", "surface", "day", "viewer", "utm_source", "referrer", "from", "experiment", "variant", "mode"] as const;
 const NUMBER_PARAMS = ["score", "position", "attempt", "target", "best"] as const;
 const BOOL_PARAMS = ["again", "retry"] as const;
 

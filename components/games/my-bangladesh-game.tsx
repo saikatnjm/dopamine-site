@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { DistrictMap } from "@/components/games/district-map";
 import { useI18n } from "@/components/providers/lang-provider";
@@ -290,6 +291,9 @@ function ResultView({ visited, onEdit }: { visited: string[]; onEdit: () => void
       <button type="button" onClick={onEdit} className={`${btnPrimary} bg-surface`}>
         {t(copy.editMap, lang)}
       </button>
+      <Link href="/games/guess-district" className="justify-self-center text-sm font-extrabold underline">
+        {t(copy.guessLink, lang)}
+      </Link>
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4" role="status" aria-live="polite">
         {toast && <p className="rounded-pill border-2 border-ink bg-ink px-5 py-2.5 font-bold text-bg shadow-pop">✅ {t(copy.linkCopied, lang)}</p>}
       </div>
