@@ -401,7 +401,26 @@ export const games: Game[] = [
       title: "Kacher Guti — Bangladeshi Marble Game Online (vs Computer)",
       description: "Play kacher guti (marbles) online: throw at the hole, then hit the marble your opponent names. Drag-and-flick physics, 3 opponents, challenge friends. Free, no sign-up.",
     },
+  },  {
+    slug: "latim-fight",
+    title: { en: "Latim Fight", bn: "লাটিম যুদ্ধ" },
+    tagline: { en: "Wind it. Throw it. Knock them out of the circle.", bn: "লেত্তি পেঁচাও, ছুড়ে মারো, বৃত্তের বাইরে ফেলো।" },
+    description: {
+      en: "The para spinning-top battle: wind the string, throw your লাটিম, and knock the other one out of the circle to win it. Spin matters: a good throw also defends. First to 3, with a ঘর কোপ finisher.",
+      bn: "পাড়ার লাটিম লড়াই: লেত্তি পেঁচাও, লাটিম ছোড়ো, অন্যের লাটিম বৃত্তের বাইরে ফেলে জিতে নাও। ঘোরানোটাই আসল: ভালো ঘোরানো লাটিম সহজে নড়ে না। আগে ৩টা, শেষে ঘর কোপ।",
+    },
+    emoji: "🌀",
+    accent: "tangerine",
+    durationSec: 120,
+    category: "random",
+    mechanic: "physics",
+    tags: ["school"],
+    seo: {
+      title: "Latim Fight — Spinning Top Battle Game (Bangladesh)",
+      description: "Play latim (spinning top) fight online: wind, throw and knock the other latim out of the circle. 3 opponents, ghor kop finisher, challenge friends. Free, no sign-up.",
+    },
   },
+
 ];
 
 /**

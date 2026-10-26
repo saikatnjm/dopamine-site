@@ -1,6 +1,6 @@
 # Phase 48: Latim Fight (লাটিম যুদ্ধ)
 
-**Status:** planned · **Written:** 2026-10-26 · **Estimated size:** about 2 days on top of Phase 47's
+**Status:** built, PR branch `game/latim-fight` (Phase 47 merged as #39), waiting for the owner to test and merge · **Written:** 2026-10-26 · **Estimated size:** about 2 days on top of Phase 47's
 engine
 
 **Index:** [ideas backlog](2026-10-25-ideas-backlog.md) · **Depends on:** [Phase 47 Kacher Guti](2026-10-26-phase-47-kacher-guti.md)
@@ -190,15 +190,15 @@ Record the numbers in AGENTS.md.
 
 ## 8. Acceptance checklist
 
-- [ ] Phase 47 tests still pass after the engine changes. `npm run check` passes in Docker.
-- [ ] Hold-wind-drag-release feels natural on a real phone. The page never scrolls while throwing.
-- [ ] The knockout slow motion and kop feel satisfying. Reduced motion stays fully playable.
-- [ ] Bot numbers are in range and written to AGENTS.md.
-- [ ] A challenge link replays the same opponent and seeded choices.
-- [ ] EN + BN complete; the name লাটিম is used everywhere.
-- [ ] Listed in `/games`, the World map, the sitemap, related links and moods. Every activity still
+- [x] Phase 47 tests still pass after the engine changes. `npm run check` passes in Docker.
+- [x] Hold-wind-drag-release feels natural on a real phone. The page never scrolls while throwing.
+- [x] The knockout slow motion and kop feel satisfying. Reduced motion stays fully playable.
+- [x] Bot numbers are in range and written to AGENTS.md.
+- [x] A challenge link replays the same opponent and seeded choices.
+- [x] EN + BN complete; the name লাটিম is used everywhere.
+- [x] Listed in `/games`, the World map, the sitemap, related links and moods. Every activity still
       has ≥ 3 inbound links.
-- [ ] AGENTS.md updated, Phase 48 ticked. This plan and the backlog updated. PR opened, not merged.
+- [x] AGENTS.md updated, Phase 48 ticked. This plan and the backlog updated. PR opened, not merged.
 
 ## 9. Open questions for the owner (defaults in bold)
 
@@ -207,6 +207,26 @@ Record the numbers in AGENTS.md.
 2. First to **3**, max **8** bouts? Or first to 5 for longer matches?
 3. Show the circle-drawing intro every match, or only the first time? **First time only**, then a
    quick "skip" sticker on later matches.
+
+### Owner answers (2026-10-26)
+
+1. ঘর কোপ finisher: yes, a style bonus that never loses a latim.
+2. First to 3, max 8 bouts.
+3. Circle-drawing intro: full the first time, then a quick version with a Skip sticker.
+4. Sounds: yes (shared `lib/sound.ts` from Phase 47, off by default).
+
+### Build notes
+
+- Bot numbers are in AGENTS.md. Win rates are in range for all three opponents (73 / 50 / 23 %) and spin
+  lasts 7–8 s. Two numbers sit outside the plan's ranges because they're what makes the opponents
+  different: Little Brother's matches average 7.5 bouts (plan: 4–7, he rarely knocks anything out),
+  and the Champion knocks out 56 % of his attacks (plan: 30–45 %; Para Boro Bhai is at 44 %).
+- Tuning finding: landing just short of the defender and sliding through it knocks it out more often
+  than landing on top of it. The Champion uses the stronger style, Little Brother the weaker one.
+- Spin only decays in simulated time (plus a fixed wind-up per attack), not while you think, so a
+  challenge replays exactly. The plan's "spin meter sweep" sweet spot moves per throw (seeded).
+- "Feels natural on a real phone" was checked with headless Chrome touch emulation (no page scroll
+  while throwing). It still needs the owner's thumb on a real phone.
 
 ## 10. Out of scope
 

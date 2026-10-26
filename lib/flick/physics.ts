@@ -8,9 +8,17 @@
 // same inputs replay the same world. No Math.sin/cos/atan2/exp here (their
 // last bits can differ by browser) and never Math.random().
 //
+// Optional spinning tops (Latim Fight): bodies with `spin` 0–1 lose spin
+// over time and in hits, wobble (a tiny seeded drift) when it runs low, fall
+// over at 0 (then skid with high friction), and act heavier in collisions
+// while spinning (gyroscopic stability). Spin is a number, not an angle.
+// An optional circular `arena` (no wall) flags bodies whose centre left it.
+//
 // Worlds are mutated in place by step() for speed; callers that need
 // snapshots use cloneWorld(). Units are world units (≈ CSS px at 360 wide)
 // and seconds.
+
+import { createRng, hashString } from "@/lib/random";
 
 export const STEP_MS = 1000 / 120;
 export const DT = STEP_MS / 1000;
@@ -29,6 +37,29 @@ export type Body = {
   mass: number;
   /** Fell into a hole: no longer moves or collides. */
   holed?: boolean;
+  /** Spinning top only: 0–1. Absent = never spins (marbles). */
+  spin?: number;
+  /** Spin ran out: lying on its side. */
+  fallen?: boolean;
+  /** Centre is outside the world's arena circle. */
+  out?: boolean;
+};
+
+export type SpinModel = {
+  /** Spin lost per second. */
+  decay: number;
+  /** Effective mass in hits = mass × (1 + spin × gyro). */
+  gyro: number;
+  /** Spin lost per unit of impulse ÷ effective mass. */
+  loss: number;
+  /** Below this spin a top wobbles (drifts). */
+  wobbleAt: number;
+  /** Max drift speed at spin 0 (units / s, position only — never counts as moving). */
+  drift: number;
+  /** Rolling friction for a fallen top. */
+  fallenFriction: number;
+  /** Seeds the wobble directions. */
+  seed: number;
 };
 
 export type Hole = { x: number; y: number; r: number };
@@ -46,17 +77,29 @@ export type World = {
   /** Fraction of speed kept (reversed) when a body hits a wall. */
   wallBounce: number;
   steps: number;
+  spin?: SpinModel;
+  arena?: { x: number; y: number; r: number };
 };
 
 export type Contact = { a: string; b: string; impulse: number; step: number };
-export type StepEvents = { contacts: Contact[]; holed: string[] };
+export type StepEvents = { contacts: Contact[]; holed: string[]; fallen: string[] };
+
+/** Steps per wobble direction change. */
+const DRIFT_BUCKET = 30;
 
 export function speedOf(b: Body): number {
   return Math.sqrt(b.vx * b.vx + b.vy * b.vy);
 }
 
 export function cloneWorld(w: World): World {
-  return { ...w, bodies: w.bodies.map((b) => ({ ...b })), holes: w.holes.map((h) => ({ ...h })), bounds: { ...w.bounds } };
+  return {
+    ...w,
+    bodies: w.bodies.map((b) => ({ ...b })),
+    holes: w.holes.map((h) => ({ ...h })),
+    bounds: { ...w.bounds },
+    ...(w.spin ? { spin: { ...w.spin } } : {}),
+    ...(w.arena ? { arena: { ...w.arena } } : {}),
+  };
 }
 
 export function bodyById(w: World, id: string): Body | undefined {
@@ -85,11 +128,14 @@ export function speedFor(distance: number, friction: number): number {
 export function step(w: World): StepEvents {
   const contacts: Contact[] = [];
   const holed: string[] = [];
-  const decel = w.friction * DT;
+  const fallen: string[] = [];
+  const sm = w.spin;
   const live = w.bodies.filter((b) => !b.holed);
+  const massOf = (b: Body) => (sm && b.spin !== undefined ? b.mass * (1 + b.spin * sm.gyro) : b.mass);
 
   // 1. Friction, then move.
   for (const b of live) {
+    const decel = (sm && b.fallen ? sm.fallenFriction : w.friction) * DT;
     const v = speedOf(b);
     if (v <= decel) {
       b.vx = 0;
@@ -118,8 +164,8 @@ export function step(w: World): StepEvents {
         const d = Math.sqrt(d2);
         const nx = d > 1e-9 ? dx / d : 1;
         const ny = d > 1e-9 ? dy / d : 0;
-        const ia = 1 / a.mass;
-        const ib = 1 / b.mass;
+        const ia = 1 / massOf(a);
+        const ib = 1 / massOf(b);
         // Push apart by inverse mass so they never stay overlapped.
         const overlap = min - d;
         a.x -= (nx * overlap * ia) / (ia + ib);
@@ -135,6 +181,9 @@ export function step(w: World): StepEvents {
         b.vx += impulse * ib * nx;
         b.vy += impulse * ib * ny;
         contacts.push({ a: a.id, b: b.id, impulse, step: w.steps });
+        // Hits cost spin; the lighter (lower-spin) top loses more.
+        if (sm && a.spin !== undefined) a.spin = Math.max(0, a.spin - sm.loss * impulse * ia);
+        if (sm && b.spin !== undefined) b.spin = Math.max(0, b.spin - sm.loss * impulse * ib);
       }
     }
   }
@@ -170,8 +219,42 @@ export function step(w: World): StepEvents {
     }
   }
 
+  // 5. Spin: decay, wobble drift, fall over at 0.
+  if (sm) {
+    for (const b of live) {
+      if (b.spin === undefined || b.fallen) continue;
+      b.spin -= sm.decay * DT;
+      if (b.spin <= 0) {
+        b.spin = 0;
+        b.fallen = true;
+        fallen.push(b.id);
+        continue;
+      }
+      if (b.spin < sm.wobbleAt) {
+        const rng = createRng(hashString(`${sm.seed}:drift:${b.id}:${Math.floor(w.steps / DRIFT_BUCKET)}`));
+        let dx = 0;
+        let dy = 0;
+        let l = 0;
+        do {
+          dx = rng() * 2 - 1;
+          dy = rng() * 2 - 1;
+          l = Math.sqrt(dx * dx + dy * dy);
+        } while (l < 0.2 || l > 1);
+        const amount = sm.drift * (1 - b.spin / sm.wobbleAt) * DT;
+        b.x += (dx / l) * amount;
+        b.y += (dy / l) * amount;
+      }
+    }
+  }
+
+  // 6. Arena: the centre left the circle → out (no wall).
+  if (w.arena) {
+    const { x, y, r } = w.arena;
+    for (const b of live) b.out = (b.x - x) * (b.x - x) + (b.y - y) * (b.y - y) > r * r;
+  }
+
   w.steps++;
-  return { contacts, holed };
+  return { contacts, holed, fallen };
 }
 
 export function isSettled(w: World): boolean {
@@ -188,11 +271,12 @@ export function freeze(w: World): void {
 
 /** Run until settled (or maxSteps). Returns all events in order. Used by rules, tests and bots. */
 export function simulate(w: World, maxSteps = 120 * 20): StepEvents {
-  const all: StepEvents = { contacts: [], holed: [] };
+  const all: StepEvents = { contacts: [], holed: [], fallen: [] };
   for (let i = 0; i < maxSteps && !isSettled(w); i++) {
     const e = step(w);
     all.contacts.push(...e.contacts);
     all.holed.push(...e.holed);
+    all.fallen.push(...e.fallen);
   }
   freeze(w);
   return all;

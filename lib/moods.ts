@@ -45,6 +45,7 @@ const MOOD_KEYS: Record<MoodId, readonly string[]> = {
     "g:traffic-boss",
     "g:book-cricket",
     "g:kacher-guti",
+    "g:latim-fight",
     "g:traffic-dodge",
     "g:cng-catch",
     "g:dont-tap",

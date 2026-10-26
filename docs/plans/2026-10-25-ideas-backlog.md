@@ -19,8 +19,8 @@ Status values: `idea` → `planned` (plan file written) → `building` → `ship
 | Phase 44 | [My Bangladesh Map](2026-10-25-phase-44-my-bangladesh-map.md): tap the districts you've visited, get a title and a poster | Rides the "Unseen Bangladesh" district-map trend (Facebook, since ~Oct 6–7, 2026). The trend is fading, so ship fast | shipped (#36) |
 | Phase 45 | [Book Cricket](2026-10-25-phase-45-book-cricket.md): the classroom page-flip cricket game | School nostalgia (pen fight went viral). Bangladesh plays West Indies at home (Oct 28 to Nov 9) and tours South Africa (Nov 15 to Dec 13, 2026) | shipped (#37) |
 | Phase 46 | [Guess the District](2026-10-25-phase-46-guess-the-district.md): daily 10-question district quiz with a Wordle-style share grid | Same trend as Phase 44. Shape questions need no fact-checking. Food and landmark clues need researched content first | shipped (#38) |
-| Phase 47 | [Kacher Guti](2026-10-26-phase-47-kacher-guti.md): village marble game vs the computer, plus the shared `lib/flick` physics engine | Owner's pick (school and para nostalgia). Rules researched from Banglapedia, bn Wikipedia and newspapers | building (PR open, awaiting merge) |
-| Phase 48 | [Latim Fight](2026-10-26-phase-48-latim-fight.md): লাটিম battle vs the computer (বেল্লা পার + ঘর কোপ) | Owner's pick. Reuses the Phase 47 engine, so build after 47 is merged | planned |
+| Phase 47 | [Kacher Guti](2026-10-26-phase-47-kacher-guti.md): village marble game vs the computer, plus the shared `lib/flick` physics engine | Owner's pick (school and para nostalgia). Rules researched from Banglapedia, bn Wikipedia and newspapers | shipped (#39) |
+| Phase 48 | [Latim Fight](2026-10-26-phase-48-latim-fight.md): লাটিম battle vs the computer (বেল্লা পার + ঘর কোপ) | Owner's pick. Reuses the Phase 47 engine, so build after 47 is merged | building (PR open, awaiting merge) |
 
 Phases 44 and 46 reuse the 64-district SVG map from Phase 43 (`data/dialects/map.ts`), which is on
 `main` since #35. Phase 46 should also reuse Phase 44's district map component, divisions data and
