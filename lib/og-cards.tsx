@@ -40,6 +40,7 @@ const PAGE_CARD: Partial<Record<PageSeoId, { emoji: string; accent: Experience["
   excuses: { emoji: "😂", accent: "marigold", cta: "Get an excuse" },
   "dhaka-person": { emoji: "🏙️", accent: "sky", cta: "Take the quiz" },
   about: { emoji: "🧠", accent: "cng", cta: "Say hi" },
+  blog: { emoji: "📝", accent: "sky", cta: "Read" },
 };
 
 export function pageOgImage(id: PageSeoId) {
@@ -77,5 +78,16 @@ export function categoryOgImage(slug: string) {
     subtitle: short(c ? t(c.description, "en") : "Free one-minute simulators about everyday chaos."),
     cta: "Play free",
     accent: "violet",
+  });
+}
+
+export function blogOgImage(post: { title: { en: string }; lead: { en: string }; cover: { emoji: string; accent: Experience["accent"] } } | undefined) {
+  return renderOgCard({
+    eyebrow: "Hottogol blog",
+    emoji: post?.cover.emoji ?? "📝",
+    title: post?.title.en ?? "Hottogol blog",
+    subtitle: short(post?.lead.en ?? "Traditional games, places and words of Bangladesh."),
+    cta: "Read",
+    accent: post?.cover.accent ?? "sky",
   });
 }

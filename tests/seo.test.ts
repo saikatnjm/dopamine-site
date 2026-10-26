@@ -4,6 +4,7 @@ import { GUIDE_SLUGS } from "@/data/guides";
 import { NOINDEX_PAGES, PAGE_SEO, type PageSeoId } from "@/data/seo";
 import { SEO_BN } from "@/data/seo-bn";
 import { gameIsPlayable } from "@/lib/activities";
+import { publishedPosts } from "@/lib/blog-content";
 import { listRegions, REGION_INDEX_MIN } from "@/lib/dialects/content";
 import { listCategories, listExperiences } from "@/lib/experience/registry";
 import { LANGS, type Lang } from "@/lib/i18n/core";
@@ -33,6 +34,7 @@ function indexable(lang: Lang): Entry[] {
     const seo = regionSeo(r.id, lang)!;
     if (seo.forms >= REGION_INDEX_MIN) add(`region:${r.id}`, seo);
   }
+  for (const p of publishedPosts()) add(`blog:${p.slug}`, p.seo[lang]);
   return out;
 }
 

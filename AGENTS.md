@@ -63,6 +63,7 @@ data/
   upcoming.ts            "Cooking…" teaser cards (not playable, not in sitemap)
   divisions.ts           8 divisions → 64 districts (validated at import)
   seo.ts                 search titles + descriptions for the site's own pages (PAGE_SEO, NOINDEX_PAGES)
+  blog/                  articles (one file each; owner publishes) + index.ts
   how-to/                "How to play" + tips + FAQ per activity (EN + BN; lib/how-to.ts rules)
   seo-bn.ts              Bangla search titles + descriptions for every page, game, simulator, guide (owner polishes)
   district-clues.ts      Guess the District clues (sourced; owner verifies; validated at import)
@@ -78,6 +79,7 @@ lib/
   og-cards.tsx           registry-driven share cards (gameOgImage, pageOgImage, guideOgImage, categoryOgImage)
   seo.ts                 pageMetadata(), JSON-LD builders (breadcrumbs, item lists, organization, activityLd), length limits
   seo-pages.ts           async metadata per page type (static, game, experience, guide, category, region)
+  blog.ts, blog-content.ts  blog types/validation (pure) and validated access (published, drafts in preview)
   seo-text.ts            pure title/description lookup per language (pageSeo, gameSeo, …, categorySeo, regionSeo)
   i18n/paths.ts          localePath(path, lang), stripLang(), langOfPath() (client-safe)
   experience/
@@ -452,6 +454,16 @@ The regional-language content is the main attraction; the personality test is se
 - **How to play + FAQ** (step C): every activity page renders `<HowToPlay activity="g:<slug>" name=… />` (`components/seo/how-to.tsx`) under the game: 3–5 steps, 2–3 tips, exactly 3 FAQs + matching `FAQPage` JSON-LD. Content in `data/how-to/*.ts` (arcade, turn-based, bangladesh, stories), keyed by activity key, EN + BN. Rules in `lib/how-to.ts` + `tests/how-to.test.ts`: every playable activity has one; no step/tip/answer repeats across activities or guides; only describe what the code really does (no invented numbers or odds); Bangla ending/rank names must match the game's own copy. A new activity needs its entry (the test fails otherwise).
 - JSON-LD helpers take the language (`activityLd(path, ld, lang)`, `itemListLd(name, items, lang)`, `breadcrumbLd(items, lang)`; `<Breadcrumbs>` reads it itself) so every URL points at the page's own language.
 
+## Blog (`/blog`, Phase 50, plan `docs/plans/2026-10-26-phase-50-blog.md`)
+
+- **What:** researched articles that answer informational searches (rules of traditional games, the 64 districts, dialect words) and send readers into a matching game. Never "play X online" or "games when bored" angles (game pages and guides own those).
+- **Content:** one file per article in `data/blog/<slug>.ts`, listed in `data/blog/index.ts`; types + validation in `lib/blog.ts`, validated read access in `lib/blog-content.ts` (bad content fails the build): unique permanent slugs, real dates (not future, `updated ≥ published`), known activity/district keys, internal `[text](/path)` links that resolve, sources required, EN + BN everywhere, ≥ 600 English words and ≥ 3 `h2`, no paragraph copied from another article, guide or how-to text. `tests/blog.test.ts` uses fake fixtures and also checks every article's SEO lengths before publishing.
+- **Editorial rule:** a research chat drafts from sources it actually opened, `status: "needs_review"`, `published: ""`. **Only the owner sets `status: "published"` + the date.** Never invent facts. Quality over volume (1–2 a week at most).
+- **Drafts** show only in the dev server (or `BLOG_PREVIEW=1`) with a DRAFT banner and noindex; never in the sitemap, feed, menu or search. With nothing published, `/blog` is an empty, noindex page and the menu link is hidden.
+- **Pages:** `app/[lang]/blog` (cards + topic chips, a tiny client filter) and `app/[lang]/blog/[slug]` (breadcrumbs, body blocks via `components/blog/post-body.tsx`, ▶ Play it now, FAQ, 📚 Sources, More from the blog, RelatedLinks). Tables scroll inside their box. The `map` block reuses `DistrictMap` (division colours, CC BY credit). No byline; JSON-LD `BlogPosting` publisher/author = `#organization`, never a person (standing instruction 9).
+- **SEO/discovery:** `blogIndexMetadata`/`blogPostMetadata`, `blogOgImage`, sitemap (published, real `lastModified`), RSS `app/blog/feed.xml/route.ts` (English, published only; outside `[lang]`, the proxy skips `.xml`). Header 📝 link after 🎮 Games (icon below 1024 px), footer Explore + "Read" group (3 newest). Game pages show "📖 Read: …" (in `HowToPlay`) when a published article plays that game. Clicks: `recommendation_click` {source: "blog" | "game_article"}.
+- **Header width:** icons only below 1024 px for Blog and the small Surprise button; logo text from 460 px. Re-run a header width sweep (360–1100 px, both languages) when adding header items.
+
 ## Internal links (`<RelatedLinks>`, every activity + content page)
 
 - Server-rendered, deterministic (crawlable) "keep playing" sections under each activity page: `components/related/related-links.tsx`; logic `lib/related.ts`. Client-side, personalised "LIKED THAT?" on result screens is separate.
@@ -662,7 +674,8 @@ The regional-language content is the main attraction; the personality test is se
 - [x] Phase 47 — Kacher Guti (`/games/kacher-guti`): marble game vs the computer, shared `lib/flick` physics engine, opt-in sounds, `kg` challenges (`docs/plans/2026-10-26-phase-47-kacher-guti.md`)
 - [x] Phase 48 — Latim Fight (`/games/latim-fight`): spinning-top battle vs the computer on the `lib/flick` spin model, ঘর কোপ finisher, `lt` challenges (`docs/plans/2026-10-26-phase-48-latim-fight.md`)
 - [ ] Phase 49 — Pro-level SEO: [x] A technical (shared metadata, share images for every page, breadcrumbs, structured data, verification, SEO tests) · [x] B `/bn` URLs (`app/[lang]`, `proxy.ts`, hreflang, Bangla SEO text, static pages) · [x] C how-to + FAQ for all 30 activities — `docs/plans/2026-10-26-phase-49-seo.md`
-- [ ] Phase 50 — Blog (`/blog`, header + footer menu; researched, owner-published articles linking into games; after Phase 49 step B) — planned: `docs/plans/2026-10-26-phase-50-blog.md`
+- [x] Phase 50 — Blog (`/blog`, header + footer menu, RSS, 3 researched launch drafts awaiting the owner's review/publish) — `docs/plans/2026-10-26-phase-50-blog.md`
+- [ ] Owner: review + publish the blog drafts (`data/blog/*.ts`: fix BN, set `status: "published"` + `published` date); decide whether Kacher Guti should follow the traditional বাদ rule
 - [ ] Owner: review district clues (`npm run content:checklist` → `data/district-clues-review/`) → verify/reject → verified clues join rounds
 - [ ] Owner: review dialect forms (`npm run content:checklist`) → verify/reject → verified forms unlock the scored quiz
 - [ ] Owner: run production Docker image locally (`docker compose up --build`)

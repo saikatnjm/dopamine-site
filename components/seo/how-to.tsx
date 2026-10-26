@@ -1,6 +1,9 @@
+import { TrackClicks } from "@/components/blog/track-clicks";
+import Link from "@/components/i18n/link";
 import { JsonLd } from "@/components/seo/json-ld";
 import { card } from "@/components/ui/styles";
 import { HOW_TO } from "@/data/how-to";
+import { articleFor } from "@/lib/blog-content";
 import { fmt, t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 
@@ -13,8 +16,18 @@ export async function HowToPlay({ activity, name }: { activity: string; name: st
   if (!h) return null;
   const { lang, d } = await getI18n();
   const id = `how-${activity.replace(/[^a-z0-9]/g, "-")}`;
+  const article = articleFor(activity);
   return (
     <section aria-labelledby={id} className="mt-12">
+      {article && (
+        <TrackClicks source="game_article" from={activity} hrefs={{ [`/blog/${article.slug}`]: `blog:${article.slug}` }}>
+          <p className="mb-8 font-bold">
+            <Link href={`/blog/${article.slug}`} className="underline decoration-2 underline-offset-4 hover:text-ink-muted">
+              {fmt(d.blogRead, { title: article.title[lang] })}
+            </Link>
+          </p>
+        </TrackClicks>
+      )}
       <JsonLd
         ld={{
           "@type": "FAQPage",
