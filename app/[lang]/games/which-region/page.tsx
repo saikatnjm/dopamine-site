@@ -14,6 +14,7 @@ import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
 import { activityLd } from "@/lib/seo";
 import { gameMetadata } from "@/lib/seo-pages";
+import { HowToPlay } from "@/components/seo/how-to";
 
 type Props = { searchParams: Promise<{ r?: string | string[] }> };
 
@@ -83,6 +84,7 @@ export default async function WhichRegionPage({ searchParams }: Props) {
           </Link>
         </div>
       )}
+      <HowToPlay activity={`g:${GAME_SLUG}`} name={t(game.title, lang)} />
       <RelatedLinks current={`g:${GAME_SLUG}`} />
     </main>
   );

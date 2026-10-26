@@ -11,6 +11,7 @@ import { pageSeo } from "@/lib/seo-text";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { activityLd } from "@/lib/seo";
+import { HowToPlay } from "@/components/seo/how-to";
 
 type Props = { searchParams: Promise<{ c?: string | string[]; s?: string | string[]; go?: string | string[] }> };
 
@@ -48,6 +49,7 @@ export default async function ExcusesPage({ searchParams }: Props) {
         <p className="mt-2 text-lg text-ink-muted">{t(copy.lead, lang)}</p>
       </header>
       <ExcuseGenerator initial={initial} shared={shared} />
+      <HowToPlay activity="p:excuses" name={t(copy.title, lang)} />
       <RelatedLinks current="p:excuses" />
     </main>
   );

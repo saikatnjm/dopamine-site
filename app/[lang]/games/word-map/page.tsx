@@ -13,6 +13,7 @@ import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { JsonLd } from "@/components/seo/json-ld";
 import { activityLd } from "@/lib/seo";
 import { gameMetadata } from "@/lib/seo-pages";
+import { HowToPlay } from "@/components/seo/how-to";
 
 const SLUG = "word-map";
 const game = getGame(SLUG);
@@ -68,6 +69,7 @@ export default async function WordMapPage({ searchParams }: Props) {
             ))}
         </ul>
       </nav>
+      <HowToPlay activity={`g:${SLUG}`} name={t(game.title, lang)} />
       <RelatedLinks current={`g:${SLUG}`} />
     </main>
   );

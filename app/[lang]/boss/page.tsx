@@ -9,6 +9,7 @@ import { pageSeo } from "@/lib/seo-text";
 import { JsonLd } from "@/components/seo/json-ld";
 import { Breadcrumbs } from "@/components/seo/breadcrumbs";
 import { activityLd } from "@/lib/seo";
+import { HowToPlay } from "@/components/seo/how-to";
 export const generateMetadata = () => staticPageMetadata("boss", "/boss");
 
 export default async function BossPage() {
@@ -37,6 +38,7 @@ export default async function BossPage() {
         <p className="mt-2 text-lg text-ink-muted">{t(copy.localNote, lang)}</p>
       </header>
       <BossArena mode={{ kind: "weekly" }} />
+      <HowToPlay activity="g:traffic-boss" name={t(copy.weeklyBoss, lang)} />
       <RelatedLinks current="g:traffic-boss" />
     </main>
   );

@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { experiencesInCategory, listCategories, listExperiences } from "@/lib/experience/registry";
+import { publishedPosts } from "@/lib/blog-content";
 import { LANGS } from "@/lib/i18n/core";
 import { localePath } from "@/lib/i18n/paths";
 import { absoluteUrl } from "@/lib/site";
@@ -56,6 +57,9 @@ function pages(): MetadataRoute.Sitemap {
     ...listRegions()
       .filter((r) => formsForRegion(r.id).length >= REGION_INDEX_MIN)
       .map((r) => ({ url: absoluteUrl(`/games/word-map/${r.id}`), changeFrequency: "monthly" as const, priority: 0.6 })),
+    // Blog: the index once something is published, and every published article (real dates only).
+    ...(publishedPosts().length > 0 ? [{ url: absoluteUrl("/blog"), changeFrequency: "weekly" as const, priority: 0.7, lastModified: publishedPosts()[0]!.updated ?? publishedPosts()[0]!.published }] : []),
+    ...publishedPosts().map((p) => ({ url: absoluteUrl(`/blog/${p.slug}`), changeFrequency: "monthly" as const, priority: 0.7, lastModified: p.updated ?? p.published })),
     { url: absoluteUrl("/about"), changeFrequency: "yearly", priority: 0.3 },
     { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.2 },
     { url: absoluteUrl("/terms"), changeFrequency: "yearly", priority: 0.2 },
