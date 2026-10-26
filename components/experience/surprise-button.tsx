@@ -44,11 +44,18 @@ export function SurpriseButton({ slugs, size = "lg", className = "", label, icon
 
   const classes = size === "lg" ? `${btnPrimary} bg-marigold` : smallButton;
   return (
-    <button type="button" onClick={roll} aria-busy={rolling} className={`${classes} whitespace-nowrap ${className}`}>
+    <button
+      type="button"
+      onClick={roll}
+      aria-busy={rolling}
+      // The small (header) button is icon-only on phones, so the header fits at 360 px.
+      aria-label={size === "lg" ? undefined : d.surprise}
+      className={`${classes} whitespace-nowrap ${className}`}
+    >
       <span aria-hidden className={`inline-block ${rolling ? "animate-spin-once" : ""} ${labelHidden ? "invisible" : ""}`}>
         {icon}
       </span>
-      <span className={labelHidden ? "invisible" : ""}>{size === "lg" ? (rolling ? d.rolling : (label ?? d.surpriseMe)) : d.surprise}</span>
+      <span className={`${labelHidden ? "invisible" : ""} ${size === "lg" ? "" : "hidden lg:inline"}`}>{size === "lg" ? (rolling ? d.rolling : (label ?? d.surpriseMe)) : d.surprise}</span>
     </button>
   );
 }

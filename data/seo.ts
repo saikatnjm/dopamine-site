@@ -69,6 +69,11 @@ export const PAGE_SEO = {
     description:
       "Explore Hottogol by world: Bangladesh (CNG, bus, bazar, dialects), Life (work, rent, decisions) and Arcade (reaction and flick games). Free.",
   },
+  blog: {
+    title: "Blog — Traditional Games, Places & Words of Bangladesh",
+    description:
+      "Researched articles on the games we grew up with, Bangladesh's districts and regional words — the rules, the history and where to play them.",
+  },
   viral: {
     title: "You Saw the Video. Now Try It Yourself.",
     description: "Play the Dhaka chaos from the video — traffic dodging, chicken crossing, CNG catching. Free, in your browser, no sign-up.",

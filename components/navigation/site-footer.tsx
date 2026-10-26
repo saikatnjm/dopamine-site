@@ -1,5 +1,6 @@
 import Link from "@/components/i18n/link";
 import { GUIDE_SLUGS, guides } from "@/data/guides";
+import { blogInMenu, visiblePosts } from "@/lib/blog-content";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
@@ -14,8 +15,13 @@ export async function SiteFooter() {
         { href: "/experiences", label: d.footerAll },
         { href: "/world", label: d.footerWorld },
         { href: "/games", label: d.footerGames },
+        ...(blogInMenu() ? [{ href: "/blog", label: d.navBlog }] : []),
       ],
     },
+    // The 3 newest articles (published; drafts too while previewing in dev).
+    ...(blogInMenu()
+      ? [{ title: d.footerRead, links: visiblePosts().slice(0, 3).map((p) => ({ href: `/blog/${p.slug}`, label: p.title[lang] })) }]
+      : []),
     {
       title: d.footerChallenges,
       links: [

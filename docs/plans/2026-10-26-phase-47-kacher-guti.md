@@ -39,6 +39,13 @@ Rules vary by area. These points agree across the sources:
 - **Banglapedia history note:** marbles arrived in the British period; before that, children played
   with clay balls.
 
+> **Correction (2026-10-26, Phase 50 blog research):** three of the sources below (bn Wikipedia,
+> kishorgonj.com, bdnews24 Kidz) say the marble the others name, the **বাদ**, is the one the shooter
+> must **not** touch: touching it costs a fine. Banglapedia doesn't mention naming at all. Our game
+> (opponent names the marble you must hit) therefore *inverts* the traditional rule. The blog article
+> `kacher-guti-rules` says so. Changing the game, or its "para marble game" intro copy, is an owner
+> decision.
+
 **Sources:**
 
 - [Banglapedia: Folk Games (Gulikhela)](https://en.banglapedia.org/index.php/Folk_Games)

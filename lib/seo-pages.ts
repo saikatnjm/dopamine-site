@@ -8,11 +8,12 @@ import { NOINDEX_PAGES, type PageSeoId } from "@/data/seo";
 import { gameIsPlayable } from "@/lib/activities";
 import { REGION_INDEX_MIN } from "@/lib/dialects/content";
 import { getLang } from "@/lib/i18n/server";
+import type { BlogPost } from "@/lib/blog";
 import { pageMetadata } from "@/lib/seo";
 import { categorySeo, experienceSeo, gameSeo, guideSeo, pageSeo, regionSeo } from "@/lib/seo-text";
 
 /** Static pages that have their own app/[lang]/<page>/opengraph-image.tsx. */
-const OWN_OG_IMAGE: ReadonlySet<PageSeoId> = new Set(["home", "games", "experiences", "bored", "boss", "daily", "world", "excuses", "dhaka-person", "about", "viral"]);
+const OWN_OG_IMAGE: ReadonlySet<PageSeoId> = new Set(["home", "games", "experiences", "bored", "boss", "daily", "world", "excuses", "dhaka-person", "about", "viral", "blog"]);
 
 export async function staticPageMetadata(id: PageSeoId, path: string): Promise<Metadata> {
   const lang = await getLang();
@@ -57,4 +58,21 @@ export async function regionMetadata(id: string): Promise<Metadata> {
   const seo = regionSeo(id, lang);
   if (!seo) return { title: "Region not found", robots: { index: false } };
   return pageMetadata({ ...seo, path: `/games/word-map/${id}`, lang, type: "article", noindex: seo.forms < REGION_INDEX_MIN, defaultImage: true });
+}
+
+/** Blog index: kept out of search until something is published. */
+export async function blogIndexMetadata(hasPublished: boolean): Promise<Metadata> {
+  const meta = await staticPageMetadata("blog", "/blog");
+  return {
+    ...meta,
+    ...(hasPublished ? {} : { robots: { index: false, follow: true } }),
+    alternates: { ...meta.alternates, types: { "application/rss+xml": "/blog/feed.xml" } },
+  };
+}
+
+/** An article (drafts — dev preview only — are noindex). */
+export async function blogPostMetadata(post: BlogPost | undefined): Promise<Metadata> {
+  if (!post) return { title: "Article not found", robots: { index: false } };
+  const lang = await getLang();
+  return pageMetadata({ ...post.seo[lang], path: `/blog/${post.slug}`, lang, type: "article", noindex: post.status !== "published" });
 }
