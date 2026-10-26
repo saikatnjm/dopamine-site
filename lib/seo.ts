@@ -61,8 +61,6 @@ export const organizationLd = (): Ld => ({
   name: siteConfig.name,
   url: absoluteUrl("/"),
   logo: absoluteUrl("/icon.svg"),
-  founder: { "@type": "Person", name: siteConfig.author.name, url: siteConfig.author.url },
-  sameAs: [siteConfig.author.url],
 });
 
 /** Publisher/author reference for page-level entities. */

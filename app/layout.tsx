@@ -3,7 +3,6 @@ import { Bricolage_Grotesque, Noto_Sans_Bengali } from "next/font/google";
 import { AchievementToaster } from "@/components/achievements/achievement-toaster";
 import { ActivityViewTracker } from "@/components/analytics/activity-view-tracker";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
-import { CreditBadge } from "@/components/navigation/github-credit";
 import { SiteFooter } from "@/components/navigation/site-footer";
 import { SiteHeader } from "@/components/navigation/site-header";
 import { ActivitiesProvider } from "@/components/providers/activities-provider";
@@ -87,7 +86,6 @@ export default async function RootLayout({
             </ActivitiesProvider>
           </div>
           <SiteFooter />
-          <CreditBadge />
           <AchievementToaster />
           <RecentPlaysRecorder />
         </LangProvider>

@@ -25,7 +25,6 @@ const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
 
 export const siteConfig = {
   name: "Hottogol",
-  author: { name: "saikatnjm", url: "https://github.com/saikatnjm" },
   tagline: "Tiny simulators for everyday chaos.",
   description:
     "Free one-minute simulators about everyday chaos — hail a Dhaka CNG, haggle, lose, and share the ending with friends. No sign-up.",
