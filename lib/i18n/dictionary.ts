@@ -37,7 +37,6 @@ const en = {
   footerTerms: "Terms",
   footerContact: "Contact",
   footerNote: "Made in Dhaka with too much cha ☕ · No accounts, no nonsense.",
-  madeBy: "Made by",
 
   heroBadge: "🎉 {n} simulators are live",
   heroA: "Tiny simulators for",
@@ -288,7 +287,6 @@ const bn: Dict = {
   footerTerms: "শর্তাবলি",
   footerContact: "যোগাযোগ",
   footerNote: "ঢাকায় বানানো, অনেক চা খেয়ে ☕ · কোনো অ্যাকাউন্ট নেই, কোনো ঝামেলা নেই।",
-  madeBy: "বানিয়েছেন",
 
   heroBadge: "🎉 {n}টি সিমুলেটর চালু!",
   heroA: "প্রতিদিনের",

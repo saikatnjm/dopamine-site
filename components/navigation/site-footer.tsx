@@ -3,7 +3,6 @@ import { GUIDE_SLUGS, guides } from "@/data/guides";
 import { t } from "@/lib/i18n/core";
 import { getI18n } from "@/lib/i18n/server";
 import { siteConfig } from "@/lib/site";
-import { GitHubIcon } from "./github-credit";
 
 export async function SiteFooter() {
   const { lang, d } = await getI18n();
@@ -77,16 +76,7 @@ export async function SiteFooter() {
         </nav>
       </div>
       <div className="border-t border-bg/15">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-2 px-4 pb-20 pt-4 text-center text-xs sm:flex-row sm:justify-between sm:pb-5 sm:text-left">
-          <a
-            href={siteConfig.author.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex min-h-9 items-center gap-2 rounded-pill text-sm font-bold underline-offset-4 hover:text-lime hover:underline"
-          >
-            <GitHubIcon className="size-4" />
-            {d.madeBy} @{siteConfig.author.name}
-          </a>
+        <div className="mx-auto flex w-full max-w-5xl justify-center px-4 py-5 text-center text-xs sm:justify-start sm:text-left">
           <p className="opacity-60">© {siteConfig.name}</p>
         </div>
       </div>

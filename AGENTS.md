@@ -582,9 +582,10 @@ The regional-language content is the main attraction; the personality test is se
 7. Keep this AGENTS.md current; record every new standing instruction here.
 8. Analytics = GA4 only. Do NOT add Vercel Analytics (owner decision). Site will be monetized later (Vercel Hobby is
    non-commercial → move to Vercel Pro or Cloudflare before ads).
-9. Always credit the creator: keep the GitHub badge (bottom-right corner) and
-   the footer "Made by @saikatnjm" link to https://github.com/saikatnjm
-   (`siteConfig.author`, `components/navigation/github-credit.tsx`).
+9. No creator credit or GitHub/ownership link anywhere on the site: no badge,
+   no "Made by" footer line, no author/founder links in structured data
+   (owner, 2026-10-26; replaces the earlier "always credit the creator" rule).
+   The README credit on the GitHub repo stays.
 10. Site URL: `NEXT_PUBLIC_SITE_URL` in Vercel; falls back to Vercel's production
     domain, never localhost, on Vercel (`lib/site.ts`).
 11. Follow the core instructions in this file. Match model to task: hand
