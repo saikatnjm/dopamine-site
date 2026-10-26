@@ -37,6 +37,7 @@ const GAMES: Record<ChallengeGame, ComponentType<GameProps>> = {
   // Server wrapper (passes the verified clue pool); its client game is its own chunk.
   "guess-district": GuessDistrictChallenge,
   "kacher-guti": dynamic(() => import("@/components/games/kacher-guti-game").then((m) => m.KacherGutiGame)),
+  "latim-fight": dynamic(() => import("@/components/games/latim-fight-game").then((m) => m.LatimFightGame)),
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

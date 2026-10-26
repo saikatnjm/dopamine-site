@@ -141,3 +141,24 @@ html:lang(bn) :is(h1, h2, h3) {
     scroll-behavior: auto !important;
   }
 }
+
+/* Latim Fight: the circle is scratched with a latim on a string (skipped with reduced motion). */
+@keyframes lt-draw {
+  from {
+    stroke-dashoffset: var(--len);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes lt-sweep {
+  to {
+    rotate: 360deg;
+  }
+}
+.lt-draw {
+  animation: lt-draw 2.6s linear both;
+}
+.lt-sweep {
+  animation: lt-sweep 2.6s linear both;
+}

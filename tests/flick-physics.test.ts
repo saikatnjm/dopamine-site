@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { aimAt, blockers, gauss } from "@/lib/flick/ai";
 import { aimFromDrag, pingPong, rotateDir } from "@/lib/flick/aim";
-import { cloneWorld, firstTouch, simulate, speedFor, step, stopDistance, type Body, type World } from "@/lib/flick/physics";
+import { cloneWorld, DT, firstTouch, simulate, speedFor, step, stopDistance, type Body, type World } from "@/lib/flick/physics";
 import { createRng } from "@/lib/random";
 
 const ball = (id: string, x: number, y: number, vx = 0, vy = 0): Body => ({ id, x, y, vx, vy, r: 8, mass: 1 });
@@ -136,5 +136,56 @@ describe("aim + ai", () => {
     w.bodies[0]!.vy = shot.dirY * shot.speed;
     expect(firstTouch(simulate(w).contacts, "s")).toBe("t");
     expect(blockers([ball("s", 0, 0), ball("t", 100, 0), ball("x", 50, 4)], ball("s", 0, 0), ball("t", 100, 0))).toBe(1);
+  });
+});
+
+describe("spinning tops (Latim Fight model)", () => {
+  const model = { decay: 0.12, gyro: 1.6, loss: 0.0009, wobbleAt: 0.25, drift: 10, fallenFriction: 2400, seed: 7 };
+  const top = (id: string, x: number, y: number, spin: number, vx = 0): Body => ({ id, x, y, vx, vy: 0, r: 13, mass: 1, spin });
+
+  it("spin decays to 0 in spin / decay seconds, then the top falls", () => {
+    const w = world([top("a", 0, 0, 0.6)], { spin: model });
+    const fallen: string[] = [];
+    let steps = 0;
+    while (!w.bodies[0]!.fallen && steps < 2000) {
+      fallen.push(...step(w).fallen);
+      steps++;
+    }
+    expect(Math.abs(steps - 0.6 / 0.12 / DT)).toBeLessThanOrEqual(1);
+    expect(fallen).toEqual(["a"]);
+    expect(w.bodies[0]!.spin).toBe(0);
+  });
+
+  it("a higher-spin top is pushed less by the same hit, and loses less spin", () => {
+    // Measured right after the first contact (before either can fall over).
+    const hit = (spin: number) => {
+      const w = world([top("s", 0, 0, 0.5, 300), top("t", 40, 0, spin)], { spin: model, friction: 0 });
+      const before = spin - model.decay * DT;
+      while (!step(w).contacts.length);
+      return { v: w.bodies[1]!.vx, lost: before - w.bodies[1]!.spin! };
+    };
+    const low = hit(0.4);
+    const high = hit(1);
+    expect(high.v).toBeLessThan(low.v);
+    expect(high.lost).toBeLessThan(low.lost);
+  });
+
+  it("flags a body whose centre leaves the arena (no wall)", () => {
+    const w = world([top("a", 0, 0, 1, 400)], { spin: model, arena: { x: 0, y: 0, r: 100 } });
+    simulate(w);
+    expect(w.bodies[0]!.out).toBe(true);
+    expect(w.bodies[0]!.x).toBeGreaterThan(100);
+  });
+
+  it("replays identically, wobble included", () => {
+    const make = () => world([top("a", 0, 0, 0.3, 120), top("b", 60, 4, 0.2)], { spin: model, arena: { x: 0, y: 0, r: 90 } });
+    const a = make();
+    const b = make();
+    for (let i = 0; i < 900; i++) {
+      step(a);
+      step(b);
+    }
+    expect(a).toEqual(b);
+    expect(a.bodies.every((x) => x.fallen)).toBe(true);
   });
 });

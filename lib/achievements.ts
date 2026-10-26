@@ -260,6 +260,21 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     hidden: true,
     unlocks: (e) => isGame(e, "kacher-guti") && e.params.outcome === "clean-sweep",
   },
+  {
+    id: "latim-king",
+    emoji: "🌀",
+    title: { en: "Latim King", bn: "লাটিম সম্রাট" },
+    description: { en: "Beat the Mohollar Champion at Latim Fight.", bn: "লাটিম যুদ্ধে মহল্লার চ্যাম্পিয়নকে হারান।" },
+    unlocks: (e) => isGame(e, "latim-fight") && e.params.opponent === "champion" && (e.params.outcome === "won" || e.params.outcome === "flawless"),
+  },
+  {
+    id: "perfect-kop",
+    emoji: "💥",
+    title: { en: "Perfect Kop", bn: "নিখুঁত কোপ" },
+    description: { en: "Land 3 perfect kops in one Latim Fight match.", bn: "এক লাটিম যুদ্ধ ম্যাচে ৩টা নিখুঁত কোপ দিন।" },
+    hidden: true,
+    unlocks: (e) => isGame(e, "latim-fight") && num(e.params.perfectKops) >= 3,
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));

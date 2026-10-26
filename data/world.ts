@@ -76,6 +76,7 @@ export const worlds: readonly World[] = [
       { kind: "game", slug: "tea-balance", zone: { en: "☕ Balance", bn: "☕ ব্যালেন্স" } },
       { kind: "game", slug: "book-cricket", zone: { en: "🏏 Back bench", bn: "🏏 লাস্ট বেঞ্চ" } },
       { kind: "game", slug: "kacher-guti", zone: { en: "🔮 Para ground", bn: "🔮 পাড়ার মাঠ" } },
+      { kind: "game", slug: "latim-fight", zone: { en: "🌀 The circle", bn: "🌀 বৃত্ত" } },
     ],
   },
 ];

@@ -279,7 +279,7 @@ function Board({ initial, onOver }: { initial: KgState; onOver: (s: KgState) => 
     setCpuAim(null);
     setRolling(piecesOfWorld(from, w));
     playSound("whoosh");
-    const events: StepEvents = { contacts: [], holed: [] };
+    const events: StepEvents = { contacts: [], holed: [], fallen: [] };
     let acc = 0;
     let last = performance.now();
     const frame = (now: number) => {
