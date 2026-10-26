@@ -27,6 +27,8 @@ export function DistrictMap({
   onToggle,
   title,
   className = "",
+  fills,
+  anonymous = false,
 }: {
   visited: ReadonlySet<string>;
   /** A second set (a friend's map): districts in both get a third colour. */
@@ -34,6 +36,10 @@ export function DistrictMap({
   onToggle?: (districtId: string) => void;
   title: string;
   className?: string;
+  /** Per-district colour overrides (e.g. a quiz reveal: answer lime, wrong pick chili). */
+  fills?: Readonly<Record<string, string>>;
+  /** Omit district ids from the DOM (quiz questions must not leak the answer). */
+  anonymous?: boolean;
 }) {
   const ids = Object.keys(DISTRICT_SHAPES);
   return (
@@ -48,9 +54,9 @@ export function DistrictMap({
           {ids.map((id) => (
             <path
               key={id}
-              data-district={id}
+              data-district={anonymous ? undefined : id}
               d={DISTRICT_SHAPES[id]!.d}
-              fill={fillFor(id, visited, compare)}
+              fill={fills?.[id] ?? fillFor(id, visited, compare)}
               onClick={onToggle ? () => onToggle(id) : undefined}
               className={onToggle ? "cursor-pointer transition-[fill] duration-150 [transform-box:fill-box] [transform-origin:center] hover:brightness-95" : undefined}
             />

@@ -5,6 +5,8 @@
 import { DIALECT_CONTENT } from "@/data/dialects";
 import { isPublicForm, isScoredForm } from "@/lib/dialects/content";
 import { validateDialectContent } from "@/lib/dialects/validate";
+import { clueContent } from "@/data/district-clues";
+import { validateClues } from "@/lib/district-clues";
 
 const { regions, concepts, forms, sources } = DIALECT_CONTENT;
 const issues = validateDialectContent(DIALECT_CONTENT);
@@ -21,6 +23,12 @@ console.log(`  public (map + detective): ${forms.filter(isPublicForm).length}`);
 console.log(`  scored (verified, quiz):  ${forms.filter(isScoredForm).length}`);
 console.log("  public forms per region:");
 for (const r of regions) console.log(`    ${r.id.padEnd(16)} ${forms.filter((f) => isPublicForm(f) && f.regions.includes(r.id)).length}`);
+
+// District clues (Guess the District)
+const clues = clueContent();
+const clueErrors = validateClues(clues);
+console.log(`\nDistrict clues: ${clues.clues.length}`, count(clues.clues, (c) => c.status), `· districts covered (verified): ${new Set(clues.clues.filter((c) => c.status === "verified").map((c) => c.district)).size}/64`);
+for (const e of clueErrors) errors.push({ level: "error", where: "clues", message: e });
 
 for (const w of warnings) console.log(`⚠️  ${w.where}: ${w.message}`);
 for (const e of errors) console.log(`❌ ${e.where}: ${e.message}`);

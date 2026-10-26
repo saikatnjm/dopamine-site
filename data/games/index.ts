@@ -364,6 +364,25 @@ export const games: Game[] = [
       description: "Play book cricket online: flip the page, the last digit is the ball. Defend or slog through 2 overs, chase the target, challenge friends to beat your score. Free, no sign-up.",
     },
   },
+  {
+    slug: "guess-district",
+    title: { en: "Guess the District", bn: "কোন জেলা?" },
+    tagline: { en: "10 districts. How well do you know your desh?", bn: "১০টা জেলা। দেশ কতটা চেনো?" },
+    description: {
+      en: "A daily Bangladesh map quiz: spot the district on the map, guess it from its shape or a clue. Same puzzle for everyone each day, unlimited practice, and a spoiler-free result grid to share.",
+      bn: "প্রতিদিনের বাংলাদেশ ম্যাপ কুইজ: ম্যাপে জেলা চেনো, আকৃতি বা সূত্র দেখে ধরো। প্রতিদিন সবার জন্য একই ধাঁধা, ইচ্ছামতো প্র্যাকটিস, আর শেয়ারের জন্য স্পয়লার-ছাড়া রেজাল্ট গ্রিড।",
+    },
+    emoji: "📍",
+    accent: "sky",
+    durationSec: 120,
+    category: "bangladesh",
+    mechanic: "quiz",
+    tags: ["geography"],
+    seo: {
+      title: "Guess the District — Daily Bangladesh Map Quiz",
+      description: "Can you name Bangladesh's 64 districts from the map and their shapes? A free daily 10-question quiz, same puzzle for everyone, plus unlimited practice and friend challenges.",
+    },
+  },
 ];
 
 /**

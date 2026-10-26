@@ -238,6 +238,13 @@ export const ACHIEVEMENTS: readonly Achievement[] = [
     hidden: true,
     unlocks: (e) => isGame(e, "book-cricket") && e.params.firstBallOut === true,
   },
+  {
+    id: "district-detective",
+    emoji: "📍",
+    title: { en: "District Detective", bn: "জেলা গোয়েন্দা" },
+    description: { en: "Get 10/10 in a Guess the District round.", bn: "কোন জেলা? রাউন্ডে ১০/১০ পান।" },
+    unlocks: (e) => isGame(e, "guess-district") && num(e.params.score) === 10,
+  },
 ];
 
 const BY_ID = new Map(ACHIEVEMENTS.map((a) => [a.id, a]));

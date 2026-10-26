@@ -1,6 +1,6 @@
 # Phase 44: My Bangladesh Map (আমার বাংলাদেশ)
 
-**Status:** built, PR open on `feat/my-bangladesh-map` (from `main` after #35), waiting for the owner to test and merge · **Written:** 2026-10-25
+**Status:** shipped (#36, merged to `main`) · **Written:** 2026-10-25
 
 **Decisions (2026-10-25):** branch from `main` (Phase 43 merged as #35) · add to Hot right now (`hot`) · static OG for v1 · one state (visited) · **Estimated size:** about 1–1.5 days
 

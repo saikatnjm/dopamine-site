@@ -28,6 +28,8 @@ export const CHALLENGE_GAMES = {
   "ancholik-quiz": { code: "aq", maxScore: 10 },
   // runs in a 2-over innings (max possible 78; headroom for future tweaks)
   "book-cricket": { code: "bk", maxScore: 200 },
+  // seed = the round (daily or practice), score = correct answers
+  "guess-district": { code: "gd", maxScore: 10 },
 } as const;
 
 export type ChallengeGame = keyof typeof CHALLENGE_GAMES;

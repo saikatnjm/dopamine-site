@@ -40,6 +40,7 @@ export const worlds: readonly World[] = [
       { kind: "game", slug: "chaos-machine", zone: { en: "🔥 Chaos", bn: "🔥 হট্টগোল" } },
       { kind: "page", id: "dhaka-person", zone: { en: "🏙️ You", bn: "🏙️ আপনি" } },
       { kind: "game", slug: "word-map", zone: { en: "🗺️ Words", bn: "🗺️ শব্দ" } },
+      { kind: "game", slug: "guess-district", zone: { en: "📍 Districts", bn: "📍 জেলা" } },
       { kind: "game", slug: "my-bangladesh", zone: { en: "🗺️ Map", bn: "🗺️ ম্যাপ" } },
       { kind: "game", slug: "which-region", zone: { en: "🕵️ Dialects", bn: "🕵️ ভাষা" } },
     ],

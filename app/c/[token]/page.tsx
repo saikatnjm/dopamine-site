@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ComponentType } from "react";
 import { AncholikQuizChallenge } from "@/components/games/ancholik-quiz-challenge";
+import { GuessDistrictChallenge } from "@/components/games/guess-district-challenge";
 import { accentText } from "@/components/ui/styles";
 import { getGame } from "@/data/games";
 import { decodeChallenge, type ChallengeGame, type FriendChallenge } from "@/lib/challenge";
@@ -33,6 +34,8 @@ const GAMES: Record<ChallengeGame, ComponentType<GameProps>> = {
   // Server wrapper (loads the reviewed question pool); its client game is its own chunk.
   "ancholik-quiz": AncholikQuizChallenge,
   "book-cricket": dynamic(() => import("@/components/games/book-cricket-game").then((m) => m.BookCricketGame)),
+  // Server wrapper (passes the verified clue pool); its client game is its own chunk.
+  "guess-district": GuessDistrictChallenge,
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -51,7 +51,7 @@ const MOOD_KEYS: Record<MoodId, readonly string[]> = {
     "g:chicken-crossing",
     "g:traffic-controller",
   ],
-  test: ["p:dhaka-person", "g:which-region", "g:personality", "g:dont-tap", "g:tea-balance", "g:traffic-controller", "g:bazar-bargain", "g:cng-catch"],
+  test: ["p:dhaka-person", "g:guess-district", "g:which-region", "g:personality", "g:dont-tap", "g:tea-balance", "g:traffic-controller", "g:bazar-bargain", "g:cng-catch"],
   dhaka: [
     "x:dhaka-cng-simulator",
     "x:dhaka-bus-simulator",
