@@ -1,5 +1,4 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { ActivityCard } from "@/components/experience/activity-card";
 import { RelatedLinks } from "@/components/related/related-links";
 import { accentBg, btnPrimary, card, chip } from "@/components/ui/styles";
@@ -10,14 +9,11 @@ import type { Dict } from "@/lib/i18n/dictionary";
 import { getI18n } from "@/lib/i18n/server";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 import { JsonLd } from "@/components/seo/json-ld";
-import { pageMetadata } from "@/lib/seo";
+import { localePath } from "@/lib/i18n/paths";
+import { guideSeo } from "@/lib/seo-text";
 
 // One template for every SEO guide page (content in data/guides.ts).
 // Server-rendered, no client JS beyond the site shell.
-
-export function guideMetadata(slug: GuideSlug): Metadata {
-  return pageMetadata({ ...guides[slug].seo, path: `/${slug}` });
-}
 
 function duration(a: Activity, d: Dict, lang: Lang): string | null {
   if (a.durationSec === undefined) return null;
@@ -35,19 +31,19 @@ export async function GuidePage({ slug }: { slug: GuideSlug }) {
   const jsonLd = [
     {
       "@type": "CollectionPage",
-      name: guide.seo.title,
-      description: guide.seo.description,
-      url: absoluteUrl(`/${slug}`),
+      name: guideSeo(slug, lang).title,
+      description: guideSeo(slug, lang).description,
+      url: absoluteUrl(localePath(`/${slug}`, lang)),
       mainEntity: {
         "@type": "ItemList",
-        itemListElement: picks.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.activity.title, url: absoluteUrl(p.activity.href) })),
+        itemListElement: picks.map((p, i) => ({ "@type": "ListItem", position: i + 1, name: p.activity.title, url: absoluteUrl(localePath(p.activity.href, lang)) })),
       },
     },
     {
       "@type": "BreadcrumbList",
       itemListElement: [
-        { "@type": "ListItem", position: 1, name: siteConfig.name, item: absoluteUrl("/") },
-        { "@type": "ListItem", position: 2, name, item: absoluteUrl(`/${slug}`) },
+        { "@type": "ListItem", position: 1, name: siteConfig.name, item: absoluteUrl(localePath("/", lang)) },
+        { "@type": "ListItem", position: 2, name, item: absoluteUrl(localePath(`/${slug}`, lang)) },
       ],
     },
     ...(guide.faq?.length

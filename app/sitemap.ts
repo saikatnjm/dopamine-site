@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { experiencesInCategory, listCategories, listExperiences } from "@/lib/experience/registry";
+import { LANGS } from "@/lib/i18n/core";
+import { localePath } from "@/lib/i18n/paths";
 import { absoluteUrl } from "@/lib/site";
 import { GAME_HREF_OVERRIDES, listGames } from "@/data/games";
 import { GUIDE_SLUGS } from "@/data/guides";
@@ -10,6 +12,20 @@ import { formsForRegion, listRegions, REGION_INDEX_MIN } from "@/lib/dialects/co
 // achievements pages are personal and noindex; redirecting routes are left out
 // (search engines treat redirects in a sitemap as errors).
 export default function sitemap(): MetadataRoute.Sitemap {
+  return pages().flatMap(withLanguages);
+}
+
+/**
+ * Every page exists in English (unprefixed) and Bangla (/bn/…): list both URLs,
+ * each with the hreflang pair, as Google recommends for multilingual sitemaps.
+ */
+function withLanguages(entry: MetadataRoute.Sitemap[number]): MetadataRoute.Sitemap {
+  const path = new URL(entry.url).pathname;
+  const languages = { en: absoluteUrl(localePath(path, "en")), bn: absoluteUrl(localePath(path, "bn")) };
+  return LANGS.map((lang) => ({ ...entry, url: languages[lang], alternates: { languages: { ...languages, "x-default": languages.en } } }));
+}
+
+function pages(): MetadataRoute.Sitemap {
   const pages: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
     { url: absoluteUrl("/experiences"), changeFrequency: "weekly", priority: 0.8 },

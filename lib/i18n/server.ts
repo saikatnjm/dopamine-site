@@ -1,10 +1,13 @@
-import { cookies } from "next/headers";
-import { DEFAULT_LANG, isLang, LANG_COOKIE, type Lang } from "./core";
+import { lang as langParam } from "next/root-params";
+import { DEFAULT_LANG, isLang, type Lang } from "./core";
 import { getDictionary } from "./dictionary";
 
-/** Current language from the cookie (English when unset). Makes the route dynamic. */
+/**
+ * Current language from the URL: every route lives under app/[lang]/ (proxy.ts
+ * serves unprefixed English URLs from /en/…). Server components only.
+ */
 export async function getLang(): Promise<Lang> {
-  const value = (await cookies()).get(LANG_COOKIE)?.value;
+  const value = await langParam();
   return isLang(value) ? value : DEFAULT_LANG;
 }
 

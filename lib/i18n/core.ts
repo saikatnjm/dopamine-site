@@ -12,6 +12,9 @@ export function t(text: Text, lang: Lang): string {
   return typeof text === "string" ? text : text[lang];
 }
 
+/** generateStaticParams for routes that only vary by language. */
+export const langParams = () => LANGS.map((lang) => ({ lang }));
+
 export function isLang(value: unknown): value is Lang {
   return value === "en" || value === "bn";
 }

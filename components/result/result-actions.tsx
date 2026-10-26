@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { PlayAnother } from "@/components/share/play-another";
 import { YouMightAlsoLike } from "@/components/share/you-might-also-like";
 import { useEffect, useRef, useState } from "react";

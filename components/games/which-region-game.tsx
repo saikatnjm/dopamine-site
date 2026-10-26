@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { DialectMap, type MapLabel } from "@/components/dialects/dialect-map";
 import { Progress } from "@/components/games/personality-game";

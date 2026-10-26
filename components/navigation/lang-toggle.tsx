@@ -1,32 +1,34 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useState } from "react";
 import { useI18n } from "@/components/providers/lang-provider";
 import { LANG_COOKIE, type Lang } from "@/lib/i18n/core";
+import { localePath } from "@/lib/i18n/paths";
 
 const options: { lang: Lang; label: string; full: string }[] = [
   { lang: "en", label: "EN", full: "English" },
   { lang: "bn", label: "বাং", full: "বাংলা" },
 ];
 
-/** Browser side effects live outside the component (React compiler rule). */
-function persistLang(next: Lang) {
+/**
+ * Browser side effects live outside the component (React compiler rule).
+ * Each language has its own URL (/bn/… for Bangla) and root layout, so the
+ * switch is a full page load; the cookie remembers the choice for next visits.
+ */
+function switchTo(next: Lang) {
   document.cookie = `${LANG_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
-  document.documentElement.lang = next;
+  const { pathname, search, hash } = window.location;
+  window.location.assign(localePath(`${pathname}${search}${hash}`, next));
 }
 
-// Same URL in both languages: the choice is stored in a cookie for a year
-// and the server re-renders the page in place.
 export function LangToggle() {
   const { lang, d } = useI18n();
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
 
   function choose(next: Lang) {
     if (next === lang) return;
-    persistLang(next);
-    startTransition(() => router.refresh());
+    setPending(true);
+    switchTo(next);
   }
 
   return (

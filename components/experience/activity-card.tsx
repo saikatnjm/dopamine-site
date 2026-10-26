@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { accentBg, cardHover } from "@/components/ui/styles";
 import type { Activity } from "@/lib/activities";
 import { fmt, num, type Lang } from "@/lib/i18n/core";

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { ActivityCard } from "@/components/experience/activity-card";
 import { chip } from "@/components/ui/styles";
 import { guides, type GuideSlug } from "@/data/guides";

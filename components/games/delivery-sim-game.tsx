@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import Link from "@/components/i18n/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode, type RefObject } from "react";
 import { ChallengeBanner, ChallengeOutcome, ShareActions } from "@/components/games/challenge-ui";
 import { ResultCard } from "@/components/share/result-card";

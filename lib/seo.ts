@@ -9,6 +9,8 @@
 // pages. JSON-LD only states facts (no ratings, counts or reviews).
 
 import type { Metadata } from "next";
+import type { Lang } from "@/lib/i18n/core";
+import { localePath } from "@/lib/i18n/paths";
 import { absoluteUrl, siteConfig } from "@/lib/site";
 
 export const TITLE_SUFFIX = ` · ${siteConfig.name}`;
@@ -26,7 +28,9 @@ const DEFAULT_OG = { url: "/opengraph-image", width: 1200, height: 630, alt: sit
 export type PageSeo = { title: string; description: string };
 
 export type PageMetaInput = PageSeo & {
+  /** Language-neutral path ("/games/x"); the /bn variant is derived. */
   path: string;
+  lang: Lang;
   noindex?: boolean;
   type?: "website" | "article";
   /** Use the title as-is (no " · Hottogol"), e.g. the homepage. */
@@ -35,14 +39,27 @@ export type PageMetaInput = PageSeo & {
   defaultImage?: boolean;
 };
 
-export function pageMetadata({ path, title, description, noindex, type = "website", absoluteTitle, defaultImage }: PageMetaInput): Metadata {
+export const OG_LOCALE: Record<Lang, string> = { en: "en_US", bn: "bn_BD" };
+
+export function pageMetadata({ path, lang, title, description, noindex, type = "website", absoluteTitle, defaultImage }: PageMetaInput): Metadata {
+  const canonical = localePath(path, lang);
   return {
     // A title that already names the site ("Daily Hottogol…") skips the suffix.
     title: absoluteTitle || title.includes(siteConfig.name) ? { absolute: title } : title,
     description,
-    alternates: { canonical: path },
+    // Each language is its own URL; hreflang ties the pair together (x-default = English).
+    alternates: { canonical, languages: { en: localePath(path, "en"), bn: localePath(path, "bn"), "x-default": localePath(path, "en") } },
     ...(noindex ? { robots: { index: false, follow: true } } : {}),
-    openGraph: { type, url: path, siteName: siteConfig.name, locale: siteConfig.locale, title, description, ...(defaultImage ? { images: [DEFAULT_OG] } : {}) },
+    openGraph: {
+      type,
+      url: canonical,
+      siteName: siteConfig.name,
+      locale: OG_LOCALE[lang],
+      alternateLocale: [OG_LOCALE[lang === "bn" ? "en" : "bn"]],
+      title,
+      description,
+      ...(defaultImage ? { images: [DEFAULT_OG] } : {}),
+    },
     // No twitter.images: Next falls back to the (file-based) og:image.
     twitter: { card: "summary_large_image", title, description },
   };
@@ -68,24 +85,24 @@ const publisherRef = { "@id": absoluteUrl("/#organization") };
 
 export type Crumb = { name: string; path?: string };
 
-export function breadcrumbLd(items: readonly Crumb[]): Ld {
+export function breadcrumbLd(items: readonly Crumb[], lang: Lang = "en"): Ld {
   return {
     "@type": "BreadcrumbList",
     itemListElement: items.map((c, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: c.name,
-      ...(c.path ? { item: absoluteUrl(c.path) } : {}),
+      ...(c.path ? { item: absoluteUrl(localePath(c.path, lang)) } : {}),
     })),
   };
 }
 
-export function itemListLd(name: string, items: readonly { name: string; path: string }[]): Ld {
+export function itemListLd(name: string, items: readonly { name: string; path: string }[], lang: Lang = "en"): Ld {
   return {
     "@type": "ItemList",
     name,
     numberOfItems: items.length,
-    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, url: absoluteUrl(it.path) })),
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, url: absoluteUrl(localePath(it.path, lang)) })),
   };
 }
 
@@ -94,13 +111,13 @@ export function itemListLd(name: string, items: readonly { name: string; path: s
  * facts every activity shares: canonical URL, share image, publisher, platform,
  * free, languages.
  */
-export function activityLd(path: string, ld: Ld, opts: { image?: string } = {}): Ld {
+export function activityLd(path: string, ld: Ld, lang: Lang, opts: { image?: string } = {}): Ld {
   return {
-    inLanguage: ["en", "bn"],
     isAccessibleForFree: true,
     ...ld,
-    url: absoluteUrl(path),
-    image: absoluteUrl(opts.image ?? `${path}/opengraph-image`),
+    inLanguage: lang,
+    url: absoluteUrl(localePath(path, lang)),
+    image: absoluteUrl(localePath(opts.image ?? `${path}/opengraph-image`, lang)),
     publisher: publisherRef,
     author: publisherRef,
     ...(ld["@type"] === "VideoGame" ? { gamePlatform: "Web browser", operatingSystem: "Any (web browser)", applicationCategory: "Game" } : {}),

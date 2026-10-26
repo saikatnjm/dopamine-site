@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { useActivities } from "@/components/providers/activities-provider";
 import { track } from "@/lib/analytics";
 import { cleanToken } from "@/lib/analytics-taxonomy";
+import { stripLang } from "@/lib/i18n/paths";
 
 const pathOf = (href: string) => href.split(/[?#]/)[0] ?? href;
 
@@ -26,7 +27,7 @@ function referrerHost(): string | undefined {
  * Nothing is stored.
  */
 export function ActivityViewTracker() {
-  const pathname = usePathname();
+  const pathname = stripLang(usePathname());
   const activities = useActivities();
   const first = useRef(true);
 

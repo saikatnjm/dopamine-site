@@ -8,6 +8,7 @@ import { track } from "@/lib/analytics";
 import type { Activity } from "@/lib/activities";
 import { prefersReducedMotion } from "@/lib/games/shared";
 import { pickRandom } from "@/lib/random";
+import { localePath } from "@/lib/i18n/paths";
 
 type Props = {
   activities: readonly Activity[];
@@ -57,7 +58,7 @@ function buildSequence(items: readonly Activity[], pick: Activity): Activity[] {
 
 export function ChaosRoulette({ activities, className = "", label }: Props) {
   const router = useRouter();
-  const { d } = useI18n();
+  const { lang, d } = useI18n();
   const titleId = useId();
   const [open, setOpen] = useState(false);
   const [pick, setPick] = useState<Activity | null>(null);
@@ -123,7 +124,7 @@ export function ChaosRoulette({ activities, className = "", label }: Props) {
     setPick(chosen);
     setStopped(false);
 
-    const goLater = () => later(() => router.push(chosen.href), AUTO_GO_MS);
+    const goLater = () => later(() => router.push(localePath(chosen.href, lang)), AUTO_GO_MS);
 
     if (prefersReducedMotion()) {
       setShown(chosen);
@@ -161,7 +162,7 @@ export function ChaosRoulette({ activities, className = "", label }: Props) {
   function go() {
     if (!pick) return;
     clearTimers();
-    router.push(pick.href);
+    router.push(localePath(pick.href, lang));
   }
 
   const current = shown ?? pick;
